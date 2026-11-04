@@ -258,6 +258,7 @@ Los tiempos se miden con `performance.now()`. La UI de respuesta es siempre tác
 
 ### Fase 4 — Lanzamiento Android
 - [x] Capacitor Android: `npm run android:apk` (`scripts/android-apk.sh`) genera el APK de depuración.
+- [x] `scripts/android-aab.sh`: AAB de release con R8 (scripts de optimización de sesolibre-games), versionCode incremental y firma con la upload key.
 - [ ] CI (traer workflows), Play Games (logros/rankings del reto diario).
 - [ ] Política de privacidad, ficha de Play Store, notificación local opcional de recordatorio diario.
 

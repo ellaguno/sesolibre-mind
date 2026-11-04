@@ -46,3 +46,7 @@ plugins/*/android/.gradle/
 *.tsbuildinfo
 vite.config.js
 vite.config.d.ts
+
+# Bundles firmados (se suben a Play, no al repo)
+*.aab
+*.jks

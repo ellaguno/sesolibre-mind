@@ -16,7 +16,8 @@
     "cap:add": "cap add android",
     "cap:sync": "cap sync android",
     "android:apk": "./scripts/android-apk.sh",
-    "icons": "python3 scripts/build-icons.py"
+    "icons": "python3 scripts/build-icons.py",
+    "android:aab": "./scripts/android-aab.sh"
   },
   "dependencies": {
     "@capacitor/android": "^8.4.2",

@@ -38,6 +38,23 @@ adb install -r android/app/build/outputs/apk/debug/app-debug.apk
 
 Requiere JDK 21 y el SDK de Android (`ANDROID_HOME`, por defecto `~/Android/Sdk`).
 
+## Google Play (AAB firmado)
+
+```bash
+./scripts/android-aab.sh ~/ruta/upload-keystore.jks upload
+```
+
+Compila el bundle de release (R8 activado, targetSdk 36), le pone
+`versionCode` = nº de commits y `versionName` = versión de `package.json`, y lo
+firma con la *upload key* (jarsigner pide la contraseña). Sale
+`sesolibre-mind-<versión>-<versionCode>.aab`. Sin argumentos lo deja sin firmar.
+
+Crear la upload key (una sola vez; guárdala muy bien, nunca en el repo):
+
+```bash
+keytool -genkeypair -v -keystore upload-keystore.jks -alias upload -keyalg RSA -keysize 2048 -validity 9125
+```
+
 ## Documentación
 
 Ver [`docs/PLAN.md`](./docs/PLAN.md): visión, reglas de propiedad intelectual,
