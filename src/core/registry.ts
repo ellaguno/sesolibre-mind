@@ -181,8 +181,11 @@ export const activities: ActivityMeta[] = [
     emoji: '🧮',
     scoreKind: 'time',
     higherIsBetter: false,
-    available: false,
+    available: true,
     accent: '#3b82f6',
+    // Deben coincidir con VARIANTS (puzzles/minisudoku/generator.ts).
+    variants: ['easy', 'hard'],
+    load: () => import('../puzzles/minisudoku/MiniSudokuGame'),
   },
 ];
 

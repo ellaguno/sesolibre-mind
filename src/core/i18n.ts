@@ -86,6 +86,20 @@ const es: Dict = {
   'sunmoon.hintRow': 'Mira la fila {n}: esa casilla solo puede ser {v}.',
   'sunmoon.hintCol': 'Mira la columna {n}: esa casilla solo puede ser {v}.',
 
+  'difficulty.easy': 'Fácil',
+  'difficulty.hard': 'Difícil 🔥',
+  'unit.row': 'la fila',
+  'unit.col': 'la columna',
+  'unit.box': 'la caja',
+  'minisudoku.rule1': 'Completa el tablero con cifras del 1 al 6.',
+  'minisudoku.rule2':
+    'Cada fila, cada columna y cada caja de 2×3 lleva cada cifra una sola vez.',
+  'minisudoku.rule3': 'Elige una casilla y toca una cifra. Con ✏️ apuntas notas a lápiz.',
+  'minisudoku.hintNaked': 'En esa casilla solo cabe el {v}.',
+  'minisudoku.hintHidden': 'En {unit} {n}, el {v} solo cabe en esa casilla.',
+  'minisudoku.erase': 'Borrar cifra',
+  'minisudoku.notes': 'Notas a lápiz',
+
   'domain.speed': 'Velocidad',
   'domain.memory': 'Memoria',
   'domain.attention': 'Atención',
@@ -181,6 +195,20 @@ const en: Dict = {
   'sunmoon.rule5': 'Tap a cell to cycle: empty → ☀️ → 🌙. Gray cells are fixed.',
   'sunmoon.hintRow': 'Look at row {n}: that cell can only be {v}.',
   'sunmoon.hintCol': 'Look at column {n}: that cell can only be {v}.',
+
+  'difficulty.easy': 'Easy',
+  'difficulty.hard': 'Hard 🔥',
+  'unit.row': 'row',
+  'unit.col': 'column',
+  'unit.box': 'box',
+  'minisudoku.rule1': 'Fill the board with digits 1 to 6.',
+  'minisudoku.rule2':
+    'Each row, each column and each 2×3 box has every digit exactly once.',
+  'minisudoku.rule3': 'Pick a cell and tap a digit. Use ✏️ for pencil notes.',
+  'minisudoku.hintNaked': 'Only {v} fits in that cell.',
+  'minisudoku.hintHidden': 'In {unit} {n}, {v} only fits in that cell.',
+  'minisudoku.erase': 'Erase digit',
+  'minisudoku.notes': 'Pencil notes',
 
   'domain.speed': 'Speed',
   'domain.memory': 'Memory',

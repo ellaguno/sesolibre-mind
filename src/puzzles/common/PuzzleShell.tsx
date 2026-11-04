@@ -32,6 +32,8 @@ interface Props {
   /** Mensaje bajo los botones (p. ej. la explicación de una pista). */
   notice?: string | null;
   rules: string[];
+  /** Controles propios del puzzle entre el tablero y los botones (p. ej. teclado numérico). */
+  controls?: ReactNode;
   children: ReactNode;
 }
 
@@ -144,6 +146,8 @@ export default function PuzzleShell(p: Props) {
           </div>
         )}
       </div>
+
+      {p.controls}
 
       <div className="grid grid-cols-3 gap-2">
         <Button variant="ghost" onClick={p.onUndo} disabled={!p.canUndo || p.solved}>
