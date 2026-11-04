@@ -14,6 +14,7 @@ import { recordResult } from '../core/play';
 import { dailySeed, dateKey } from '../core/rng';
 import { useSettings } from '../core/settings';
 import { useT } from '../core/i18n';
+import { syncReminder } from '../core/reminder';
 import { resultText, sessionShareText } from '../core/sessionText';
 import { currentStreak, useRewards } from '../core/RewardService';
 import {
@@ -90,11 +91,14 @@ export default function SessionScreen() {
             { id: currentId, score, meta },
           ],
         };
-        void saveSession(next);
+        void saveSession(next).then(() => {
+          // Sesión terminada: el aviso de hoy ya no hace falta.
+          if (isComplete(plan, next)) void syncReminder();
+        });
         return next;
       });
     },
-    [currentId, day],
+    [currentId, day, plan],
   );
 
   // Continuar: a la siguiente actividad pendiente (o al resumen). Si se sale

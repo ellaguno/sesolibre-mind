@@ -3,6 +3,7 @@ import type { GameProps } from '../../core/registry';
 import { useT } from '../../core/i18n';
 import { AudioService } from '../../core/AudioService';
 import PuzzleShell from '../common/PuzzleShell';
+import { useSavedPuzzle } from '../../core/progress';
 import { useActivityLevel } from '../../core/levels';
 
 import { useTutorialOpen } from '../../core/tutorials';
@@ -32,7 +33,11 @@ export default function ThreadGame({
   const [round, setRound] = useState(0);
   const [notice, setNotice] = useState<string | null>(null);
 
-  const bseed = boardSeed(seed, daily, round, variant.id);
+  // Partida en curso: si hay una guardada de este nivel, se regenera su tablero.
+  const savedGame = useSavedPuzzle('thread', daily);
+  const resumeSeed =
+    round === 0 && savedGame.saved?.level === variant.id ? savedGame.saved.seed : null;
+  const bseed = resumeSeed ?? boardSeed(seed, daily, round, variant.id);
   const key = `${bseed}:${variant.id}`;
   const generated = useWorkerResult(
     key,
@@ -50,6 +55,13 @@ export default function ThreadGame({
     initial: () => (puzzle ? [puzzle.clues[0]] : []),
     isSolved: (path) => !!puzzle && isSolved(puzzle, path),
     paused: tutorialOpen,
+    persist: {
+      activityId: 'thread',
+      daily,
+      seed: bseed,
+      level: variant.id,
+      restore: resumeSeed !== null ? savedGame.saved : null,
+    },
     onSolved: (secs, hints) => onScore(secs, { difficulty: variant.id, hints }),
   });
   const { cells: path, cellsRef, commit, preview, solved } = session;
@@ -144,6 +156,7 @@ export default function ThreadGame({
       ready={!!puzzle && session.ready}
       elapsed={session.elapsed}
       solved={solved}
+      resumed={session.resumed}
       hints={session.hints}
       label={`${size}×${size}`}
       variants={VARIANTS.map((v) => ({

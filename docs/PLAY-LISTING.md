@@ -80,6 +80,7 @@ datos). Actualizar si se integra monetización o Google Play Juegos.
 > • **Sin conexión** — funciona en el avión, el metro o sin señal.
 > • **Sin anuncios**, **sin compras** y **sin registro**.
 > • **Privacidad total** — no recopilamos ningún dato; todo se guarda en tu teléfono.
+> • **Recordatorio diario** opcional, y tus puzzles se guardan para seguir después.
 > • **Tutorial ilustrado** la primera vez que juegas cada puzzle.
 > • **Modo daltónico** con texturas y colores fáciles de distinguir.
 > • Tema claro y oscuro, sonido y animaciones configurables.
@@ -129,6 +130,7 @@ datos). Actualizar si se integra monetización o Google Play Juegos.
 > • **Offline** — works on a plane, on the subway or with no signal.
 > • **No ads**, **no purchases** and **no sign-up**.
 > • **Full privacy** — we collect no data; everything stays on your phone.
+> • Optional **daily reminder**, and your puzzles are saved to continue later.
 > • **Illustrated tutorial** the first time you play each puzzle.
 > • **Color-blind mode** with textures and easy-to-tell colors.
 > • Light and dark theme, configurable sound and animations.

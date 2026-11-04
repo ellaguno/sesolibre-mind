@@ -59,6 +59,8 @@ const es: Dict = {
 
   'hub.dailyChallenge': 'Reto del día',
   'puzzle.daily': 'Del día',
+  'puzzle.resumed': 'Continuando tu partida donde la dejaste.',
+  'hub.inProgress': 'En curso',
   'puzzle.time': 'Tiempo',
   'puzzle.size': 'Tamaño del tablero',
   'puzzle.generating': 'Generando tablero…',
@@ -335,6 +337,19 @@ const es: Dict = {
   'cheer.7': '¡Cada día mejor!',
   'cheer.8': '¡Bravo!',
 
+  'settings.reminder': 'Recordatorio diario',
+  'settings.reminderHint':
+    'Un aviso a la hora que elijas para hacer la sesión del día. Si ya la hiciste, no te molesta.',
+  'settings.reminderTime': 'Hora del recordatorio',
+  'reminder.denied':
+    'Sin permiso de notificaciones. Actívalo en los ajustes de Android para SesoLibre Mind.',
+  'reminder.on': 'Listo: te avisaremos cada día a las {time}.',
+  'reminder.title': 'SesoLibre Mind',
+  'reminder.body1': '¿Hacemos la sesión de hoy? Son unos 5 minutos. 🧠',
+  'reminder.body2': 'Tu puzzle del día te espera. 🧩',
+  'reminder.body3': 'Un ratito para tu mente: la sesión de hoy está lista.',
+  'reminder.body4': 'Mantén tu racha: la sesión de hoy te espera. 🔥',
+
   'domain.speed': 'Velocidad',
   'domain.memory': 'Memoria',
   'domain.attention': 'Atención',
@@ -408,6 +423,8 @@ const en: Dict = {
 
   'hub.dailyChallenge': 'Daily challenge',
   'puzzle.daily': 'Daily',
+  'puzzle.resumed': 'Picking up your game where you left off.',
+  'hub.inProgress': 'In progress',
   'puzzle.time': 'Time',
   'puzzle.size': 'Board size',
   'puzzle.generating': 'Generating board…',
@@ -676,6 +693,19 @@ const en: Dict = {
   'cheer.6': 'Sharp mind!',
   'cheer.7': 'Better every day!',
   'cheer.8': 'Bravo!',
+
+  'settings.reminder': 'Daily reminder',
+  'settings.reminderHint':
+    "A nudge at the time you choose to do today's session. If you already did it, no nudge.",
+  'settings.reminderTime': 'Reminder time',
+  'reminder.denied':
+    'Notifications are not allowed. Turn them on in Android settings for SesoLibre Mind.',
+  'reminder.on': 'Done: we will remind you every day at {time}.',
+  'reminder.title': 'SesoLibre Mind',
+  'reminder.body1': "Shall we do today's session? About 5 minutes. 🧠",
+  'reminder.body2': 'Your puzzle of the day is waiting. 🧩',
+  'reminder.body3': "A little time for your mind: today's session is ready.",
+  'reminder.body4': "Keep your streak: today's session is waiting. 🔥",
 
   'domain.speed': 'Speed',
   'domain.memory': 'Memory',

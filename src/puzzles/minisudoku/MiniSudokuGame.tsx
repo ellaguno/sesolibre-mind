@@ -3,6 +3,7 @@ import type { GameProps } from '../../core/registry';
 import { useT } from '../../core/i18n';
 import { AudioService } from '../../core/AudioService';
 import PuzzleShell from '../common/PuzzleShell';
+import { useSavedPuzzle } from '../../core/progress';
 import { useActivityLevel } from '../../core/levels';
 
 import { useTutorialOpen } from '../../core/tutorials';
@@ -53,7 +54,11 @@ export default function MiniSudokuGame({
   const [selected, setSelected] = useState<number | null>(null);
   const [notesMode, setNotesMode] = useState(false);
 
-  const bseed = boardSeed(seed, daily, round, variant.id);
+  // Partida en curso: si hay una guardada de este nivel, se regenera su tablero.
+  const savedGame = useSavedPuzzle('minisudoku', daily);
+  const resumeSeed =
+    round === 0 && savedGame.saved?.level === variant.id ? savedGame.saved.seed : null;
+  const bseed = resumeSeed ?? boardSeed(seed, daily, round, variant.id);
   const key = `${bseed}:${variant.id}`;
   const generated = useWorkerResult(
     key,
@@ -69,6 +74,13 @@ export default function MiniSudokuGame({
     initial: () => [...(givens ?? [])],
     isSolved: (cells) => isSolved(cells.map(valueOf)),
     paused: tutorialOpen,
+    persist: {
+      activityId: 'minisudoku',
+      daily,
+      seed: bseed,
+      level: variant.id,
+      restore: resumeSeed !== null ? savedGame.saved : null,
+    },
     onSolved: (secs, hints) => onScore(secs, { difficulty: variant.id, hints }),
   });
   const { cells, cellsRef, commit, solved } = session;
@@ -187,6 +199,7 @@ export default function MiniSudokuGame({
       ready={!!givens && session.ready}
       elapsed={session.elapsed}
       solved={solved}
+      resumed={session.resumed}
       hints={session.hints}
       label={label}
       variants={VARIANTS.map((v) => ({

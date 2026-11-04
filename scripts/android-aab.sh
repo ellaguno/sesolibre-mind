@@ -39,6 +39,8 @@ echo "sdk.dir=$ANDROID_HOME" > android/local.properties
 grep -q "targetSdkVersion = 36" android/variables.gradle # Play exige targetSdk 36
 npx cap sync android
 npx @capacitor/assets generate --android
+# Recursos nativos propios (ícono de la notificación del recordatorio).
+cp -r native/android/res/. android/app/src/main/res/
 ./scripts/android-optimize.sh
 
 sed -i "s/versionCode 1$/versionCode ${VC}/" android/app/build.gradle

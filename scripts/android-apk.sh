@@ -31,6 +31,8 @@ fi
 
 npx cap sync android
 npx @capacitor/assets generate --android
+# Recursos nativos propios (ícono de la notificación del recordatorio).
+cp -r native/android/res/. android/app/src/main/res/
 
 cd android
 ./gradlew assembleDebug --no-daemon -q

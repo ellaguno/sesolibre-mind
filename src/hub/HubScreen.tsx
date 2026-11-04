@@ -10,13 +10,16 @@ import { useT } from '../core/i18n';
 import { dailyPlan, isComplete, loadSession } from '../core/session';
 import StreakCalendar from './StreakCalendar';
 import StartChoiceDialog from './StartChoiceDialog';
+import { hasProgress } from '../core/progress';
 import { useLevels } from '../core/levels';
 
 function ActivityTile({ activity }: { activity: ActivityMeta }) {
   const t = useT();
   const [best, setBest] = useState<ScoreEntry | null>(null);
+  const [inProgress, setInProgress] = useState(false);
   useEffect(() => {
     void ScoreService.getDisplayBest(activity).then(setBest);
+    if (activity.kind === 'puzzle') void hasProgress(activity.id).then(setInProgress);
   }, [activity]);
 
   return (
@@ -34,6 +37,11 @@ function ActivityTile({ activity }: { activity: ActivityMeta }) {
         <span className="flex min-w-0 flex-1 flex-col gap-0.5">
           <span className="flex items-center gap-2">
             <span className="font-semibold">{t(`act.${activity.id}.title`)}</span>
+            {inProgress && (
+              <span className="rounded-full bg-brand/20 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-brand">
+                ▶ {t('hub.inProgress')}
+              </span>
+            )}
             {!activity.available && (
               <span className="rounded-full bg-app-surface2 px-2 py-0.5 text-[10px] uppercase tracking-wide text-app-muted">
                 {t('common.soon')}

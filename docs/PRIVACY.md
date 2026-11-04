@@ -20,7 +20,8 @@ para que tu experiencia se conserve entre sesiones:
 
 - **Resultados de los ejercicios y puzzles** (mejores marcas e historial reciente),
   con los que se calcula tu **Índice Seso** por habilidad.
-- **Progreso de la sesión diaria** del día en curso.
+- **Progreso de la sesión diaria** del día en curso y **partidas de puzzle en curso**
+  (para retomarlas donde las dejaste).
 - **Constancia y logros** (días con actividad, racha y logros desbloqueados).
 - **Preferencias de la app** (tema claro/oscuro, sonido, animaciones, idioma y
   modo daltónico) y qué tutoriales ya viste.
@@ -60,9 +61,11 @@ consentimiento conforme a la normativa vigente.
 
 ## Permisos
 
-La app solo declara el permiso de **Internet**, requerido técnicamente por la
-plataforma. La app no necesita conexión para funcionar y no envía datos a través
-de la red.
+La app declara el permiso de **Internet**, requerido técnicamente por la
+plataforma (la app no necesita conexión para funcionar y no envía datos a través
+de la red), y el de **notificaciones**, que sólo se solicita si activas el
+recordatorio diario. Las notificaciones las programa tu propio teléfono: no
+pasan por ningún servidor ni envían datos.
 
 ## Menores de edad
 
@@ -111,7 +114,8 @@ persists between sessions:
 
 - **Exercise and puzzle results** (best results and recent history), used to
   compute your **Seso Index** per skill.
-- **Progress of today's daily session**.
+- **Progress of today's daily session** and **puzzles in progress** (so you can
+  pick them up where you left off).
 - **Consistency and achievements** (active days, streak and unlocked
   achievements).
 - **App preferences** (light/dark theme, sound, motion, language and color-blind
@@ -151,9 +155,11 @@ requested in accordance with applicable regulations.
 
 ## Permissions
 
-The app only declares the **Internet** permission, which is technically required
-by the platform. The app does not need a connection to work and does not send data
-over the network.
+The app declares the **Internet** permission, technically required by the
+platform (the app does not need a connection to work and sends no data over the
+network), and the **notifications** permission, which is only requested if you
+turn on the daily reminder. Notifications are scheduled by your own phone: they
+go through no server and send no data.
 
 ## Children
 

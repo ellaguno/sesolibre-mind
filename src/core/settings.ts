@@ -16,6 +16,9 @@ export interface Settings {
    * pistas gratis, ayudas al jugar, ánimo en vez de Índice y racha que perdona.
    */
   serene: boolean;
+  /** Recordatorio diario (app nativa) y su hora HH:MM. */
+  reminder: boolean;
+  reminderTime: string;
 }
 
 const KEY = 'settings';
@@ -26,6 +29,8 @@ const DEFAULTS: Settings = {
   lang: 'auto',
   colorblind: false,
   serene: false,
+  reminder: false,
+  reminderTime: '19:00',
 };
 
 interface SettingsState extends Settings {
@@ -38,6 +43,7 @@ interface SettingsState extends Settings {
   setLang: (lang: LangSetting) => void;
   setColorblind: (on: boolean) => void;
   setSerene: (on: boolean) => void;
+  setReminder: (on: boolean, time?: string) => void;
 }
 
 function applyTheme(theme: Theme) {
@@ -103,6 +109,11 @@ export const useSettings = create<SettingsState>((set, get) => ({
     void persist(get);
   },
 
+  setReminder: (reminder, time) => {
+    set(time ? { reminder, reminderTime: time } : { reminder });
+    void persist(get);
+  },
+
   setSerene: (serene) => {
     applyScale(serene);
     set({ serene });
@@ -111,8 +122,18 @@ export const useSettings = create<SettingsState>((set, get) => ({
 }));
 
 async function persist(get: () => SettingsState) {
-  const { theme, sound, motion, lang, colorblind, serene } = get();
-  await storage.set<Settings>(KEY, { theme, sound, motion, lang, colorblind, serene });
+  const { theme, sound, motion, lang, colorblind, serene, reminder, reminderTime } =
+    get();
+  await storage.set<Settings>(KEY, {
+    theme,
+    sound,
+    motion,
+    lang,
+    colorblind,
+    serene,
+    reminder,
+    reminderTime,
+  });
 }
 
 /** ¿Deben reproducirse animaciones? Respeta el ajuste y prefers-reduced-motion. */

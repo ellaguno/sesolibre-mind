@@ -1,5 +1,17 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AudioService } from '../../core/AudioService';
+import { clearProgress, saveProgress, type SavedPuzzle } from '../../core/progress';
+
+/** Guardado de la partida en curso (ver core/progress). */
+export interface PersistOptions {
+  activityId: string;
+  daily: boolean;
+  /** Semilla y nivel del tablero actual. */
+  seed: number;
+  level: string;
+  /** Partida guardada a restaurar si corresponde a este mismo tablero. */
+  restore: SavedPuzzle | null;
+}
 
 interface Options<T> {
   /** Identifica el tablero actual; al cambiar se reinicia la partida. null = cargando. */
@@ -10,6 +22,7 @@ interface Options<T> {
   onSolved: (seconds: number, hints: number) => void;
   /** Detiene el cronómetro (p. ej. mientras se lee el tutorial). */
   paused?: boolean;
+  persist?: PersistOptions;
 }
 
 /**
@@ -25,6 +38,7 @@ export function usePuzzleSession<T>({
   isSolved,
   onSolved,
   paused = false,
+  persist,
 }: Options<T>) {
   const [cells, setCellsState] = useState<T[]>([]);
   const [history, setHistory] = useState<T[][]>([]);
@@ -37,19 +51,36 @@ export function usePuzzleSession<T>({
   const startRef = useRef(0);
   const pausedAt = useRef<number | null>(null);
   const flashTimer = useRef<ReturnType<typeof setTimeout>>();
+  /** ¿Se retomó una partida guardada? (para avisar al jugador). */
+  const [resumed, setResumed] = useState(false);
+  /** Sólo se guarda un tablero tocado (o retomado), no uno recién generado. */
+  const touched = useRef(false);
+  const persistRef = useRef(persist);
+  persistRef.current = persist;
 
   // Tablero nuevo: reiniciar la partida.
   useEffect(() => {
     if (boardKey === null) return;
     const fresh = initial();
-    cellsRef.current = fresh;
-    setCellsState(fresh);
+    const r = persistRef.current?.restore;
+    const p = persistRef.current;
+    const restoring =
+      !!r &&
+      !!p &&
+      r.seed === p.seed &&
+      r.level === p.level &&
+      r.cells.length === fresh.length;
+    const start = restoring ? (r.cells as T[]) : fresh;
+    cellsRef.current = start;
+    setCellsState(start);
     setHistory([]);
-    setElapsed(0);
-    setHints(0);
+    setElapsed(restoring ? r.elapsed : 0);
+    setHints(restoring ? r.hints : 0);
     setSolved(false);
     setActiveKey(boardKey);
-    startRef.current = performance.now();
+    setResumed(restoring);
+    touched.current = restoring;
+    startRef.current = performance.now() - (restoring ? r.elapsed * 1000 : 0);
     // Tablero nuevo durante una pausa: la pausa cuenta desde ahora.
     if (pausedAt.current !== null) pausedAt.current = startRef.current;
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -82,12 +113,52 @@ export function usePuzzleSession<T>({
     const secs = Math.max(1, Math.round((performance.now() - startRef.current) / 1000));
     setElapsed(secs);
     setSolved(true);
+    solvedRef.current = true;
+    if (persistRef.current) {
+      void clearProgress(persistRef.current.activityId, persistRef.current.daily);
+    }
     AudioService.play('win');
     onSolved(secs, hints);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ready, cells, solved]);
 
   useEffect(() => () => clearTimeout(flashTimer.current), []);
+
+  // Guardar la partida en curso (con un pequeño retraso y al salir).
+  const elapsedNow = () => {
+    const now = pausedAt.current ?? performance.now();
+    return Math.floor((now - startRef.current) / 1000);
+  };
+  const saveNow = useCallback(() => {
+    const p = persistRef.current;
+    if (!p || !touched.current) return;
+    void saveProgress(p.activityId, p.daily, {
+      seed: p.seed,
+      level: p.level,
+      cells: cellsRef.current,
+      elapsed: elapsedNow(),
+      hints: hintsRef.current,
+    });
+  }, []);
+  const hintsRef = useRef(hints);
+  hintsRef.current = hints;
+  useEffect(() => {
+    if (!ready || solved || !touched.current) return;
+    const id = setTimeout(saveNow, 400);
+    return () => clearTimeout(id);
+  }, [ready, solved, cells, hints, saveNow]);
+  useEffect(() => {
+    const onHide = () => {
+      if (document.visibilityState === 'hidden' && !solvedRef.current) saveNow();
+    };
+    document.addEventListener('visibilitychange', onHide);
+    return () => {
+      document.removeEventListener('visibilitychange', onHide);
+      if (!solvedRef.current) saveNow();
+    };
+  }, [saveNow]);
+  const solvedRef = useRef(solved);
+  solvedRef.current = solved;
 
   /** Vista previa sin historial (durante un arrastre). */
   const preview = useCallback((next: T[]) => {
@@ -97,6 +168,7 @@ export function usePuzzleSession<T>({
 
   /** Confirma un cambio desde `before` (entra en el historial de deshacer). */
   const commit = useCallback((before: T[], next: T[]) => {
+    touched.current = true;
     cellsRef.current = next;
     setCellsState(next);
     if (before.length === next.length && before.every((v, i) => v === next[i])) return;
@@ -133,5 +205,6 @@ export function usePuzzleSession<T>({
     flash,
     highlight,
     solved,
+    resumed,
   };
 }

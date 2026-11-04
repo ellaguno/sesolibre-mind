@@ -4,6 +4,7 @@ import { useT } from '../../core/i18n';
 import { useSettings } from '../../core/settings';
 import { AudioService } from '../../core/AudioService';
 import PuzzleShell from '../common/PuzzleShell';
+import { useSavedPuzzle } from '../../core/progress';
 import { useActivityLevel } from '../../core/levels';
 
 import { useTutorialOpen } from '../../core/tutorials';
@@ -69,7 +70,11 @@ export default function PlotsGame({
   const serene = useSettings((s) => s.serene);
   const [anchor, setAnchor] = useState<number | null>(null);
 
-  const bseed = boardSeed(seed, daily, round, variant.id);
+  // Partida en curso: si hay una guardada de este nivel, se regenera su tablero.
+  const savedGame = useSavedPuzzle('plots', daily);
+  const resumeSeed =
+    round === 0 && savedGame.saved?.level === variant.id ? savedGame.saved.seed : null;
+  const bseed = resumeSeed ?? boardSeed(seed, daily, round, variant.id);
   const key = `${bseed}:${variant.id}`;
   // Generar es casi instantáneo (< 15 ms): no hace falta Web Worker.
   const generated = useMemo(() => generatePlots(bseed, variant), [bseed, variant]);
@@ -81,6 +86,13 @@ export default function PlotsGame({
     initial: () => new Array<number>(size * size).fill(0),
     isSolved: (cells) => isSolved(puzzle, cells),
     paused: tutorialOpen,
+    persist: {
+      activityId: 'plots',
+      daily,
+      seed: bseed,
+      level: variant.id,
+      restore: resumeSeed !== null ? savedGame.saved : null,
+    },
     onSolved: (secs, hints) => onScore(secs, { difficulty: variant.id, hints }),
   });
   const { cells, cellsRef, commit, solved } = session;
@@ -185,6 +197,7 @@ export default function PlotsGame({
       ready={session.ready}
       elapsed={session.elapsed}
       solved={solved}
+      resumed={session.resumed}
       hints={session.hints}
       label={`${size}×${size}`}
       variants={VARIANTS.map((v) => ({

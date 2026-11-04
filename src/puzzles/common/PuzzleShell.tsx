@@ -37,6 +37,8 @@ interface Props {
   onHint: () => void;
   /** Mensaje bajo los botones (p. ej. la explicación de una pista). */
   notice?: string | null;
+  /** Se retomó una partida guardada: se avisa unos segundos. */
+  resumed?: boolean;
   rules: string[];
   /** Tutorial ilustrado: se muestra la primera vez y con el botón «?». */
   slides?: Slide[];
@@ -90,6 +92,14 @@ export default function PuzzleShell(p: Props) {
     setSuggest(null);
   };
   const labelOf = (id: string) => p.variants?.find((v) => v.id === id)?.label ?? id;
+
+  const [showResumed, setShowResumed] = useState(false);
+  useEffect(() => {
+    if (!p.resumed) return;
+    setShowResumed(true);
+    const id = setTimeout(() => setShowResumed(false), 4000);
+    return () => clearTimeout(id);
+  }, [p.resumed]);
 
   const share = async () => {
     const text = shareText({ ...p, title, withTime: !serene });
@@ -254,7 +264,7 @@ export default function PuzzleShell(p: Props) {
         className="min-h-[1.25rem] text-center text-sm text-app-muted"
         aria-live="polite"
       >
-        {p.notice ?? ''}
+        {p.notice ?? (showResumed ? `↩ ${t('puzzle.resumed')}` : '')}
       </p>
 
       <details className="rounded-xl border border-app-border bg-app-surface px-4 py-3 text-sm">

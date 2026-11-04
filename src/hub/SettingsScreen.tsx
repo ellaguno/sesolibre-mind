@@ -4,6 +4,12 @@ import { useSettings, type LangSetting } from '../core/settings';
 import { AudioService } from '../core/AudioService';
 import { useT } from '../core/i18n';
 import { useLevels, type StartChoice } from '../core/levels';
+import { useState } from 'react';
+import {
+  remindersSupported,
+  requestReminderPermission,
+  syncReminder,
+} from '../core/reminder';
 
 function ToggleRow({
   label,
@@ -72,7 +78,27 @@ export default function SettingsScreen() {
     setLang,
     setColorblind,
     setSerene,
+    reminder,
+    reminderTime,
+    setReminder,
   } = useSettings();
+  const [reminderMsg, setReminderMsg] = useState<string | null>(null);
+
+  const toggleReminder = async () => {
+    setReminderMsg(null);
+    if (reminder) {
+      setReminder(false);
+      await syncReminder();
+      return;
+    }
+    if (!(await requestReminderPermission())) {
+      setReminderMsg(t('reminder.denied'));
+      return;
+    }
+    setReminder(true);
+    await syncReminder();
+    setReminderMsg(t('reminder.on', { time: reminderTime }));
+  };
   const start = useLevels((s) => s.start);
   const chooseStart = useLevels((s) => s.choose);
 
@@ -98,6 +124,36 @@ export default function SettingsScreen() {
           checked={motion}
           onChange={() => setMotion(!motion)}
         />
+        {remindersSupported() ? (
+          <>
+            <ToggleRow
+              label={t('settings.reminder')}
+              hint={t('settings.reminderHint')}
+              checked={reminder}
+              onChange={() => void toggleReminder()}
+            />
+            {reminder && (
+              <Row label={t('settings.reminderTime')}>
+                <input
+                  type="time"
+                  value={reminderTime}
+                  aria-label={t('settings.reminderTime')}
+                  onChange={(e) => {
+                    if (!e.target.value) return;
+                    setReminder(true, e.target.value);
+                    void syncReminder();
+                  }}
+                  className="rounded-lg border border-app-border bg-app-surface2 p-2 text-app-text"
+                />
+              </Row>
+            )}
+            {reminderMsg && (
+              <p className="px-1 text-sm text-app-muted" aria-live="polite">
+                {reminderMsg}
+              </p>
+            )}
+          </>
+        ) : null}
         <ToggleRow
           label={t('settings.serene')}
           hint={t('settings.sereneHint')}
@@ -126,7 +182,11 @@ export default function SettingsScreen() {
           <select
             value={lang}
             aria-label={t('settings.language')}
-            onChange={(e) => setLang(e.target.value as LangSetting)}
+            onChange={(e) => {
+              setLang(e.target.value as LangSetting);
+              // El texto de las notificaciones sigue al idioma.
+              void syncReminder();
+            }}
             className="rounded-lg border border-app-border bg-app-surface2 p-2 text-app-text"
           >
             <option value="auto">{t('lang.auto')}</option>

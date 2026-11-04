@@ -280,7 +280,9 @@ vayan creciendo, sin limitar a quien ya juega bien.
 - [x] Capacitor Android: `npm run android:apk` (`scripts/android-apk.sh`) genera el APK de depuración.
 - [x] `scripts/android-aab.sh`: AAB de release con R8 (scripts de optimización de sesolibre-games), versionCode incremental y firma con la upload key.
 - [ ] CI (traer workflows), Play Games (logros/rankings del reto diario).
-- [ ] Política de privacidad, ficha de Play Store, notificación local opcional de recordatorio diario.
+- [x] Política de privacidad y ficha de Play Store (`docs/PRIVACY.md`, `docs/PLAY-LISTING.md`).
+- [x] **Recordatorio diario** opcional (`core/reminder.ts`, @capacitor/local-notifications): avisos locales para los próximos 14 días a la hora elegida, se salta el de hoy si la sesión ya está hecha, se reprograma al abrir la app / al terminar la sesión / al cambiar idioma; tocarlo abre la sesión. Ícono propio de notificación (`native/android/res`).
+- [x] **Guardar partida en curso** en los 5 puzzles (`core/progress.ts`): tablero (semilla + nivel), marcas, tiempo y pistas; una partida libre y otra del reto del día (válida ese día, compartida con la sesión). Aviso «Continuando tu partida» y etiqueta «En curso» en el hub.
 
 ### Fase 5+ — Expansión
 - [ ] Ejercicios v2 (N-back, Corsi, Go/No-Go, búsqueda visual, cambio, reloj, cambio de regla).

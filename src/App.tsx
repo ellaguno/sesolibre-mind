@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useNavigate } from 'react-router-dom';
+import { listenReminderTaps, syncReminder } from './core/reminder';
 import HubScreen from './hub/HubScreen';
 import GameHost from './hub/GameHost';
 import SettingsScreen from './hub/SettingsScreen';
@@ -19,11 +20,20 @@ export default function App() {
   const hydrateTutorials = useTutorials((s) => s.hydrate);
   const hydrateLevels = useLevels((s) => s.hydrate);
   useEffect(() => {
-    void hydrateSettings();
+    // Al abrir: hidratar y reprogramar el recordatorio diario (app nativa).
+    void hydrateSettings().then(() => syncReminder());
     void hydrateRewards();
     void hydrateTutorials();
     void hydrateLevels();
   }, [hydrateSettings, hydrateRewards, hydrateTutorials, hydrateLevels]);
+
+  // Tocar la notificación del recordatorio abre la sesión del día.
+  const navigate = useNavigate();
+  useEffect(() => {
+    let off = () => {};
+    void listenReminderTaps((route) => navigate(route)).then((f) => (off = f));
+    return () => off();
+  }, [navigate]);
 
   // <html lang> sigue al idioma elegido (lectores de pantalla / TalkBack).
   const lang = useSettings((s) => s.lang);
