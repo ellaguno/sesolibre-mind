@@ -67,7 +67,7 @@ puzzles concretos** sí. Por eso:
 | id | Nombre (es / en) | Género genérico | Regla corta | Fase |
 |---|---|---|---|---|
 | `crowns` | Coronas / Crowns | Star Battle (1 por unidad) | N×N con N zonas de color; una corona por fila, columna y zona; ninguna se toca, ni en diagonal | **MVP ✅** |
-| `sunmoon` | Sol y Luna / Sun & Moon | Takuzu / Binairo | 6×6; igual nº de ☀️ y 🌙 por fila/columna; máximo 2 iguales seguidos; pistas `=` (iguales) y `×` (opuestos) | **MVP** |
+| `sunmoon` | Sol y Luna / Sun & Moon | Takuzu / Binairo | 6×6 u 8×8; igual nº de ☀️ y 🌙 por fila/columna; máximo 2 iguales seguidos; pistas `=` (iguales) y `×` (opuestos) | **MVP ✅** |
 | `thread` | Hilo / Thread | Camino hamiltoniano con números (Numbrix/Hidato + paredes) | Un solo trazo que pasa por todas las casillas, visita los números en orden y no cruza paredes | **MVP** |
 | `plots` | Parcelas / Plots | Shikaku | Partir la cuadrícula en rectángulos; cada uno contiene un número = su área (y, opcional, su forma: cuadrado/alto/ancho) | **MVP** |
 | `minisudoku` | Sudoku mini / Mini Sudoku | Sudoku 6×6 (cajas 2×3) | Clásico, cifras 1–6 | **MVP** |
@@ -237,11 +237,11 @@ Los tiempos se miden con `performance.now()`. La UI de respuesta es siempre tác
 ### Fase 1 — MVP puzzles
 - [x] `crowns`: generador de zonas + solver con conteo de soluciones + UI (tap: ✕, doble tap: 👑; arrastrar para marcar ✕), en Web Worker, tamaños 6–9, reto diario (lunes 6×6 → domingo 9×9), pista, deshacer, compartir.
   - [ ] Pendiente: pistas lógicas explicadas (hoy revela/corrige una corona), auto-✕ opcional al poner corona, guardar partida en curso, modo daltónico (patrones por zona).
-- [ ] `sunmoon`: generador/solver 6×6 con pistas `=`/`×`.
+- [x] `sunmoon`: generador/solver con pistas `=`/`×`; variantes 6×6, 6×6 difícil y 8×8. El generador sólo acepta tableros que se resuelven **por deducción fila/columna** (nunca hay que adivinar) y la pista explica qué fila o columna obliga el valor. Reto diario: 6×6 lun–jue, 6×6 difícil el viernes, 8×8 el fin de semana.
 - [ ] `minisudoku`: adaptar `games/sudoku/generator.ts` de sesolibre-games a 6×6.
 - [ ] `plots`: generador de particiones en rectángulos + solver.
 - [ ] `thread`: camino hamiltoniano aleatorio + paredes + números; verificación de unicidad.
-- [ ] Componentes comunes: cuadrícula táctil con arrastre, deshacer, pista, cronómetro, pantalla de fin.
+- [x] Componentes comunes (`puzzles/common/`): `PuzzleShell` (encabezado, cronómetro, variantes, victoria, compartir, botones, reglas), `usePuzzleSession` (celdas, deshacer, pistas, victoria), `useWorkerResult` (generación en Web Worker), `boardSeed`.
 
 ### Fase 2 — MVP ejercicios + sesión diaria
 - [ ] `quickmath`, `colorclash`, `countdown`, `numberspan`, `trails`, `headcount`.

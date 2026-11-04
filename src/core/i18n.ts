@@ -70,6 +70,22 @@ const es: Dict = {
   'crowns.rule3':
     'Toca una vez para marcar ✕ y dos para poner 👑. Arrastra para marcar varias ✕.',
 
+  'puzzle.hintWrong': 'Esa casilla estaba mal: la vacié.',
+  'puzzle.hintReveal': 'Te revelé una casilla.',
+  'cell.sun': 'sol',
+  'cell.moon': 'luna',
+  'cell.given': '(fija)',
+  'sunmoon.rule1': 'Llena cada casilla con ☀️ o 🌙.',
+  'sunmoon.rule2': 'Cada fila y cada columna lleva tantos ☀️ como 🌙.',
+  'sunmoon.rule3':
+    'No puede haber más de 2 iguales seguidos, ni en horizontal ni en vertical.',
+  'sunmoon.rule4':
+    'Las casillas unidas por = son iguales; las unidas por × son opuestas.',
+  'sunmoon.rule5':
+    'Toca una casilla para alternar: vacía → ☀️ → 🌙. Las grises son fijas.',
+  'sunmoon.hintRow': 'Mira la fila {n}: esa casilla solo puede ser {v}.',
+  'sunmoon.hintCol': 'Mira la columna {n}: esa casilla solo puede ser {v}.',
+
   'domain.speed': 'Velocidad',
   'domain.memory': 'Memoria',
   'domain.attention': 'Atención',
@@ -152,6 +168,19 @@ const en: Dict = {
   'crowns.rule1': 'Place one crown in every row, every column and every color region.',
   'crowns.rule2': 'Two crowns can never touch, not even diagonally.',
   'crowns.rule3': 'Tap once to mark ✕ and twice to place 👑. Drag to mark several ✕.',
+
+  'puzzle.hintWrong': 'That cell was wrong, so I cleared it.',
+  'puzzle.hintReveal': 'I revealed a cell for you.',
+  'cell.sun': 'sun',
+  'cell.moon': 'moon',
+  'cell.given': '(fixed)',
+  'sunmoon.rule1': 'Fill every cell with ☀️ or 🌙.',
+  'sunmoon.rule2': 'Each row and each column has as many ☀️ as 🌙.',
+  'sunmoon.rule3': 'No more than 2 of the same in a row, horizontally or vertically.',
+  'sunmoon.rule4': 'Cells joined by = are the same; cells joined by × are opposite.',
+  'sunmoon.rule5': 'Tap a cell to cycle: empty → ☀️ → 🌙. Gray cells are fixed.',
+  'sunmoon.hintRow': 'Look at row {n}: that cell can only be {v}.',
+  'sunmoon.hintCol': 'Look at column {n}: that cell can only be {v}.',
 
   'domain.speed': 'Speed',
   'domain.memory': 'Memory',

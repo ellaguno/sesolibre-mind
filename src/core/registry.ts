@@ -148,8 +148,11 @@ export const activities: ActivityMeta[] = [
     emoji: '🌓',
     scoreKind: 'time',
     higherIsBetter: false,
-    available: false,
+    available: true,
     accent: '#f59e0b',
+    // Deben coincidir con VARIANTS (puzzles/sunmoon/generator.ts).
+    variants: ['6', '6h', '8'],
+    load: () => import('../puzzles/sunmoon/SunMoonGame'),
   },
   {
     id: 'thread',

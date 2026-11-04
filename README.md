@@ -14,7 +14,7 @@ Base y servicios heredados de [sesolibre-games](https://github.com/ellaguno/seso
 
 | Tipo | Actividades (MVP) | Estado |
 |---|---|---|
-| Puzzles | **Coronas** ✅ · Sol y Luna, Hilo, Parcelas, Sudoku mini | En curso |
+| Puzzles | **Coronas** ✅ · **Sol y Luna** ✅ · Hilo, Parcelas, Sudoku mini | En curso |
 | Ejercicios | Cálculo relámpago, Choque de colores, Cuenta atrás, Retén la cifra, Sendero, ¿Cuántos quedan? | Planificado |
 
 ## Desarrollo
