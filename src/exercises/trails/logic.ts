@@ -60,6 +60,6 @@ export function positions(rng: Rng, count = ITEMS): Point[] {
   }
 }
 
-export function score(ms: number, errors: number): number {
-  return Math.round(ms / 1000 + errors * PENALTY_S);
+export function score(ms: number, errors: number, penalty = PENALTY_S): number {
+  return Math.round(ms / 1000 + errors * penalty);
 }

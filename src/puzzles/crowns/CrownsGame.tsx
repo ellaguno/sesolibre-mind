@@ -17,6 +17,7 @@ import {
   CROWN,
   EMPTY,
   MARK,
+  autoMark,
   colOf,
   conflicts,
   hint as computeHint,
@@ -116,6 +117,7 @@ export default function CrownsGame({
   const { cells, cellsRef, commit, preview, solved } = session;
   const dragRef = useRef<Drag | null>(null);
   const colorblind = useSettings((s) => s.colorblind);
+  const serene = useSettings((s) => s.serene);
 
   const bad = useMemo(
     () => (puzzle && session.ready ? conflicts(puzzle, cells) : new Set<number>()),
@@ -132,12 +134,14 @@ export default function CrownsGame({
     (i: number) => {
       if (solved) return;
       const before = cellsRef.current;
-      const next = [...before];
+      let next = [...before];
       next[i] = next[i] === EMPTY ? MARK : next[i] === MARK ? CROWN : EMPTY;
+      // Modo sereno: al poner una corona se marcan solas las ✕ obvias.
+      if (next[i] === CROWN && serene && puzzle) next = autoMark(puzzle, next, i);
       AudioService.play(next[i] === CROWN ? 'pop' : 'click');
       commit(before, next);
     },
-    [solved, cellsRef, commit],
+    [solved, cellsRef, commit, serene, puzzle],
   );
 
   const onPointerDown = (e: React.PointerEvent) => {
@@ -187,8 +191,9 @@ export default function CrownsGame({
     const before = cellsRef.current;
     const h = computeHint(generated.puzzle, generated.solution, before);
     if (!h) return;
-    const next = [...before];
+    let next = [...before];
     next[h.cell] = h.kind === 'wrong' ? EMPTY : CROWN;
+    if (h.kind === 'place' && serene) next = autoMark(generated.puzzle, next, h.cell);
     session.countHint();
     session.highlight(h.cell);
     commit(before, next);

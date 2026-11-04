@@ -3,6 +3,8 @@ import type { GameProps } from '../../core/registry';
 import { useT } from '../../core/i18n';
 import { AudioService } from '../../core/AudioService';
 import { mulberry32 } from '../../core/rng';
+import { SERENE_SLOWDOWN, useSettings } from '../../core/settings';
+
 import ExerciseShell, { type RunProps } from '../common/ExerciseShell';
 import NumPad from '../common/NumPad';
 import Feedback from '../common/Feedback';
@@ -33,6 +35,9 @@ function Run({ seed, finish, lv }: RunProps & { lv: Level }) {
   const [best, setBest] = useState(0);
   const [fb, setFb] = useState<'ok' | 'bad' | null>(null);
   const showing = shown < seq.length;
+  // Modo sereno: cada cifra se ve más tiempo.
+  const serene = useSettings((s) => s.serene);
+  const showMs = serene ? SHOW_MS * SERENE_SLOWDOWN : SHOW_MS;
 
   // Mostrar la serie dígito a dígito.
   useEffect(() => {
@@ -44,12 +49,12 @@ function Run({ seed, finish, lv }: RunProps & { lv: Level }) {
     const off = setTimeout(() => {
       setVisible(null);
       setShown((s) => s + 1);
-    }, GAP_MS + SHOW_MS);
+    }, GAP_MS + showMs);
     return () => {
       clearTimeout(on);
       clearTimeout(off);
     };
-  }, [showing, shown, seq]);
+  }, [showing, shown, seq, showMs]);
 
   const nextRound = (len: number) => {
     setLength(len);

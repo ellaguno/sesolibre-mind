@@ -12,6 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import { findActivity, type GameProps } from '../core/registry';
 import { recordResult } from '../core/play';
 import { dailySeed, dateKey } from '../core/rng';
+import { useSettings } from '../core/settings';
 import { useT } from '../core/i18n';
 import { resultText, sessionShareText } from '../core/sessionText';
 import { currentStreak, useRewards } from '../core/RewardService';
@@ -46,7 +47,8 @@ export default function SessionScreen() {
   const [step, setStep] = useState(-1);
   const [shared, setShared] = useState(false);
   const rewards = useRewards();
-  const streak = currentStreak(rewards, day);
+  const serene = useSettings((s) => s.serene);
+  const streak = currentStreak(rewards, day, serene);
 
   useEffect(() => {
     void loadSession(day).then((r) => {

@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { storage } from './storage';
 import { findActivity, type ActivityMeta } from './registry';
+import { useSettings } from './settings';
 
 /**
  * Escalera de niveles. Cada actividad tiene niveles del más fácil al más
@@ -95,6 +96,8 @@ export const useLevels = create<LevelsState>((set, get) => ({
   },
 
   choose: (start) => {
+    // Quien empieza desde lo más básico arranca con el modo sereno (se puede quitar en Ajustes).
+    if (start === 'basic' && get().start === null) useSettings.getState().setSerene(true);
     set({ start, current: {} });
     void persist(get);
   },

@@ -4,6 +4,8 @@ import { useT } from '../../core/i18n';
 import { AudioService } from '../../core/AudioService';
 import { formatDuration } from '../../core/format';
 import { mulberry32 } from '../../core/rng';
+import { useSettings } from '../../core/settings';
+
 import { errorsText } from '../common/text';
 import ExerciseShell, { type RunProps } from '../common/ExerciseShell';
 import NumPad from '../common/NumPad';
@@ -21,6 +23,8 @@ function Run({ seed, finish, lv }: RunProps & { lv: Level }) {
   const [errors, setErrors] = useState(0);
   const [fb, setFb] = useState<'ok' | 'bad' | null>(null);
   const clock = useStopwatch();
+  // Modo sereno: sin reloj a la vista ni penalización por error.
+  const serene = useSettings((s) => s.serene);
   const p = list[k];
 
   const next = useCallback(
@@ -29,7 +33,7 @@ function Run({ seed, finish, lv }: RunProps & { lv: Level }) {
       setErrors(errs);
       setTyped('');
       if (k + 1 === list.length) {
-        const s = score(clock.ms(), errs, lv);
+        const s = score(clock.ms(), errs, serene ? { ...lv, penalty: 0 } : lv);
         finish({
           score: s,
           headline: formatDuration(s),
@@ -39,7 +43,7 @@ function Run({ seed, finish, lv }: RunProps & { lv: Level }) {
         });
       } else setK(k + 1);
     },
-    [errors, k, list.length, clock, finish, t, lv],
+    [errors, k, list.length, clock, finish, t, lv, serene],
   );
 
   const onDigit = useCallback(
@@ -61,7 +65,9 @@ function Run({ seed, finish, lv }: RunProps & { lv: Level }) {
         <span>
           {k + 1}/{list.length}
         </span>
-        <span className="font-mono tabular-nums">{formatDuration(clock.elapsed)}</span>
+        {!serene && (
+          <span className="font-mono tabular-nums">{formatDuration(clock.elapsed)}</span>
+        )}
       </div>
       <div className="relative flex flex-1 flex-col items-center justify-center rounded-2xl bg-app-surface py-8">
         <Feedback kind={fb} />

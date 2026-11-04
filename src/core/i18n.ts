@@ -312,6 +312,27 @@ const es: Dict = {
   'lvl.headcount.2': '4 rondas; entran y salen.',
   'lvl.headcount.3': '5 rondas, cada vez más rápidas.',
 
+  'settings.serene': 'Modo sereno',
+  'settings.sereneHint':
+    'Sin reloj ni prisas, letra más grande, pistas gratis, ayudas al jugar y racha que perdona un día.',
+  'plots.tapCorner': 'Ahora toca la esquina opuesta.',
+  'plots.rule4serene':
+    'Arrastra para trazar, o toca una esquina y luego la opuesta. Toca una parcela para borrarla.',
+  'profile.levels': 'Tu progreso',
+  'profile.levelsPassed': 'Niveles superados: {n}',
+  'profile.levelOf': 'Nivel {n} de {total}',
+  'profile.calm': 'A tu ritmo',
+  'profile.noteSerene':
+    'Cada nivel superado es un paso. Avanza a tu ritmo: no hay prisa.',
+  'cheer.1': '¡Muy bien!',
+  'cheer.2': '¡Lo lograste!',
+  'cheer.3': '¡Excelente!',
+  'cheer.4': '¡Sigue así!',
+  'cheer.5': '¡Bien hecho!',
+  'cheer.6': '¡Qué buena mente!',
+  'cheer.7': '¡Cada día mejor!',
+  'cheer.8': '¡Bravo!',
+
   'domain.speed': 'Velocidad',
   'domain.memory': 'Memoria',
   'domain.attention': 'Atención',
@@ -630,6 +651,27 @@ const en: Dict = {
   'lvl.headcount.1': '3 slow rounds; people only walk in.',
   'lvl.headcount.2': '4 rounds; in and out.',
   'lvl.headcount.3': '5 rounds, faster each time.',
+
+  'settings.serene': 'Calm mode',
+  'settings.sereneHint':
+    'No clock or rush, larger text, free hints, playing aids and a streak that forgives one day.',
+  'plots.tapCorner': 'Now tap the opposite corner.',
+  'plots.rule4serene':
+    'Drag to draw, or tap one corner and then the opposite one. Tap a plot to erase it.',
+  'profile.levels': 'Your progress',
+  'profile.levelsPassed': 'Levels passed: {n}',
+  'profile.levelOf': 'Level {n} of {total}',
+  'profile.calm': 'At your pace',
+  'profile.noteSerene':
+    'Every level you pass is a step forward. Go at your own pace: there is no rush.',
+  'cheer.1': 'Very good!',
+  'cheer.2': 'You did it!',
+  'cheer.3': 'Excellent!',
+  'cheer.4': 'Keep it up!',
+  'cheer.5': 'Well done!',
+  'cheer.6': 'Sharp mind!',
+  'cheer.7': 'Better every day!',
+  'cheer.8': 'Bravo!',
 
   'domain.speed': 'Speed',
   'domain.memory': 'Memory',

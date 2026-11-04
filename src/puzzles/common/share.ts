@@ -9,8 +9,11 @@ export function shareText(o: {
   label: string;
   elapsed: number;
   hints: number;
+  /** false en modo sereno: sin tiempo. */
+  withTime?: boolean;
 }): string {
   const head = o.daily ? `SesoLibre Mind · ${dateKey(new Date())}` : 'SesoLibre Mind';
   const tail = o.hints ? ` · 💡${o.hints}` : '';
-  return `${head}\n${o.emoji} ${o.title} ${o.label} · ${formatDuration(o.elapsed)} ✅${tail}`;
+  const time = o.withTime === false ? '' : ` · ${formatDuration(o.elapsed)}`;
+  return `${head}\n${o.emoji} ${o.title} ${o.label}${time} ✅${tail}`;
 }

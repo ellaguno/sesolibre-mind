@@ -46,3 +46,21 @@ describe('racha de constancia', () => {
     expect(currentStreak(d, '2026-11-03')).toBe(0);
   });
 });
+
+describe('racha que perdona (modo sereno)', () => {
+  it('faltar un solo día no la rompe; faltar dos, sí', () => {
+    let d = applyActiveDay(empty, '2026-11-01', true);
+    d = applyActiveDay(d, '2026-11-03', true);
+    expect(d.streak).toBe(2);
+    expect(currentStreak(d, '2026-11-05', true)).toBe(2);
+    expect(currentStreak(d, '2026-11-06', true)).toBe(0);
+    d = applyActiveDay(d, '2026-11-06', true);
+    expect(d.streak).toBe(1);
+  });
+
+  it('sin modo sereno, un día de hueco sí la rompe', () => {
+    let d = applyActiveDay(empty, '2026-11-01');
+    d = applyActiveDay(d, '2026-11-03');
+    expect(d.streak).toBe(1);
+  });
+});

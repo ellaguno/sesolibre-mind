@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { storage } from './storage';
 import { activities } from './registry';
 import { dateKey } from './rng';
+import { useSettings } from './settings';
 
 /**
  * Constancia y logros. La racha cuenta días en que se completó al menos una
@@ -51,11 +52,25 @@ export function isConsecutive(prev: string, today: string): boolean {
   );
 }
 
-/** Registra actividad en `today`. Idempotente dentro del mismo día. */
-export function applyActiveDay(data: RewardData, today: string): RewardData {
+/** Días entre dos claves YYYY-MM-DD (en UTC). */
+export function daysBetween(prev: string, today: string): number {
+  return Math.round(
+    (Date.parse(today + 'T00:00:00Z') - Date.parse(prev + 'T00:00:00Z')) / 86_400_000,
+  );
+}
+
+/**
+ * Registra actividad en `today`. Idempotente dentro del mismo día. Con
+ * `grace` (modo sereno) faltar un solo día no rompe la racha.
+ */
+export function applyActiveDay(
+  data: RewardData,
+  today: string,
+  grace = false,
+): RewardData {
   if (data.lastActiveDay === today) return data;
-  const streak =
-    data.lastActiveDay && isConsecutive(data.lastActiveDay, today) ? data.streak + 1 : 1;
+  const gap = data.lastActiveDay ? daysBetween(data.lastActiveDay, today) : Infinity;
+  const streak = gap === 1 || (grace && gap === 2) ? data.streak + 1 : 1;
   const achievements = [...data.achievements];
   for (const n of STREAK_MILESTONES) {
     const id = `streak_${n}`;
@@ -71,13 +86,13 @@ export function applyActiveDay(data: RewardData, today: string): RewardData {
   };
 }
 
-/** Racha vigente a fecha `today`: si ayer no hubo actividad, ya se rompió. */
-export function currentStreak(data: RewardData, today: string): number {
+/**
+ * Racha vigente a fecha `today`: si ayer no hubo actividad, ya se rompió
+ * (con `grace`, si faltó más de un día).
+ */
+export function currentStreak(data: RewardData, today: string, grace = false): number {
   if (!data.lastActiveDay) return 0;
-  if (data.lastActiveDay === today || isConsecutive(data.lastActiveDay, today)) {
-    return data.streak;
-  }
-  return 0;
+  return daysBetween(data.lastActiveDay, today) <= (grace ? 2 : 1) ? data.streak : 0;
 }
 
 // ---------- Store ----------
@@ -107,7 +122,9 @@ export const useRewards = create<RewardState>((set, get) => ({
   },
 
   recordPlay: (activityId) => {
-    set(applyActiveDay(snapshot(get()), dateKey(new Date())));
+    set(
+      applyActiveDay(snapshot(get()), dateKey(new Date()), useSettings.getState().serene),
+    );
     get().unlock(`play_${activityId}`);
     const all = activities.every((a) => get().achievements.includes(`play_${a.id}`));
     if (all) get().unlock('all_activities');

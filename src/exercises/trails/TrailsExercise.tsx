@@ -4,6 +4,8 @@ import { useT } from '../../core/i18n';
 import { AudioService } from '../../core/AudioService';
 import { formatDuration } from '../../core/format';
 import { mulberry32 } from '../../core/rng';
+import { useSettings } from '../../core/settings';
+
 import { errorsText } from '../common/text';
 import ExerciseShell, { type RunProps } from '../common/ExerciseShell';
 import { useStopwatch } from '../common/useStopwatch';
@@ -22,6 +24,7 @@ function Run({ seed, finish, lv }: RunProps & { lv: Level }) {
   const [errors, setErrors] = useState(0);
   const [shake, setShake] = useState<number | null>(null);
   const clock = useStopwatch();
+  const serene = useSettings((s) => s.serene);
 
   const tap = (k: number) => {
     if (k < next) return;
@@ -34,7 +37,7 @@ function Run({ seed, finish, lv }: RunProps & { lv: Level }) {
     }
     AudioService.play('correct');
     if (k + 1 === items.length) {
-      const s = score(clock.ms(), errors);
+      const s = score(clock.ms(), errors, serene ? 0 : undefined);
       finish({
         score: s,
         headline: formatDuration(s),
@@ -50,7 +53,9 @@ function Run({ seed, finish, lv }: RunProps & { lv: Level }) {
     <div className="flex flex-1 flex-col gap-3">
       <div className="flex justify-between text-sm text-app-muted">
         <span>{t('trails.next', { v: items[next] ?? '' })}</span>
-        <span className="font-mono tabular-nums">{formatDuration(clock.elapsed)}</span>
+        {!serene && (
+          <span className="font-mono tabular-nums">{formatDuration(clock.elapsed)}</span>
+        )}
       </div>
       <div className="relative aspect-square w-full rounded-2xl bg-slate-50">
         <svg viewBox="0 0 1 1" className="absolute inset-0 h-full w-full" aria-hidden>

@@ -5,6 +5,7 @@ import { ScoreService, type ScoreEntry } from '../core/ScoreService';
 import { currentStreak, useRewards } from '../core/RewardService';
 import { dateKey } from '../core/rng';
 import { formatActivityScore } from '../core/format';
+import { useSettings } from '../core/settings';
 import { useT } from '../core/i18n';
 import { dailyPlan, isComplete, loadSession } from '../core/session';
 import StreakCalendar from './StreakCalendar';
@@ -77,9 +78,10 @@ function Section({ kind, title }: { kind: ActivityKind; title: string }) {
 export default function HubScreen() {
   const t = useT();
   const rewards = useRewards();
+  const serene = useSettings((s) => s.serene);
   const askStart = useLevels((s) => s.loaded && s.start === null);
   const today = dateKey(new Date());
-  const streak = currentStreak(rewards, today);
+  const streak = currentStreak(rewards, today, serene);
   const [sessionDone, setSessionDone] = useState(false);
   const [sessionStarted, setSessionStarted] = useState(false);
   useEffect(() => {

@@ -39,6 +39,7 @@ function Run({ seed, finish, lv }: RunProps & { lv: Level }) {
   const [errors, setErrors] = useState(0);
   const [fb, setFb] = useState<'ok' | 'bad' | null>(null);
   const clock = useStopwatch();
+  const serene = useSettings((s) => s.serene);
   const trial = list[k];
 
   const answer = (c: Color) => {
@@ -49,7 +50,7 @@ function Run({ seed, finish, lv }: RunProps & { lv: Level }) {
     const errs = errors + (ok ? 0 : 1);
     setErrors(errs);
     if (k + 1 === list.length) {
-      const s = score(clock.ms(), errs);
+      const s = score(clock.ms(), errs, serene ? 0 : undefined);
       finish({
         score: s,
         headline: formatDuration(s),
@@ -66,7 +67,9 @@ function Run({ seed, finish, lv }: RunProps & { lv: Level }) {
         <span>
           {k + 1}/{list.length}
         </span>
-        <span className="font-mono tabular-nums">{formatDuration(clock.elapsed)}</span>
+        {!serene && (
+          <span className="font-mono tabular-nums">{formatDuration(clock.elapsed)}</span>
+        )}
       </div>
       <div className="relative flex flex-1 items-center justify-center rounded-2xl bg-slate-50 py-12">
         <Feedback kind={fb} />

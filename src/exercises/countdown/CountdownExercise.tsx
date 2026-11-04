@@ -4,6 +4,8 @@ import { useT } from '../../core/i18n';
 import { AudioService } from '../../core/AudioService';
 import { formatDuration } from '../../core/format';
 import { mulberry32 } from '../../core/rng';
+import { useSettings } from '../../core/settings';
+
 import { errorsText } from '../common/text';
 import ExerciseShell, { type RunProps } from '../common/ExerciseShell';
 import NumPad from '../common/NumPad';
@@ -12,6 +14,9 @@ import { useStopwatch } from '../common/useStopwatch';
 import { LEVELS, canContinue, startValue, type Level } from './logic';
 import { useActivityLevel } from '../../core/levels';
 import { levelOptions } from '../common/levelOptions';
+
+/** Respuestas por partida en modo sereno (sin límite de tiempo). */
+const SERENE_ANSWERS = 12;
 
 function Run({ seed, finish, lv }: RunProps & { lv: Level }) {
   const t = useT();
@@ -24,6 +29,8 @@ function Run({ seed, finish, lv }: RunProps & { lv: Level }) {
   const [fb, setFb] = useState<'ok' | 'bad' | null>(null);
   const [reveal, setReveal] = useState<number | null>(null);
   const clock = useStopwatch();
+  // Modo sereno: sin límite de tiempo; termina tras SERENE_ANSWERS respuestas.
+  const serene = useSettings((s) => s.serene);
   const left = Math.max(0, lv.seconds - clock.elapsed);
   const done = useRef(false);
 
@@ -40,7 +47,7 @@ function Run({ seed, finish, lv }: RunProps & { lv: Level }) {
   };
 
   useEffect(() => {
-    if (left === 0) end(correct, errors);
+    if (!serene && left === 0) end(correct, errors);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [left]);
 
@@ -61,7 +68,7 @@ function Run({ seed, finish, lv }: RunProps & { lv: Level }) {
       setTimeout(() => setReveal(null), 1200);
     }
     setCurrent(target);
-    if (!canContinue(target, step)) end(c, e);
+    if (!canContinue(target, step) || (serene && c + e >= SERENE_ANSWERS)) end(c, e);
   };
 
   const first = current === start;
@@ -69,7 +76,9 @@ function Run({ seed, finish, lv }: RunProps & { lv: Level }) {
     <div className="flex flex-1 flex-col gap-4">
       <div className="flex justify-between text-sm text-app-muted">
         <span>{t('countdown.correct', { n: correct })}</span>
-        <span className="font-mono tabular-nums">{formatDuration(left)}</span>
+        <span className="font-mono tabular-nums">
+          {serene ? `${correct + errors}/${SERENE_ANSWERS}` : formatDuration(left)}
+        </span>
       </div>
       <div className="relative flex flex-1 flex-col items-center justify-center gap-2 rounded-2xl bg-app-surface py-8 text-center">
         <Feedback kind={fb} />

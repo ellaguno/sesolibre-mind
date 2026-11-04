@@ -65,11 +65,13 @@ export default function SettingsScreen() {
     motion,
     lang,
     colorblind,
+    serene,
     toggleTheme,
     setSound,
     setMotion,
     setLang,
     setColorblind,
+    setSerene,
   } = useSettings();
   const start = useLevels((s) => s.start);
   const chooseStart = useLevels((s) => s.choose);
@@ -95,6 +97,12 @@ export default function SettingsScreen() {
           label={t('settings.animations')}
           checked={motion}
           onChange={() => setMotion(!motion)}
+        />
+        <ToggleRow
+          label={t('settings.serene')}
+          hint={t('settings.sereneHint')}
+          checked={serene}
+          onChange={() => setSerene(!serene)}
         />
         <ToggleRow
           label={t('settings.colorblind')}

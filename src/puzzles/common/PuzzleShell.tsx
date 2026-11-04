@@ -1,5 +1,7 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { PASSES_TO_PROMOTE, passesOf, useLevels } from '../../core/levels';
+import { useSettings } from '../../core/settings';
+import { cheer } from '../../core/cheer';
 import Tutorial, { type Slide } from '../../ui/Tutorial';
 import { useTutorialOpen, useTutorials } from '../../core/tutorials';
 import { useT } from '../../core/i18n';
@@ -60,6 +62,8 @@ export default function PuzzleShell(p: Props) {
   // Escalera de niveles: al resolver (con 0–1 pistas) cuenta como aprobado y,
   // si toca, se propone el siguiente nivel.
   const levels = useLevels();
+  // Modo sereno: sin cronómetro a la vista y las pistas no impiden superar el nivel.
+  const serene = useSettings((s) => s.serene);
   const [suggest, setSuggest] = useState<string | null>(null);
   const { solved, hints, variant, activityId } = p;
   useEffect(() => {
@@ -68,9 +72,11 @@ export default function PuzzleShell(p: Props) {
       return;
     }
     if (variant) {
-      setSuggest(useLevels.getState().recordResult(activityId, variant, hints <= 1));
+      setSuggest(
+        useLevels.getState().recordResult(activityId, variant, serene || hints <= 1),
+      );
     }
-  }, [solved, hints, variant, activityId]);
+  }, [solved, hints, variant, activityId, serene]);
   const goNext = () => {
     if (!suggest) return;
     levels.setLevel(p.activityId, suggest);
@@ -80,7 +86,7 @@ export default function PuzzleShell(p: Props) {
   const labelOf = (id: string) => p.variants?.find((v) => v.id === id)?.label ?? id;
 
   const share = async () => {
-    const text = shareText({ ...p, title });
+    const text = shareText({ ...p, title, withTime: !serene });
     try {
       if (navigator.share) await navigator.share({ text });
       else await navigator.clipboard.writeText(text);
@@ -125,9 +131,11 @@ export default function PuzzleShell(p: Props) {
             ?
           </button>
         )}
-        <span className="font-mono text-lg tabular-nums" aria-label={t('puzzle.time')}>
-          {formatDuration(p.elapsed)}
-        </span>
+        {!serene && (
+          <span className="font-mono text-lg tabular-nums" aria-label={t('puzzle.time')}>
+            {formatDuration(p.elapsed)}
+          </span>
+        )}
       </header>
 
       {!p.daily && !p.inSession && p.variants && (
@@ -174,10 +182,14 @@ export default function PuzzleShell(p: Props) {
               <span className="text-5xl" aria-hidden>
                 {p.emoji}
               </span>
-              <h2 className="text-xl font-bold">{t('puzzle.solved')}</h2>
+              <h2 className="text-xl font-bold">
+                {serene ? cheer(t, p.elapsed) : t('puzzle.solved')}
+              </h2>
               <p className="text-app-muted">
-                {p.label} · {formatDuration(p.elapsed)}
-                {p.hints > 0 && ` · ${t('puzzle.hintsUsed', { n: p.hints })}`}
+                {serene
+                  ? `${p.label} · ${t('puzzle.solved')}`
+                  : `${p.label} · ${formatDuration(p.elapsed)}`}
+                {!serene && p.hints > 0 && ` · ${t('puzzle.hintsUsed', { n: p.hints })}`}
               </p>
               {suggest && (
                 <div className="w-full rounded-xl bg-brand/15 p-3">

@@ -254,7 +254,13 @@ vayan creciendo, sin limitar a quien ya juega bien.
   - Cuenta atrás: de 1 en 1 → 2 → 3 → 7. Retén la cifra: desde 2 / 3 en orden / 3 al revés.
   - Sendero: 1–5 → 1–10 → 1–16 → 1→A→2→B (16) → (20). ¿Cuántos quedan?: 3 rondas lentas sólo entrando → 4 → 5.
 - [x] **Pregunta inicial** «¿Cómo quieres empezar?» (lo más básico / normal / reto) que fija el punto de partida; se cambia en Ajustes.
-- [ ] **Modo sereno** (Ajustes): sin cronómetro ni penalizaciones, letra y botones grandes, animaciones lentas, pistas gratis, auto-✕ en Coronas, tocar en vez de arrastrar, ánimo en vez de Índice, racha que perdona un día.
+- [x] **Modo sereno** (Ajustes; se activa solo al elegir «Desde lo más básico»):
+  - sin cronómetro a la vista ni penalizaciones; Cuenta atrás termina por respuestas (12), no por tiempo;
+  - interfaz un ~19 % más grande (escala rem) y animaciones / exposición de cifras / 3-2-1 un 50 % más lentas;
+  - pistas gratis (no impiden superar el nivel);
+  - Coronas marca solas las ✕ al poner una corona; Parcelas se traza tocando dos esquinas (Hilo ya admite tocar);
+  - frases de ánimo al terminar en vez de tiempos; perfil con progreso por niveles (⭐ superado, 🔸 actual) en vez del Índice;
+  - racha que perdona un día sin actividad.
 - [ ] **Sesión diaria adaptada** al nivel de cada actividad (hoy los puzzles de la sesión y del reto diario siguen el tamaño por día de la semana).
 
 ### Fase 2 — MVP ejercicios + sesión diaria

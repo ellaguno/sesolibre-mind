@@ -69,6 +69,30 @@ export function conflicts(p: CrownsPuzzle, state: readonly CellState[]): Set<num
   return bad;
 }
 
+/**
+ * Ayuda del modo sereno: al poner una corona en `cell`, marca con ✕ las casillas
+ * vacías donde ya no puede ir ninguna (misma fila, columna o zona, o vecinas).
+ */
+export function autoMark(
+  p: CrownsPuzzle,
+  state: readonly CellState[],
+  cell: number,
+): CellState[] {
+  const next = [...state];
+  for (let i = 0; i < next.length; i++) {
+    if (i === cell || next[i] !== EMPTY) continue;
+    if (
+      rowOf(p.size, i) === rowOf(p.size, cell) ||
+      colOf(p.size, i) === colOf(p.size, cell) ||
+      p.regions[i] === p.regions[cell] ||
+      touching(p.size, i, cell)
+    ) {
+      next[i] = MARK;
+    }
+  }
+  return next;
+}
+
 /** ¿El tablero está resuelto? (N coronas y ninguna en conflicto). */
 export function isSolved(p: CrownsPuzzle, state: readonly CellState[]): boolean {
   const count = state.reduce<number>((n, s) => n + (s === CROWN ? 1 : 0), 0);

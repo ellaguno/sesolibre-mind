@@ -11,6 +11,11 @@ export interface Settings {
   lang: LangSetting;
   /** Modo daltónico: texturas además de color y paletas seguras para daltonismo. */
   colorblind: boolean;
+  /**
+   * Modo sereno: sin cronómetro ni penalizaciones, interfaz más grande y lenta,
+   * pistas gratis, ayudas al jugar, ánimo en vez de Índice y racha que perdona.
+   */
+  serene: boolean;
 }
 
 const KEY = 'settings';
@@ -20,6 +25,7 @@ const DEFAULTS: Settings = {
   motion: true,
   lang: 'auto',
   colorblind: false,
+  serene: false,
 };
 
 interface SettingsState extends Settings {
@@ -31,6 +37,7 @@ interface SettingsState extends Settings {
   setMotion: (motion: boolean) => void;
   setLang: (lang: LangSetting) => void;
   setColorblind: (on: boolean) => void;
+  setSerene: (on: boolean) => void;
 }
 
 function applyTheme(theme: Theme) {
@@ -42,6 +49,15 @@ function applyTheme(theme: Theme) {
     ?.setAttribute('content', theme === 'dark' ? '#0f172a' : '#eef2f7');
 }
 
+/** Modo sereno: toda la interfaz (en rem) un ~20 % más grande. */
+function applyScale(serene: boolean) {
+  if (typeof document === 'undefined') return;
+  document.documentElement.style.fontSize = serene ? '118.75%' : '';
+}
+
+/** Factor de lentitud de animaciones y tiempos de exposición en modo sereno. */
+export const SERENE_SLOWDOWN = 1.5;
+
 export const useSettings = create<SettingsState>((set, get) => ({
   ...DEFAULTS,
   loaded: false,
@@ -50,6 +66,7 @@ export const useSettings = create<SettingsState>((set, get) => ({
     const saved = await storage.get<Settings>(KEY);
     const merged = { ...DEFAULTS, ...saved };
     applyTheme(merged.theme);
+    applyScale(merged.serene);
     set({ ...merged, loaded: true });
   },
 
@@ -85,11 +102,17 @@ export const useSettings = create<SettingsState>((set, get) => ({
     set({ colorblind });
     void persist(get);
   },
+
+  setSerene: (serene) => {
+    applyScale(serene);
+    set({ serene });
+    void persist(get);
+  },
 }));
 
 async function persist(get: () => SettingsState) {
-  const { theme, sound, motion, lang, colorblind } = get();
-  await storage.set<Settings>(KEY, { theme, sound, motion, lang, colorblind });
+  const { theme, sound, motion, lang, colorblind, serene } = get();
+  await storage.set<Settings>(KEY, { theme, sound, motion, lang, colorblind, serene });
 }
 
 /** ¿Deben reproducirse animaciones? Respeta el ajuste y prefers-reduced-motion. */

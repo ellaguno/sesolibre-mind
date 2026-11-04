@@ -134,3 +134,18 @@ describe('coronas · sin fugas de la solución', () => {
     expect(matches).toBeLessThan(5);
   });
 });
+
+describe('coronas · marcas automáticas (modo sereno)', () => {
+  it('marca fila, columna, zona y vecinas, sin tocar coronas ni marcas', async () => {
+    const { autoMark } = await import('../src/puzzles/crowns/logic');
+    const p: CrownsPuzzle = {
+      size: 5,
+      regions: Array.from({ length: 25 }, (_, i) => i % 5),
+    };
+    const s = stateFrom(5, [12]); // centro
+    const out = autoMark(p, s, 12);
+    expect(out[12]).toBe(CROWN);
+    for (const i of [10, 14, 2, 22, 6, 8, 16, 18]) expect(out[i]).toBe(MARK);
+    expect(out[0]).toBe(EMPTY); // esquina: ni fila, ni columna, ni zona, ni vecina
+  });
+});

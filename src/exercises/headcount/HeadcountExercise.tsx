@@ -3,6 +3,8 @@ import type { GameProps } from '../../core/registry';
 import { useT } from '../../core/i18n';
 import { AudioService } from '../../core/AudioService';
 import { mulberry32 } from '../../core/rng';
+import { SERENE_SLOWDOWN, useSettings } from '../../core/settings';
+
 import ExerciseShell, { type RunProps } from '../common/ExerciseShell';
 import NumPad from '../common/NumPad';
 import { LEVELS, passed, rounds, type Level } from './logic';
@@ -21,7 +23,11 @@ function Run({ seed, finish, lv }: RunProps & { lv: Level }) {
   const [typed, setTyped] = useState('');
   const [score, setScore] = useState(0);
   const [lastOk, setLastOk] = useState(false);
+  // Modo sereno: la gente camina más despacio.
+  const serene = useSettings((s) => s.serene);
+  const slow = serene ? SERENE_SLOWDOWN : 1;
   const round = list[r];
+  const stepMs = Math.round(round.stepMs * slow);
 
   useEffect(() => {
     if (stage === 'ready') {
@@ -35,7 +41,7 @@ function Run({ seed, finish, lv }: RunProps & { lv: Level }) {
       const id = setTimeout(() => {
         if (move + 1 < round.moves.length) setMove(move + 1);
         else setStage('ask');
-      }, round.stepMs);
+      }, stepMs);
       return () => clearTimeout(id);
     }
     if (stage === 'feedback') {
@@ -47,7 +53,7 @@ function Run({ seed, finish, lv }: RunProps & { lv: Level }) {
       }, 1400);
       return () => clearTimeout(id);
     }
-  }, [stage, move, round, r, ROUNDS]);
+  }, [stage, move, round, r, ROUNDS, stepMs]);
 
   const submit = () => {
     if (stage !== 'ask' || typed === '') return;
@@ -73,7 +79,7 @@ function Run({ seed, finish, lv }: RunProps & { lv: Level }) {
 
   const m = round.moves[move];
   const walkStyle = {
-    '--walk-ms': `${Math.round(round.stepMs * 0.9)}ms`,
+    '--walk-ms': `${Math.round(stepMs * 0.9)}ms`,
   } as CSSProperties;
 
   return (

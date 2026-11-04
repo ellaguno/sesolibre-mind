@@ -5,6 +5,9 @@ import { AudioService } from '../../core/AudioService';
 import Button from '../../ui/Button';
 import { boardSeed } from '../../puzzles/common/boardSeed';
 import { PASSES_TO_PROMOTE, passesOf, useLevels } from '../../core/levels';
+import { SERENE_SLOWDOWN, useSettings } from '../../core/settings';
+import { cheer } from '../../core/cheer';
+import { findActivity } from '../../core/registry';
 
 export interface ExerciseResult {
   /** Valor que se guarda como puntuación (según el scoreKind de la actividad). */
@@ -49,6 +52,7 @@ export default function ExerciseShell(p: Props) {
   const [result, setResult] = useState<ExerciseResult | null>(null);
   const [suggest, setSuggest] = useState<string | null>(null);
   const levels = useLevels();
+  const serene = useSettings((s) => s.serene);
   const finished = useRef(false);
   const title = t(`act.${p.activityId}.title`);
 
@@ -59,9 +63,12 @@ export default function ExerciseShell(p: Props) {
       return;
     }
     AudioService.play('tick');
-    const id = setTimeout(() => setCount((c) => c - 1), 650);
+    const id = setTimeout(
+      () => setCount((c) => c - 1),
+      serene ? 650 * SERENE_SLOWDOWN : 650,
+    );
     return () => clearTimeout(id);
-  }, [phase, count]);
+  }, [phase, count, serene]);
 
   const start = () => {
     finished.current = false;
@@ -187,9 +194,22 @@ export default function ExerciseShell(p: Props) {
           <span className="text-6xl" aria-hidden>
             {p.emoji}
           </span>
-          <p className="text-app-muted">{t('exercise.result')}</p>
-          <p className="text-5xl font-black tabular-nums">{result.headline}</p>
-          {result.detail && <p className="text-app-muted">{result.detail}</p>}
+          {serene ? (
+            <>
+              <p className="text-4xl font-black">{cheer(t, result.score + attempt)}</p>
+              {/* En modo sereno no se muestra el tiempo: sólo los aciertos o errores. */}
+              {findActivity(p.activityId)?.scoreKind !== 'time' && (
+                <p className="text-2xl font-bold tabular-nums">{result.headline}</p>
+              )}
+              {result.detail && <p className="text-app-muted">{result.detail}</p>}
+            </>
+          ) : (
+            <>
+              <p className="text-app-muted">{t('exercise.result')}</p>
+              <p className="text-5xl font-black tabular-nums">{result.headline}</p>
+              {result.detail && <p className="text-app-muted">{result.detail}</p>}
+            </>
+          )}
           <div className="mt-4 flex w-full max-w-xs flex-col gap-2">
             {suggest && (
               <div className="rounded-xl bg-brand/15 p-3">

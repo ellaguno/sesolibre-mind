@@ -1,6 +1,7 @@
 import { useMemo, useRef, useState } from 'react';
 import type { GameProps } from '../../core/registry';
 import { useT } from '../../core/i18n';
+import { useSettings } from '../../core/settings';
 import { AudioService } from '../../core/AudioService';
 import PuzzleShell from '../common/PuzzleShell';
 import { useActivityLevel } from '../../core/levels';
@@ -67,6 +68,9 @@ export default function PlotsGame({
   const [notice, setNotice] = useState<string | null>(null);
   const [drag, setDrag] = useState<{ start: number; end: number } | null>(null);
   const dragRef = useRef<{ start: number; end: number } | null>(null);
+  // Modo sereno: también se traza tocando una esquina y luego la opuesta.
+  const serene = useSettings((s) => s.serene);
+  const [anchor, setAnchor] = useState<number | null>(null);
 
   const bseed = boardSeed(seed, daily, round, variant.id);
   const key = `${bseed}:${variant.id}`;
@@ -124,6 +128,24 @@ export default function PlotsGame({
     setDrag(null);
     if (!d || solved) return;
     const before = cellsRef.current;
+    if (serene && d.start === d.end) {
+      // Primer toque en casilla libre: fija una esquina; segundo toque: traza.
+      if (anchor === null && !before[d.start]) {
+        setAnchor(d.start);
+        setNotice(t('plots.tapCorner'));
+        AudioService.play('click');
+        return;
+      }
+      if (anchor !== null) {
+        const next = drawRect(size, before, rectBetween(size, anchor, d.start));
+        setAnchor(null);
+        setNotice(null);
+        AudioService.play('pop');
+        commit(before, next);
+        return;
+      }
+    }
+    setAnchor(null);
     // Tocar una parcela la borra; tocar una celda libre o arrastrar traza.
     const next =
       d.start === d.end && before[d.start]
@@ -192,7 +214,12 @@ export default function PlotsGame({
       onHint={applyHint}
       notice={notice}
       slides={plotsSlides(t)}
-      rules={[t('plots.rule1'), t('plots.rule2'), t('plots.rule3'), t('plots.rule4')]}
+      rules={[
+        t('plots.rule1'),
+        t('plots.rule2'),
+        t('plots.rule3'),
+        serene ? t('plots.rule4serene') : t('plots.rule4'),
+      ]}
     >
       <div className="h-full w-full overflow-hidden rounded-xl border-[3px] border-slate-800 bg-slate-50">
         <div
@@ -235,7 +262,7 @@ export default function PlotsGame({
                 }
                 className={`flex flex-col items-center justify-center leading-none text-slate-900 ${
                   session.flash === i ? 'animate-pulse' : ''
-                }`}
+                } ${anchor === i ? 'ring-4 ring-inset ring-brand' : ''}`}
                 style={{
                   backgroundColor: valid
                     ? plotColor(plot.clue)
