@@ -13,7 +13,7 @@ import {
   type PlotsPuzzle,
   type Rect,
 } from '../src/puzzles/plots/logic';
-import { VARIANTS, dailyVariant, generatePlots } from '../src/puzzles/plots/generator';
+import { VARIANTS, generatePlots } from '../src/puzzles/plots/generator';
 
 function boardFrom(size: number, rects: Rect[]): number[] {
   let b = new Array<number>(size * size).fill(0);
@@ -84,11 +84,6 @@ describe('parcelas · generador', () => {
   it('es determinista', () => {
     expect(generatePlots(3, VARIANTS[1])).toEqual(generatePlots(3, VARIANTS[1]));
     expect(generatePlots(3, VARIANTS[1])).not.toEqual(generatePlots(4, VARIANTS[1]));
-  });
-
-  it('el reto diario usa una variante conocida', () => {
-    for (let d = 0; d < 7; d++)
-      expect(VARIANTS).toContain(dailyVariant(new Date(2026, 10, 1 + d)));
   });
 });
 

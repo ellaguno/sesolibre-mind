@@ -103,7 +103,10 @@ function Run({ seed, finish, lv }: RunProps & { lv: Level }) {
 
 export default function ColorClashExercise(props: GameProps) {
   const t = useT();
-  const [level, setLevel] = useActivityLevel('colorclash');
+  const [level, setLevel] = useActivityLevel(
+    'colorclash',
+    props.daily || !!props.inSession,
+  );
   const lv = LEVELS[level] ?? LEVELS['3'];
   return (
     <ExerciseShell

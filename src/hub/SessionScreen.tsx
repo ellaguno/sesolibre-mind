@@ -9,7 +9,7 @@ import {
   type LazyExoticComponent,
 } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { findActivity, type GameProps } from '../core/registry';
+import { findActivity, type ActivityMeta, type GameProps } from '../core/registry';
 import { recordResult } from '../core/play';
 import { dailySeed, dateKey } from '../core/rng';
 import { useSettings } from '../core/settings';
@@ -22,6 +22,7 @@ import {
   loadSession,
   saveSession,
   type SessionRecord,
+  type StepResult,
 } from '../core/session';
 import Button from '../ui/Button';
 import Screen from '../ui/Screen';
@@ -37,8 +38,20 @@ function lazyActivity(id: string) {
   return c;
 }
 
+/** «· Nivel 2» del resultado guardado (si se sabe en qué nivel se jugó). */
+function useLevelText() {
+  const t = useT();
+  return (a: ActivityMeta, r: StepResult | undefined) => {
+    const lv = r?.meta?.difficulty;
+    return typeof lv === 'string' && a.variants.includes(lv)
+      ? ` · ${t('level.n', { n: a.variants.indexOf(lv) + 1 })}`
+      : '';
+  };
+}
+
 export default function SessionScreen() {
   const t = useT();
+  const levelText = useLevelText();
   const navigate = useNavigate();
   const day = useMemo(() => dateKey(new Date()), []);
   const plan = useMemo(() => dailyPlan(day), [day]);
@@ -183,6 +196,7 @@ export default function SessionScreen() {
                     {t(
                       a.kind === 'puzzle' ? 'session.puzzleOfDay' : `domain.${a.domain}`,
                     )}
+                    {levelText(a, r)}
                   </span>
                 </span>
                 <span

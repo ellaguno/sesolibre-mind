@@ -261,7 +261,7 @@ vayan creciendo, sin limitar a quien ya juega bien.
   - Coronas marca solas las ✕ al poner una corona; Parcelas se traza tocando dos esquinas (Hilo ya admite tocar);
   - frases de ánimo al terminar en vez de tiempos; perfil con progreso por niveles (⭐ superado, 🔸 actual) en vez del Índice;
   - racha que perdona un día sin actividad.
-- [ ] **Sesión diaria adaptada** al nivel de cada actividad (hoy los puzzles de la sesión y del reto diario siguen el tamaño por día de la semana).
+- [x] **Sesión diaria y reto del día adaptados**: usan el nivel actual de cada actividad (se elimina el tamaño fijo por día de la semana). Siguen siendo iguales para todos los que juegan en el mismo nivel (misma semilla diaria). El nivel se congela durante la partida: si se supera en el reto o la sesión, el siguiente queda programado para la próxima vez. El resumen indica el nivel jugado.
 
 ### Fase 2 — MVP ejercicios + sesión diaria
 - [x] `quickmath`, `colorclash`, `countdown` (−7 / −3), `numberspan` (en orden / al revés), `trails` (A / B), `headcount`. Lógica pura en `exercises/<id>/logic.ts` con tests.

@@ -162,9 +162,3 @@ export function generateThread(seed: number, variant: Variant): GeneratedThread 
     if (g) return g;
   }
 }
-
-/** Reto diario: 6×6 lun–jue, 7×7 el viernes, 8×8 difícil el fin de semana. */
-export function dailyVariant(date: Date): Variant {
-  const day = date.getDay();
-  return VARIANTS[day === 0 || day === 6 ? 4 : day === 5 ? 3 : 2];
-}

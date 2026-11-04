@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import { create } from 'zustand';
 import { storage } from './storage';
 import { findActivity, type ActivityMeta } from './registry';
@@ -123,17 +124,22 @@ async function persist(get: () => LevelsState) {
 }
 
 /**
- * Nivel actual de una actividad y su setter. En el reto diario el nivel lo fija
- * `fixed` (igual para todos) y no se puede cambiar.
+ * Nivel actual de una actividad y su setter. Con `freeze` (reto del día y
+ * sesión) el nivel queda fijo durante la partida: si se sube de nivel al
+ * terminar, aplica a la próxima vez sin cambiar el tablero en curso.
  */
 export function useActivityLevel(
   activityId: string,
-  fixed?: string,
+  freeze = false,
 ): [string, (level: string) => void] {
   const level = useLevels((s) => {
     const a = findActivity(activityId);
     return a ? levelOf(s, a) : '';
   });
+  const loaded = useLevels((s) => s.loaded);
   const setLevel = useLevels((s) => s.setLevel);
-  return [fixed ?? level, (l: string) => setLevel(activityId, l)];
+  // Hasta hidratar el store el nivel puede cambiar; después, se congela.
+  const frozen = useRef(level);
+  if (!freeze || !loaded) frozen.current = level;
+  return [freeze ? frozen.current : level, (l: string) => setLevel(activityId, l)];
 }

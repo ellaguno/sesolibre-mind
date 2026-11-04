@@ -9,11 +9,7 @@ import {
   nextDeduction,
   solveByLogic,
 } from '../src/puzzles/minisudoku/logic';
-import {
-  VARIANTS,
-  dailyVariant,
-  generateSudoku,
-} from '../src/puzzles/minisudoku/generator';
+import { VARIANTS, generateSudoku } from '../src/puzzles/minisudoku/generator';
 
 describe('sudoku mini · reglas', () => {
   it('hay 18 unidades de 6 celdas (filas, columnas y cajas 2×3)', () => {
@@ -67,12 +63,6 @@ describe('sudoku mini · generador', () => {
   it('es determinista', () => {
     expect(generateSudoku(9, 'hard')).toEqual(generateSudoku(9, 'hard'));
     expect(generateSudoku(9, 'hard')).not.toEqual(generateSudoku(10, 'hard'));
-  });
-
-  it('el reto diario usa una variante conocida', () => {
-    for (let d = 0; d < 7; d++) {
-      expect(VARIANTS).toContain(dailyVariant(new Date(2026, 10, 1 + d)));
-    }
   });
 });
 

@@ -128,7 +128,10 @@ function Run({ seed, finish, lv }: RunProps & { lv: Level }) {
 
 export default function NumberSpanExercise(props: GameProps) {
   const t = useT();
-  const [level, setLevel] = useActivityLevel('numberspan');
+  const [level, setLevel] = useActivityLevel(
+    'numberspan',
+    props.daily || !!props.inSession,
+  );
   const lv = LEVELS[level] ?? LEVELS.forward;
   return (
     <ExerciseShell

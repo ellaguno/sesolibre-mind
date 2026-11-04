@@ -13,11 +13,7 @@ import {
   type Cell,
   type SunMoonPuzzle,
 } from '../src/puzzles/sunmoon/logic';
-import {
-  VARIANTS,
-  dailyVariant,
-  generateSunMoon,
-} from '../src/puzzles/sunmoon/generator';
+import { VARIANTS, generateSunMoon } from '../src/puzzles/sunmoon/generator';
 
 const empty = (size: number): SunMoonPuzzle => ({
   size,
@@ -101,13 +97,6 @@ describe('sol y luna · generador', () => {
   it('es determinista', () => {
     expect(generateSunMoon(5, 6)).toEqual(generateSunMoon(5, 6));
     expect(generateSunMoon(5, 6)).not.toEqual(generateSunMoon(6, 6));
-  });
-
-  it('el reto diario usa una variante conocida', () => {
-    for (let d = 0; d < 7; d++) {
-      const date = new Date(2026, 10, 1 + d);
-      expect(VARIANTS.map((v) => v.id)).toContain(dailyVariant(date).id);
-    }
   });
 });
 

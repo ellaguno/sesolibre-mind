@@ -105,7 +105,10 @@ function Run({ seed, finish, lv }: RunProps & { lv: Level }) {
 
 export default function CountdownExercise(props: GameProps) {
   const t = useT();
-  const [level, setLevel] = useActivityLevel('countdown');
+  const [level, setLevel] = useActivityLevel(
+    'countdown',
+    props.daily || !!props.inSession,
+  );
   const lv = LEVELS[level] ?? LEVELS['3'];
   return (
     <ExerciseShell

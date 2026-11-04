@@ -65,10 +65,15 @@ export default function PuzzleShell(p: Props) {
   // Modo sereno: sin cronómetro a la vista y las pistas no impiden superar el nivel.
   const serene = useSettings((s) => s.serene);
   const [suggest, setSuggest] = useState<string | null>(null);
+  // En el reto del día y en la sesión el tablero en curso no cambia: subir de
+  // nivel queda para la próxima vez.
+  const deferred = p.daily || !!p.inSession;
+  const [scheduled, setScheduled] = useState<string | null>(null);
   const { solved, hints, variant, activityId } = p;
   useEffect(() => {
     if (!solved) {
       setSuggest(null);
+      setScheduled(null);
       return;
     }
     if (variant) {
@@ -80,7 +85,8 @@ export default function PuzzleShell(p: Props) {
   const goNext = () => {
     if (!suggest) return;
     levels.setLevel(p.activityId, suggest);
-    setShared(false);
+    if (deferred) setScheduled(suggest);
+    else setShared(false);
     setSuggest(null);
   };
   const labelOf = (id: string) => p.variants?.find((v) => v.id === id)?.label ?? id;
@@ -195,9 +201,16 @@ export default function PuzzleShell(p: Props) {
                 <div className="w-full rounded-xl bg-brand/15 p-3">
                   <p className="text-sm font-semibold">⭐ {t('level.unlocked')}</p>
                   <Button onClick={goNext} className="mt-2 w-full">
-                    {t('level.tryNext', { level: labelOf(suggest) })}
+                    {deferred
+                      ? t('level.setNext', { level: labelOf(suggest) })
+                      : t('level.tryNext', { level: labelOf(suggest) })}
                   </Button>
                 </div>
+              )}
+              {scheduled && (
+                <p className="text-sm font-semibold text-brand">
+                  ✓ {t('level.scheduled', { level: labelOf(scheduled) })}
+                </p>
               )}
               <Button
                 variant={suggest ? 'ghost' : 'primary'}

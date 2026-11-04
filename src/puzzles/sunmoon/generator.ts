@@ -121,9 +121,3 @@ export const VARIANTS = [
   { id: '8', size: 8, difficulty: 'hard' },
 ] as const satisfies readonly { id: string; size: number; difficulty: Difficulty }[];
 export type Variant = (typeof VARIANTS)[number];
-
-/** Reto diario: 6×6 fácil de lunes a jueves, 6×6 difícil el viernes, 8×8 el fin de semana. */
-export function dailyVariant(date: Date): Variant {
-  const day = date.getDay();
-  return VARIANTS[day === 0 || day === 6 ? 3 : day === 5 ? 2 : 1];
-}

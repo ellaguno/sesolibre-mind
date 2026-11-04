@@ -98,7 +98,7 @@ function Run({ seed, finish, lv }: RunProps & { lv: Level }) {
 
 export default function TrailsExercise(props: GameProps) {
   const t = useT();
-  const [level, setLevel] = useActivityLevel('trails');
+  const [level, setLevel] = useActivityLevel('trails', props.daily || !!props.inSession);
   const lv = LEVELS[level] ?? LEVELS.A;
   return (
     <ExerciseShell

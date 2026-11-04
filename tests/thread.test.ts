@@ -10,7 +10,7 @@ import {
   wallSet,
   type ThreadPuzzle,
 } from '../src/puzzles/thread/logic';
-import { VARIANTS, dailyVariant, generateThread } from '../src/puzzles/thread/generator';
+import { VARIANTS, generateThread } from '../src/puzzles/thread/generator';
 
 describe('hilo · reglas', () => {
   // 3×3: 1 en la esquina, 2 en el centro… con zigzag como única ruta forzada por paredes.
@@ -64,11 +64,6 @@ describe('hilo · generador', () => {
   it('es determinista', () => {
     expect(generateThread(5, VARIANTS[0])).toEqual(generateThread(5, VARIANTS[0]));
     expect(generateThread(5, VARIANTS[0])).not.toEqual(generateThread(6, VARIANTS[0]));
-  });
-
-  it('el reto diario usa una variante conocida', () => {
-    for (let d = 0; d < 7; d++)
-      expect(VARIANTS).toContain(dailyVariant(new Date(2026, 10, 1 + d)));
   });
 });
 

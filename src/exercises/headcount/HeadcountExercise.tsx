@@ -146,7 +146,10 @@ function Run({ seed, finish, lv }: RunProps & { lv: Level }) {
 
 export default function HeadcountExercise(props: GameProps) {
   const t = useT();
-  const [level, setLevel] = useActivityLevel('headcount');
+  const [level, setLevel] = useActivityLevel(
+    'headcount',
+    props.daily || !!props.inSession,
+  );
   const lv = LEVELS[level] ?? LEVELS['3'];
   return (
     <ExerciseShell

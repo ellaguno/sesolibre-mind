@@ -12,7 +12,7 @@ import { crownsSlides } from './tutorial';
 import { useWorkerResult } from '../common/useWorkerResult';
 import { usePuzzleSession } from '../common/usePuzzleSession';
 import { boardSeed } from '../common/boardSeed';
-import { dailySize, generateCrowns } from './generator';
+import { generateCrowns } from './generator';
 import {
   CROWN,
   EMPTY,
@@ -90,10 +90,7 @@ export default function CrownsGame({
   inSession,
 }: GameProps) {
   const t = useT();
-  const [level, setLevel] = useActivityLevel(
-    'crowns',
-    daily ? String(dailySize(new Date())) : undefined,
-  );
+  const [level, setLevel] = useActivityLevel('crowns', daily || !!inSession);
   const size = Number(level);
   const [round, setRound] = useState(0);
   const bseed = boardSeed(seed, daily, round, String(size));

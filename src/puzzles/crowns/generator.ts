@@ -41,12 +41,6 @@ function randomPlacement(rng: Rng, size: number): number[] | null {
   return place(0) ? cols : null;
 }
 
-/** Tamaño del reto diario según el día de la semana: lunes fácil → fin de semana difícil. */
-export function dailySize(date: Date): number {
-  // domingo, lunes, martes, miércoles, jueves, viernes, sábado
-  return [9, 6, 6, 7, 7, 8, 8][date.getDay()];
-}
-
 /** Hace crecer las zonas desde sus semillas hasta llenar el tablero. */
 function growRegions(rng: Rng, size: number, seeds: number[]): number[] {
   const regions = new Array<number>(size * size).fill(-1);

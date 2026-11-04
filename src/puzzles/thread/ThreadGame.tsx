@@ -10,7 +10,7 @@ import { threadSlides } from './tutorial';
 import { useWorkerResult } from '../common/useWorkerResult';
 import { usePuzzleSession } from '../common/usePuzzleSession';
 import { boardSeed } from '../common/boardSeed';
-import { VARIANTS, dailyVariant, generateThread, type Variant } from './generator';
+import { VARIANTS, generateThread, type Variant } from './generator';
 import { canStep, clueOrder, hint as computeHint, isSolved, wallSet } from './logic';
 
 const makeWorker = () =>
@@ -26,10 +26,7 @@ export default function ThreadGame({
   inSession,
 }: GameProps) {
   const t = useT();
-  const [variantId, setVariantId] = useActivityLevel(
-    'thread',
-    daily ? dailyVariant(new Date()).id : undefined,
-  );
+  const [variantId, setVariantId] = useActivityLevel('thread', daily || !!inSession);
   const variant = VARIANTS.find((v) => v.id === variantId) ?? VARIANTS[0];
   const { size } = variant;
   const [round, setRound] = useState(0);

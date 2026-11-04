@@ -198,7 +198,8 @@ const es: Dict = {
   'session.resume': 'Continuar sesión',
   'session.puzzleOfDay': 'Puzzle del día',
   'session.progress': 'Actividad {n} de {total}',
-  'session.note': 'La sesión es la misma para todos hoy. Solo cuenta tu primer intento.',
+  'session.note':
+    'Hoy la sesión es la misma para todos los que juegan en tu nivel. Solo cuenta tu primer intento.',
   'calendar.title': 'Constancia',
   'calendar.best': 'Mejor racha: {n}',
   'calendar.weekdays': 'L,M,M,J,V,S,D',
@@ -264,6 +265,7 @@ const es: Dict = {
     'Las líneas gruesas son paredes: el camino no puede cruzarlas. Arrastra desde la punta del trazo; vuelve atrás para deshacer.',
 
   'level.n': 'Nivel {n}',
+  'level.scheduled': 'La próxima vez jugarás {level}.',
   'level.passed': 'nivel superado',
   'level.unlocked': '¡Nivel superado! Ya puedes subir.',
   'level.tryNext': 'Subir a {level}',
@@ -539,7 +541,8 @@ const en: Dict = {
   'session.resume': 'Resume session',
   'session.puzzleOfDay': 'Puzzle of the day',
   'session.progress': 'Activity {n} of {total}',
-  'session.note': "Today's session is the same for everyone. Only your first try counts.",
+  'session.note':
+    "Today's session is the same for everyone playing at your level. Only your first try counts.",
   'calendar.title': 'Consistency',
   'calendar.best': 'Best streak: {n}',
   'calendar.weekdays': 'M,T,W,T,F,S,S',
@@ -604,6 +607,7 @@ const en: Dict = {
     'Thick lines are walls: the path cannot cross them. Drag from the tip of the path; go back to undo.',
 
   'level.n': 'Level {n}',
+  'level.scheduled': 'Next time you will play {level}.',
   'level.passed': 'level passed',
   'level.unlocked': 'Level passed! You can move up.',
   'level.tryNext': 'Move up to {level}',

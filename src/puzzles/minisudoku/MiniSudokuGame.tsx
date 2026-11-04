@@ -10,7 +10,7 @@ import { minisudokuSlides } from './tutorial';
 import { useWorkerResult } from '../common/useWorkerResult';
 import { usePuzzleSession } from '../common/usePuzzleSession';
 import { boardSeed } from '../common/boardSeed';
-import { VARIANTS, dailyVariant, generateSudoku, type Difficulty } from './generator';
+import { VARIANTS, generateSudoku, type Difficulty } from './generator';
 import { conflicts, hint as computeHint, isSolved, specFor } from './logic';
 
 /**
@@ -35,10 +35,7 @@ export default function MiniSudokuGame({
   inSession,
 }: GameProps) {
   const t = useT();
-  const [variantId, setVariantId] = useActivityLevel(
-    'minisudoku',
-    daily ? dailyVariant(new Date()).id : undefined,
-  );
+  const [variantId, setVariantId] = useActivityLevel('minisudoku', daily || !!inSession);
   const variant = VARIANTS.find((v) => v.id === variantId) ?? VARIANTS[1];
   const spec = specFor(variant.size * variant.size);
   const {

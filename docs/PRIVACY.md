@@ -29,8 +29,8 @@ Esta información se almacena mediante el almacenamiento local del dispositivo
 (Capacitor Preferences / almacenamiento del navegador). **No se transmite a
 ningún servidor** y no es accesible para el desarrollador.
 
-El reto y la sesión diaria son iguales para todos los usuarios porque se generan
-en tu dispositivo a partir de la fecha; no requieren conexión ni comparten datos.
+El reto y la sesión diaria se generan en tu dispositivo a partir de la fecha y de
+tu nivel; no requieren conexión ni comparten datos.
 
 ## Información que NO se recopila
 
@@ -115,14 +115,15 @@ persists between sessions:
 - **Consistency and achievements** (active days, streak and unlocked
   achievements).
 - **App preferences** (light/dark theme, sound, motion, language and color-blind
-  mode) and which tutorials you have already seen.
+  mode and calm mode), your level in each activity and which tutorials you have
+  already seen.
 
 This information is stored using the device's local storage (Capacitor Preferences
 / browser storage). **It is not transmitted to any server** and is not accessible
 to the developer.
 
-The daily challenge and session are the same for everyone because they are
-generated on your device from the date; they need no connection and share no data.
+The daily challenge and session are generated on your device from the date and
+your level; they need no connection and share no data.
 
 ## Information NOT collected
 

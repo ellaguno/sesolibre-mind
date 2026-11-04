@@ -10,7 +10,7 @@ import { useTutorialOpen } from '../../core/tutorials';
 import { plotsSlides } from './tutorial';
 import { usePuzzleSession } from '../common/usePuzzleSession';
 import { boardSeed } from '../common/boardSeed';
-import { VARIANTS, dailyVariant, generatePlots } from './generator';
+import { VARIANTS, generatePlots } from './generator';
 import {
   drawRect,
   eraseAt,
@@ -58,10 +58,7 @@ export default function PlotsGame({
   inSession,
 }: GameProps) {
   const t = useT();
-  const [variantId, setVariantId] = useActivityLevel(
-    'plots',
-    daily ? dailyVariant(new Date()).id : undefined,
-  );
+  const [variantId, setVariantId] = useActivityLevel('plots', daily || !!inSession);
   const variant = VARIANTS.find((v) => v.id === variantId) ?? VARIANTS[0];
   const { size } = variant;
   const [round, setRound] = useState(0);

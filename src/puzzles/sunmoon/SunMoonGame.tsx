@@ -10,7 +10,7 @@ import { sunmoonSlides } from './tutorial';
 import { useWorkerResult } from '../common/useWorkerResult';
 import { usePuzzleSession } from '../common/usePuzzleSession';
 import { boardSeed } from '../common/boardSeed';
-import { VARIANTS, dailyVariant, generateSunMoon, type Difficulty } from './generator';
+import { VARIANTS, generateSunMoon, type Difficulty } from './generator';
 import {
   EMPTY,
   MOON,
@@ -41,10 +41,7 @@ export default function SunMoonGame({
   inSession,
 }: GameProps) {
   const t = useT();
-  const [variantId, setVariantId] = useActivityLevel(
-    'sunmoon',
-    daily ? dailyVariant(new Date()).id : undefined,
-  );
+  const [variantId, setVariantId] = useActivityLevel('sunmoon', daily || !!inSession);
   const variant = VARIANTS.find((v) => v.id === variantId) ?? VARIANTS[0];
   const { size, difficulty } = variant;
   const [round, setRound] = useState(0);

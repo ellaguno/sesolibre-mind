@@ -87,9 +87,3 @@ export function generateSudoku(
   }
   return fallback!;
 }
-
-/** Reto diario: fácil de lunes a jueves, difícil de viernes a domingo. */
-export function dailyVariant(date: Date): (typeof VARIANTS)[number] {
-  const day = date.getDay();
-  return VARIANTS[day === 0 || day >= 5 ? 2 : 1];
-}

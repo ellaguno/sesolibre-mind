@@ -51,6 +51,7 @@ export default function ExerciseShell(p: Props) {
   const [attempt, setAttempt] = useState(0);
   const [result, setResult] = useState<ExerciseResult | null>(null);
   const [suggest, setSuggest] = useState<string | null>(null);
+  const [scheduled, setScheduled] = useState<string | null>(null);
   const levels = useLevels();
   const serene = useSettings((s) => s.serene);
   const finished = useRef(false);
@@ -103,6 +104,7 @@ export default function ExerciseShell(p: Props) {
     if (!suggest) return;
     levels.setLevel(p.activityId, suggest);
     setSuggest(null);
+    if (!canRetry) setScheduled(suggest);
     // Fuera de la sesión y del reto diario, empezar ya el nivel nuevo.
     if (canRetry) {
       setAttempt((a) => a + 1);
@@ -220,6 +222,11 @@ export default function ExerciseShell(p: Props) {
                     : t('level.setNext', { level: labelOf(suggest) })}
                 </Button>
               </div>
+            )}
+            {scheduled && (
+              <p className="text-sm font-semibold text-brand">
+                ✓ {t('level.scheduled', { level: labelOf(scheduled) })}
+              </p>
             )}
             {canRetry && (
               <Button onClick={retry} className="w-full">

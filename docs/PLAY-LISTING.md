@@ -46,9 +46,14 @@ datos). Actualizar si se integra monetización o Google Play Juegos.
 > conexión**.
 >
 > 📅 **Sesión del día (~5 min)**
-> Cada día, 3 ejercicios de habilidades distintas + el puzzle del día. Es la misma
-> para todos, así que puedes comparar tu resultado con amigos y familia (sin
-> spoilers). Mantén tu racha y mira tu constancia en el calendario.
+> Cada día, 3 ejercicios de habilidades distintas + el puzzle del día. Se adapta a tu
+> nivel y es la misma para quienes juegan en tu nivel, así que puedes comparar
+> tu resultado con amigos y familia (sin spoilers). Mantén tu racha y mira tu constancia en el calendario.
+>
+> 🌱 **Para todos los niveles**
+> Empieza desde lo más básico (tableros de 4×4, pocas preguntas, sin prisa) o
+> directo en el reto. Cuando superas un nivel, te proponemos el siguiente. El
+> **modo sereno** quita el reloj, agranda todo y añade ayudas.
 >
 > 🧩 **5 puzzles de lógica, siempre con solución única**
 > 👑 **Coronas** — Una corona por fila, columna y zona de color, sin que se toquen.
@@ -90,9 +95,14 @@ datos). Actualizar si se integra monetización o Google Play Juegos.
 > offline**.
 >
 > 📅 **Today's session (~5 min)**
-> Every day, 3 exercises for different skills + the puzzle of the day. It's the
-> same for everyone, so you can compare results with friends and family (no
-> spoilers). Keep your streak and track your consistency on the calendar.
+> Every day, 3 exercises for different skills + the puzzle of the day. It adapts to
+> your level and is the same for everyone at your level, so you can compare
+> results with friends and family (no spoilers). Keep your streak and track your consistency on the calendar.
+>
+> 🌱 **For every level**
+> Start from the very basics (4×4 boards, few questions, no rush) or jump
+> straight into the challenge. Pass a level and we suggest the next one.
+> **Calm mode** removes the clock, enlarges everything and adds helpers.
 >
 > 🧩 **5 logic puzzles, always with a unique solution**
 > 👑 **Crowns** — One crown per row, column and color region, never touching.
