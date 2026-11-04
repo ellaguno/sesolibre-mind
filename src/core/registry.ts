@@ -171,8 +171,11 @@ export const activities: ActivityMeta[] = [
     emoji: '🟩',
     scoreKind: 'time',
     higherIsBetter: false,
-    available: false,
+    available: true,
     accent: '#06b6d4',
+    // Deben coincidir con VARIANTS (puzzles/plots/generator.ts).
+    variants: ['6', '7', '8'],
+    load: () => import('../puzzles/plots/PlotsGame'),
   },
   {
     id: 'minisudoku',

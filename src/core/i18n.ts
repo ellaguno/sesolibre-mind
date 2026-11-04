@@ -100,6 +100,21 @@ const es: Dict = {
   'minisudoku.erase': 'Borrar cifra',
   'minisudoku.notes': 'Notas a lápiz',
 
+  'shape.square': 'cuadrado',
+  'shape.tall': 'alto',
+  'shape.wide': 'ancho',
+  'plots.rule1':
+    'Divide la cuadrícula en rectángulos que no se encimen y la cubran entera.',
+  'plots.rule2':
+    'Cada rectángulo contiene un solo número, y ese número es su área (casillas).',
+  'plots.rule3':
+    'Si el número lleva un dibujo encima, el rectángulo debe tener esa forma: cuadrado, alto o ancho.',
+  'plots.rule4': 'Arrastra para trazar un rectángulo; toca una parcela para borrarla.',
+  'plots.hintWrong': 'Esa parcela no va así: la quité.',
+  'plots.hintPlace': 'Así va la parcela del {n}.',
+  'plots.clueCell': 'Fila {r}, columna {c}: pista {n}',
+  'plots.inPlot': 'en una parcela',
+
   'domain.speed': 'Velocidad',
   'domain.memory': 'Memoria',
   'domain.attention': 'Atención',
@@ -209,6 +224,21 @@ const en: Dict = {
   'minisudoku.hintHidden': 'In {unit} {n}, {v} only fits in that cell.',
   'minisudoku.erase': 'Erase digit',
   'minisudoku.notes': 'Pencil notes',
+
+  'shape.square': 'square',
+  'shape.tall': 'tall',
+  'shape.wide': 'wide',
+  'plots.rule1':
+    'Split the grid into non-overlapping rectangles that cover it completely.',
+  'plots.rule2':
+    'Each rectangle holds exactly one number, and that number is its area (cells).',
+  'plots.rule3':
+    'If the number has a little drawing above it, the rectangle must have that shape: square, tall or wide.',
+  'plots.rule4': 'Drag to draw a rectangle; tap a plot to erase it.',
+  'plots.hintWrong': "That plot doesn't go there, so I removed it.",
+  'plots.hintPlace': "Here's where the {n} plot goes.",
+  'plots.clueCell': 'Row {r}, column {c}: clue {n}',
+  'plots.inPlot': 'in a plot',
 
   'domain.speed': 'Speed',
   'domain.memory': 'Memory',
