@@ -85,3 +85,37 @@ body {
   animation: overlay-pop 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
+
+/* ¿Cuántos quedan?: gente que entra (desde la izquierda) o sale (hacia la derecha) de la casa. */
+@keyframes walk-in {
+  from {
+    transform: translateX(-170%);
+    opacity: 1;
+  }
+  75% {
+    opacity: 1;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 0;
+  }
+}
+@keyframes walk-out {
+  from {
+    transform: translateX(0);
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+  }
+  to {
+    transform: translateX(170%);
+    opacity: 1;
+  }
+}
+.walk-in {
+  animation: walk-in var(--walk-ms, 900ms) linear forwards;
+}
+.walk-out {
+  animation: walk-out var(--walk-ms, 900ms) linear forwards;
+}

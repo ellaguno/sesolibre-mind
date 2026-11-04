@@ -14,6 +14,7 @@ interface Props {
   /** id de la actividad (textos `act.<id>.title`). */
   activityId: string;
   daily: boolean;
+  inSession?: boolean;
   ready: boolean;
   elapsed: number;
   solved: boolean;
@@ -85,7 +86,7 @@ export default function PuzzleShell(p: Props) {
         </span>
       </header>
 
-      {!p.daily && p.variants && (
+      {!p.daily && !p.inSession && p.variants && (
         <div
           className="flex flex-wrap items-center gap-2"
           role="group"
@@ -134,13 +135,17 @@ export default function PuzzleShell(p: Props) {
               <Button onClick={() => void share()} className="w-full">
                 {shared ? t('puzzle.shared') : t('puzzle.share')}
               </Button>
-              {!p.daily && (
+              {!p.daily && !p.inSession && (
                 <Button variant="ghost" onClick={startNew} className="w-full">
                   {t('puzzle.new')}
                 </Button>
               )}
-              <Button variant="ghost" onClick={p.onExit} className="w-full">
-                {t('common.back')}
+              <Button
+                variant={p.inSession ? 'primary' : 'ghost'}
+                onClick={p.onExit}
+                className="w-full"
+              >
+                {p.inSession ? t('session.continue') : t('common.back')}
               </Button>
             </div>
           </div>

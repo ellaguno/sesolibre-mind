@@ -69,7 +69,13 @@ interface Drag {
   before: CellState[];
 }
 
-export default function CrownsGame({ onScore, onExit, seed, daily }: GameProps) {
+export default function CrownsGame({
+  onScore,
+  onExit,
+  seed,
+  daily,
+  inSession,
+}: GameProps) {
   const t = useT();
   const [size, setSize] = useState<number>(() => (daily ? dailySize(new Date()) : 7));
   const [round, setRound] = useState(0);
@@ -177,6 +183,7 @@ export default function CrownsGame({ onScore, onExit, seed, daily }: GameProps) 
       emoji="👑"
       activityId="crowns"
       daily={daily}
+      inSession={inSession}
       ready={!!puzzle && session.ready}
       elapsed={session.elapsed}
       solved={solved}

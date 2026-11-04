@@ -35,7 +35,13 @@ const makeWorker = () =>
 const generateInline = (a: { seed: number; difficulty: Difficulty }) =>
   generateSudoku(a.seed, a.difficulty);
 
-export default function MiniSudokuGame({ onScore, onExit, seed, daily }: GameProps) {
+export default function MiniSudokuGame({
+  onScore,
+  onExit,
+  seed,
+  daily,
+  inSession,
+}: GameProps) {
   const t = useT();
   const [variantId, setVariantId] = useState<string>(() =>
     daily ? dailyVariant(new Date()).id : VARIANTS[0].id,
@@ -173,6 +179,7 @@ export default function MiniSudokuGame({ onScore, onExit, seed, daily }: GamePro
       emoji="🧮"
       activityId="minisudoku"
       daily={daily}
+      inSession={inSession}
       ready={!!givens && session.ready}
       elapsed={session.elapsed}
       solved={solved}

@@ -4,8 +4,10 @@ import { activities, type ActivityKind, type ActivityMeta } from '../core/regist
 import { ScoreService, type ScoreEntry } from '../core/ScoreService';
 import { currentStreak, useRewards } from '../core/RewardService';
 import { dateKey } from '../core/rng';
-import { formatScore } from '../core/format';
+import { formatActivityScore } from '../core/format';
 import { useT } from '../core/i18n';
+import { dailyPlan, isComplete, loadSession } from '../core/session';
+import StreakCalendar from './StreakCalendar';
 
 function ActivityTile({ activity }: { activity: ActivityMeta }) {
   const t = useT();
@@ -39,7 +41,7 @@ function ActivityTile({ activity }: { activity: ActivityMeta }) {
           <span className="text-xs text-app-muted">
             {t(`domain.${activity.domain}`)}
             {best &&
-              ` · ${t(`best.${activity.scoreKind}`, { v: formatScore(best.value, activity.scoreKind) })}`}
+              ` · ${t(`best.${activity.scoreKind}`, { v: formatActivityScore(activity, best.value) })}`}
           </span>
         </span>
       </Link>
@@ -73,7 +75,16 @@ function Section({ kind, title }: { kind: ActivityKind; title: string }) {
 export default function HubScreen() {
   const t = useT();
   const rewards = useRewards();
-  const streak = currentStreak(rewards, dateKey(new Date()));
+  const today = dateKey(new Date());
+  const streak = currentStreak(rewards, today);
+  const [sessionDone, setSessionDone] = useState(false);
+  const [sessionStarted, setSessionStarted] = useState(false);
+  useEffect(() => {
+    void loadSession(today).then((r) => {
+      setSessionStarted(r.results.length > 0);
+      setSessionDone(isComplete(dailyPlan(today), r));
+    });
+  }, [today]);
 
   return (
     <main className="mx-auto flex min-h-full max-w-2xl flex-col gap-6 px-4 py-6">
@@ -91,22 +102,31 @@ export default function HubScreen() {
         </Link>
       </header>
 
-      {/* Sesión diaria: se habilita cuando existan actividades disponibles (ver PLAN, fase 2). */}
       <section className="rounded-2xl bg-gradient-to-br from-brand to-brand-dark p-5 text-white">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-bold">{t('hub.dailyTitle')}</h2>
           {streak > 0 && (
-            <span className="text-sm">🔥 {t('hub.streak', { n: streak })}</span>
+            <span className="text-sm">
+              🔥 {t(streak === 1 ? 'hub.streak1' : 'hub.streak', { n: streak })}
+            </span>
           )}
         </div>
-        <p className="mt-1 text-sm text-white/80">{t('hub.dailyDesc')}</p>
-        <button
-          disabled
-          className="mt-4 rounded-xl bg-white/90 px-5 py-2 font-semibold text-brand-dark disabled:opacity-60"
+        <p className="mt-1 text-sm text-white/80">
+          {sessionDone ? t('session.doneToday') : t('hub.dailyDesc')}
+        </p>
+        <Link
+          to="/session"
+          className="mt-4 inline-block rounded-xl bg-white px-5 py-2 font-semibold text-brand-dark transition active:scale-95"
         >
-          {t('hub.start')} · {t('common.soon')}
-        </button>
+          {sessionDone
+            ? t('session.viewSummary')
+            : sessionStarted
+              ? t('session.resume')
+              : t('hub.start')}
+        </Link>
       </section>
+
+      <StreakCalendar />
 
       <Section kind="exercise" title={t('hub.exercises')} />
       <Section kind="puzzle" title={t('hub.puzzles')} />

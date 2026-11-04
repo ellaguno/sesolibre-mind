@@ -1,4 +1,4 @@
-import type { ScoreKind } from './registry';
+import type { ActivityMeta, ScoreKind } from './registry';
 import { resolveLang, translate } from './i18n';
 import { useSettings } from './settings';
 
@@ -20,4 +20,16 @@ export function formatScore(
   if (kind === 'time') return formatDuration(value);
   if (kind === 'moves') return translate(lang, 'fmt.moves', { n: value });
   return value.toLocaleString(lang);
+}
+
+/** Como formatScore, pero con la unidad propia de la actividad si la tiene. */
+export function formatActivityScore(
+  activity: ActivityMeta,
+  value: number,
+  lang = resolveLang(useSettings.getState().lang),
+): string {
+  if (activity.scoreKind === 'points' && activity.pointsKey) {
+    return translate(lang, activity.pointsKey, { n: value });
+  }
+  return formatScore(value, activity.scoreKind, lang);
 }

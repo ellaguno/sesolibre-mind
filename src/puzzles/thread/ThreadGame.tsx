@@ -14,7 +14,13 @@ const makeWorker = () =>
 const generateInline = (a: { seed: number; variant: Variant }) =>
   generateThread(a.seed, a.variant);
 
-export default function ThreadGame({ onScore, onExit, seed, daily }: GameProps) {
+export default function ThreadGame({
+  onScore,
+  onExit,
+  seed,
+  daily,
+  inSession,
+}: GameProps) {
   const t = useT();
   const [variantId, setVariantId] = useState<string>(() =>
     daily ? dailyVariant(new Date()).id : VARIANTS[0].id,
@@ -130,6 +136,7 @@ export default function ThreadGame({ onScore, onExit, seed, daily }: GameProps) 
       emoji="🧵"
       activityId="thread"
       daily={daily}
+      inSession={inSession}
       ready={!!puzzle && session.ready}
       elapsed={session.elapsed}
       solved={solved}

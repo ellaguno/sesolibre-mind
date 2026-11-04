@@ -29,7 +29,13 @@ const generateInline = (a: { seed: number; size: number; difficulty: Difficulty 
 
 const SYMBOL: Record<Cell, string> = { [EMPTY]: '', [SUN]: '☀️', [MOON]: '🌙' };
 
-export default function SunMoonGame({ onScore, onExit, seed, daily }: GameProps) {
+export default function SunMoonGame({
+  onScore,
+  onExit,
+  seed,
+  daily,
+  inSession,
+}: GameProps) {
   const t = useT();
   const [variantId, setVariantId] = useState<string>(() =>
     daily ? dailyVariant(new Date()).id : VARIANTS[0].id,
@@ -118,6 +124,7 @@ export default function SunMoonGame({ onScore, onExit, seed, daily }: GameProps)
       emoji="🌓"
       activityId="sunmoon"
       daily={daily}
+      inSession={inSession}
       ready={!!puzzle && session.ready}
       elapsed={session.elapsed}
       solved={solved}

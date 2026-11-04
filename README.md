@@ -15,7 +15,8 @@ Base y servicios heredados de [sesolibre-games](https://github.com/ellaguno/seso
 | Tipo | Actividades (MVP) | Estado |
 |---|---|---|
 | Puzzles | Coronas, Sol y Luna, Hilo, Parcelas, Sudoku mini | ✅ |
-| Ejercicios | Cálculo relámpago, Choque de colores, Cuenta atrás, Retén la cifra, Sendero, ¿Cuántos quedan? | Planificado |
+| Ejercicios | Cálculo relámpago, Choque de colores, Cuenta atrás, Retén la cifra, Sendero, ¿Cuántos quedan? | ✅ |
+| Sesión diaria | 3 ejercicios + puzzle del día, resumen para compartir, calendario de constancia | ✅ |
 
 ## Desarrollo
 

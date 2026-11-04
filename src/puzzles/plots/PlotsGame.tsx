@@ -45,7 +45,13 @@ function ShapeIcon({ shape }: { shape: Exclude<Shape, 'any'> }) {
 /** Color pastel de la parcela de la pista k (tono repartido con el ángulo áureo). */
 const plotColor = (k: number) => `hsl(${Math.round((k * 137.5) % 360)} 75% 78%)`;
 
-export default function PlotsGame({ onScore, onExit, seed, daily }: GameProps) {
+export default function PlotsGame({
+  onScore,
+  onExit,
+  seed,
+  daily,
+  inSession,
+}: GameProps) {
   const t = useT();
   const [variantId, setVariantId] = useState<string>(() =>
     daily ? dailyVariant(new Date()).id : VARIANTS[0].id,
@@ -149,6 +155,7 @@ export default function PlotsGame({ onScore, onExit, seed, daily }: GameProps) {
       emoji="🟩"
       activityId="plots"
       daily={daily}
+      inSession={inSession}
       ready={session.ready}
       elapsed={session.elapsed}
       solved={solved}

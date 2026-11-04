@@ -26,6 +26,11 @@ export interface GameProps {
   seed: number;
   /** true si es el reto del día (semilla compartida por todos ese día). */
   daily: boolean;
+  /**
+   * Dentro de la sesión diaria: sin selector de variante ni "otra vez"; al
+   * terminar, el botón principal es "Continuar" (que llama a onExit).
+   */
+  inSession?: boolean;
   difficulty?: string;
 }
 
@@ -44,6 +49,8 @@ export interface ActivityMeta {
    * la más difícil. La actividad las indica en onScore(score, { difficulty }).
    */
   variants?: readonly string[];
+  /** Para scoreKind 'points': clave i18n con {n} para mostrar la unidad (p. ej. "8 cifras"). */
+  pointsKey?: string;
 }
 
 /** Clave de récords de una actividad (y de su variante, si la tiene). */
@@ -73,8 +80,9 @@ export const activities: ActivityMeta[] = [
     emoji: '➗',
     scoreKind: 'time',
     higherIsBetter: false,
-    available: false,
+    available: true,
     accent: '#f97316',
+    load: () => import('../exercises/quickmath/QuickMathExercise'),
   },
   {
     id: 'colorclash',
@@ -83,8 +91,9 @@ export const activities: ActivityMeta[] = [
     emoji: '🎨',
     scoreKind: 'time',
     higherIsBetter: false,
-    available: false,
+    available: true,
     accent: '#ec4899',
+    load: () => import('../exercises/colorclash/ColorClashExercise'),
   },
   {
     id: 'countdown',
@@ -93,8 +102,11 @@ export const activities: ActivityMeta[] = [
     emoji: '➖',
     scoreKind: 'points',
     higherIsBetter: true,
-    available: false,
+    available: true,
     accent: '#a855f7',
+    pointsKey: 'unit.correct',
+    variants: ['3', '7'],
+    load: () => import('../exercises/countdown/CountdownExercise'),
   },
   {
     id: 'numberspan',
@@ -103,8 +115,11 @@ export const activities: ActivityMeta[] = [
     emoji: '🔢',
     scoreKind: 'points',
     higherIsBetter: true,
-    available: false,
+    available: true,
     accent: '#8b5cf6',
+    pointsKey: 'unit.digits',
+    variants: ['forward', 'backward'],
+    load: () => import('../exercises/numberspan/NumberSpanExercise'),
   },
   {
     id: 'trails',
@@ -113,8 +128,10 @@ export const activities: ActivityMeta[] = [
     emoji: '🔗',
     scoreKind: 'time',
     higherIsBetter: false,
-    available: false,
+    available: true,
     accent: '#14b8a6',
+    variants: ['A', 'B'],
+    load: () => import('../exercises/trails/TrailsExercise'),
   },
   {
     id: 'headcount',
@@ -123,8 +140,10 @@ export const activities: ActivityMeta[] = [
     emoji: '🏠',
     scoreKind: 'points',
     higherIsBetter: true,
-    available: false,
+    available: true,
     accent: '#eab308',
+    pointsKey: 'unit.ofFive',
+    load: () => import('../exercises/headcount/HeadcountExercise'),
   },
 
   // ---------- Puzzles de lógica (Bloque A) ----------

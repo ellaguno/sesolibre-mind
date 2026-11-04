@@ -82,12 +82,12 @@ puzzles concretos** sí. Por eso:
 
 | id | Nombre (es / en) | Prueba base | Habilidad | Mecánica | Puntuación | Fase |
 |---|---|---|---|---|---|---|
-| `quickmath` | Cálculo relámpago / Lightning Math | Cálculo simple rápido | Velocidad | 20 operaciones (+ − × ÷ de una cifra); teclado numérico propio | Tiempo + penalización por error | **MVP** |
-| `colorclash` | Choque de colores / Color Clash | Stroop | Atención | Palabra de color en tinta distinta; tocar el color de la **tinta**. Opcional: respuesta por voz (Web Speech API) | Tiempo de reacción medio + aciertos | **MVP** |
-| `countdown` | Cuenta atrás / Countdown | Resta seriada (100 − 7…) | Memoria de trabajo | Escribir cada resultado sin ver los anteriores | Aciertos consecutivos | **MVP** |
-| `numberspan` | Retén la cifra / Number Span | Digit span (directo/inverso) | Memoria | Mostrar dígitos 1 por 1; repetirlos (o al revés). Adaptativo: +1 si aciertas | Longitud máxima | **MVP** |
-| `trails` | Sendero / Trails | Trail Making Test A/B | Flexibilidad | Tocar 1→2→3… (A) o 1→A→2→B… (B) dispersos en pantalla | Tiempo | **MVP** |
-| `headcount` | ¿Cuántos quedan? / Headcount | Seguimiento atencional | Atención | Figuritas entran y salen de una casa animada; al final, ¿cuántos hay dentro? | Aciertos en 5 rondas | **MVP** |
+| `quickmath` ✅ | Cálculo relámpago / Lightning Math | Cálculo simple rápido | Velocidad | 20 operaciones (+ − × ÷ de una cifra); teclado numérico propio | Tiempo + penalización por error | **MVP** |
+| `colorclash` ✅ | Choque de colores / Color Clash | Stroop | Atención | Palabra de color en tinta distinta; tocar el color de la **tinta**. Opcional: respuesta por voz (Web Speech API) | Tiempo de reacción medio + aciertos | **MVP** |
+| `countdown` ✅ | Cuenta atrás / Countdown | Resta seriada (100 − 7…) | Memoria de trabajo | Escribir cada resultado sin ver los anteriores | Aciertos consecutivos | **MVP** |
+| `numberspan` ✅ | Retén la cifra / Number Span | Digit span (directo/inverso) | Memoria | Mostrar dígitos 1 por 1; repetirlos (o al revés). Adaptativo: +1 si aciertas | Longitud máxima | **MVP** |
+| `trails` ✅ | Sendero / Trails | Trail Making Test A/B | Flexibilidad | Tocar 1→2→3… (A) o 1→A→2→B… (B) dispersos en pantalla | Tiempo | **MVP** |
+| `headcount` ✅ | ¿Cuántos quedan? / Headcount | Seguimiento atencional | Atención | Figuritas entran y salen de una casa animada; al final, ¿cuántos hay dentro? | Aciertos en 5 rondas | **MVP** |
 | `nback` | Eco / Echo | N-back (simple y dual) | Memoria | ¿Coincide con el de hace N pasos? N se adapta | Nivel N alcanzado | v2 |
 | `corsi` | Secuencia / Sequence | Bloques de Corsi | Memoria espacial | Repetir el orden en que se encienden bloques | Longitud máxima | v2 |
 | `gonogo` | Alto y siga / Stop & Go | Go/No-Go | Control inhibitorio | Tocar solo ante el estímulo objetivo | Aciertos − falsos positivos | v2 |
@@ -244,10 +244,10 @@ Los tiempos se miden con `performance.now()`. La UI de respuesta es siempre tác
 - [x] Componentes comunes (`puzzles/common/`): `PuzzleShell` (encabezado, cronómetro, variantes, victoria, compartir, botones, reglas), `usePuzzleSession` (celdas, deshacer, pistas, victoria), `useWorkerResult` (generación en Web Worker), `boardSeed`.
 
 ### Fase 2 — MVP ejercicios + sesión diaria
-- [ ] `quickmath`, `colorclash`, `countdown`, `numberspan`, `trails`, `headcount`.
-- [ ] Teclado numérico propio y cuenta regresiva 3-2-1 compartidos.
-- [ ] Flujo de **sesión diaria** + resumen + texto para compartir.
-- [ ] Calendario de constancia.
+- [x] `quickmath`, `colorclash`, `countdown` (−7 / −3), `numberspan` (en orden / al revés), `trails` (A / B), `headcount`. Lógica pura en `exercises/<id>/logic.ts` con tests.
+- [x] `ExerciseShell` (instrucciones → 3-2-1 → ejercicio → resultado), `NumPad` con teclado físico, `Feedback` ✓/✗.
+- [x] Flujo de **sesión diaria** (`#/session`): 3 ejercicios de habilidades distintas + puzzle del día que rota; progreso guardado para retomar; resumen + texto para compartir.
+- [x] Calendario de constancia (5 semanas) en el hub.
 
 ### Fase 3 — Perfil y pulido
 - [ ] Índice Seso por habilidad + radar + tendencia.

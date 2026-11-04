@@ -1,10 +1,8 @@
 import { Suspense, lazy, useCallback, useMemo } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { findActivity, scoreKey, variantFromMeta } from '../core/registry';
-import { ScoreService } from '../core/ScoreService';
-import { useRewards } from '../core/RewardService';
+import { findActivity } from '../core/registry';
+import { recordResult } from '../core/play';
 import { dailySeed, dateKey, randomSeed } from '../core/rng';
-import { celebrate } from '../anim/particles';
 import GamePlaceholder from './GamePlaceholder';
 
 /** Monta una actividad: `#/play/<id>` (libre) o `#/play/<id>?daily=1` (reto del día). */
@@ -29,15 +27,7 @@ export default function GameHost() {
   // Callbacks estables: las actividades los tienen en dependencias de efectos.
   const onScore = useCallback(
     (score: number, meta?: Record<string, unknown>) => {
-      const a = findActivity(id);
-      if (!a) return;
-      useRewards.getState().recordPlay(a.id);
-      const variant = variantFromMeta(a, meta);
-      void ScoreService.submit(scoreKey(a.id, variant), score, { ...meta, daily }).then(
-        (isRecord) => {
-          if (isRecord) celebrate();
-        },
-      );
+      if (id) recordResult(id, score, meta, daily);
     },
     [id, daily],
   );
