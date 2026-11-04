@@ -58,7 +58,9 @@ keytool -genkeypair -v -keystore upload-keystore.jks -alias upload -keyalg RSA -
 ## Documentación
 
 Ver [`docs/PLAN.md`](./docs/PLAN.md): visión, reglas de propiedad intelectual,
-catálogo completo, arquitectura y roadmap.
+catálogo completo, arquitectura y roadmap. Publicación:
+[`docs/PLAY-LISTING.md`](./docs/PLAY-LISTING.md) (ficha de Play) y
+[`docs/PRIVACY.md`](./docs/PRIVACY.md) (política de privacidad).
 
 ## Licencia
 
