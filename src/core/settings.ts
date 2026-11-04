@@ -9,10 +9,18 @@ export interface Settings {
   sound: boolean;
   motion: boolean;
   lang: LangSetting;
+  /** Modo daltónico: texturas además de color y paletas seguras para daltonismo. */
+  colorblind: boolean;
 }
 
 const KEY = 'settings';
-const DEFAULTS: Settings = { theme: 'dark', sound: true, motion: true, lang: 'auto' };
+const DEFAULTS: Settings = {
+  theme: 'dark',
+  sound: true,
+  motion: true,
+  lang: 'auto',
+  colorblind: false,
+};
 
 interface SettingsState extends Settings {
   loaded: boolean;
@@ -22,6 +30,7 @@ interface SettingsState extends Settings {
   setSound: (sound: boolean) => void;
   setMotion: (motion: boolean) => void;
   setLang: (lang: LangSetting) => void;
+  setColorblind: (on: boolean) => void;
 }
 
 function applyTheme(theme: Theme) {
@@ -71,11 +80,16 @@ export const useSettings = create<SettingsState>((set, get) => ({
     set({ lang });
     void persist(get);
   },
+
+  setColorblind: (colorblind) => {
+    set({ colorblind });
+    void persist(get);
+  },
 }));
 
 async function persist(get: () => SettingsState) {
-  const { theme, sound, motion, lang } = get();
-  await storage.set<Settings>(KEY, { theme, sound, motion, lang });
+  const { theme, sound, motion, lang, colorblind } = get();
+  await storage.set<Settings>(KEY, { theme, sound, motion, lang, colorblind });
 }
 
 /** ¿Deben reproducirse animaciones? Respeta el ajuste y prefers-reduced-motion. */

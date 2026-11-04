@@ -251,9 +251,10 @@ Los tiempos se miden con `performance.now()`. La UI de respuesta es siempre tác
 
 ### Fase 3 — Perfil y pulido
 - [x] Índice Seso por habilidad (`core/profile.ts`, pantalla `#/profile`): barras por habilidad (más legibles que un radar con un solo jugador), índice global, mejor racha y días activos. Pendiente: tendencia semanal.
-- [ ] Tutorial interactivo por actividad (primer uso).
+- [x] Tutorial ilustrado de primer uso en cada puzzle (mini tableros con ejemplos ✓/✗, reabrible con «?», pausa el cronómetro). Los ejercicios explican sus reglas en la pantalla previa.
 - [x] Ícono propio (`scripts/build-icons.py`, adaptado de sesolibre-games: grafotipo SesoLibre sobre índigo + fichas con los colores de los puzzles). Pendiente: ilustraciones.
-- [ ] Accesibilidad: modo daltónico, etiquetas ARIA, pruebas con TalkBack.
+- [x] Modo daltónico (Ajustes): texturas por zona en Coronas y tintas validadas para protan/deutan/tritan en Choque de colores (azul, naranja, rosa, negro); errores del Sudoku subrayados además de en rojo.
+- [ ] Pruebas con TalkBack.
 
 ### Fase 4 — Lanzamiento Android
 - [x] Capacitor Android: `npm run android:apk` (`scripts/android-apk.sh`) genera el APK de depuración.

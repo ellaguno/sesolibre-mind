@@ -3,6 +3,8 @@ import type { GameProps } from '../../core/registry';
 import { useT } from '../../core/i18n';
 import { AudioService } from '../../core/AudioService';
 import PuzzleShell from '../common/PuzzleShell';
+import { useTutorialOpen } from '../../core/tutorials';
+import { minisudokuSlides } from './tutorial';
 import { useWorkerResult } from '../common/useWorkerResult';
 import { usePuzzleSession } from '../common/usePuzzleSession';
 import { boardSeed } from '../common/boardSeed';
@@ -62,10 +64,12 @@ export default function MiniSudokuGame({
   );
   const givens = generated?.givens;
 
+  const tutorialOpen = useTutorialOpen('minisudoku');
   const session = usePuzzleSession<number>({
     boardKey: generated ? key : null,
     initial: () => [...(givens ?? [])],
     isSolved: (cells) => isSolved(cells.map(valueOf)),
+    paused: tutorialOpen,
     onSolved: (secs, hints) => onScore(secs, { difficulty: variant.id, hints }),
   });
   const { cells, cellsRef, commit, solved } = session;
@@ -202,6 +206,7 @@ export default function MiniSudokuGame({
       onClear={clear}
       onHint={applyHint}
       notice={notice}
+      slides={minisudokuSlides(t)}
       rules={[t('minisudoku.rule1'), t('minisudoku.rule2'), t('minisudoku.rule3')]}
       controls={
         <div className="grid grid-cols-8 gap-1.5">
@@ -291,7 +296,7 @@ export default function MiniSudokuGame({
                   <span
                     className={`text-[min(8vw,2.1rem)] ${
                       bad.has(i)
-                        ? 'font-bold text-red-600'
+                        ? 'font-bold text-red-600 underline decoration-wavy decoration-2 underline-offset-4'
                         : fixed
                           ? 'font-bold text-slate-900'
                           : 'font-semibold text-indigo-700'

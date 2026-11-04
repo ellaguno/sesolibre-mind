@@ -8,11 +8,14 @@ import { errorsText } from '../common/text';
 import ExerciseShell, { type RunProps } from '../common/ExerciseShell';
 import Feedback from '../common/Feedback';
 import { useStopwatch } from '../common/useStopwatch';
-import { COLORS, COUNT, INK, score, trials, type Color } from './logic';
+import { COLORS, COLORS_CB, COUNT, INK, score, trials, type Color } from './logic';
+import { useSettings } from '../../core/settings';
 
 function Run({ seed, finish }: RunProps) {
   const t = useT();
-  const list = useMemo(() => trials(mulberry32(seed)), [seed]);
+  const colorblind = useSettings((s) => s.colorblind);
+  const colors = colorblind ? COLORS_CB : COLORS;
+  const list = useMemo(() => trials(mulberry32(seed), COUNT, colors), [seed, colors]);
   const [k, setK] = useState(0);
   const [errors, setErrors] = useState(0);
   const [fb, setFb] = useState<'ok' | 'bad' | null>(null);
@@ -61,7 +64,7 @@ function Run({ seed, finish }: RunProps) {
       </div>
       <p className="text-center text-sm text-app-muted">{t('colorclash.prompt')}</p>
       <div className="grid grid-cols-2 gap-2">
-        {COLORS.map((c) => (
+        {colors.map((c) => (
           <button
             key={c}
             onClick={() => answer(c)}

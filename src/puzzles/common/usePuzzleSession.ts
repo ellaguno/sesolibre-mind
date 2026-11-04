@@ -8,6 +8,8 @@ interface Options<T> {
   isSolved: (cells: readonly T[]) => boolean;
   /** Se llama una vez al resolver, con los segundos empleados y las pistas usadas. */
   onSolved: (seconds: number, hints: number) => void;
+  /** Detiene el cronómetro (p. ej. mientras se lee el tutorial). */
+  paused?: boolean;
 }
 
 /**
@@ -22,6 +24,7 @@ export function usePuzzleSession<T>({
   initial,
   isSolved,
   onSolved,
+  paused = false,
 }: Options<T>) {
   const [cells, setCellsState] = useState<T[]>([]);
   const [history, setHistory] = useState<T[][]>([]);
@@ -32,6 +35,7 @@ export function usePuzzleSession<T>({
   const [activeKey, setActiveKey] = useState<string | null>(null);
   const cellsRef = useRef<T[]>([]);
   const startRef = useRef(0);
+  const pausedAt = useRef<number | null>(null);
   const flashTimer = useRef<ReturnType<typeof setTimeout>>();
 
   // Tablero nuevo: reiniciar la partida.
@@ -46,20 +50,31 @@ export function usePuzzleSession<T>({
     setSolved(false);
     setActiveKey(boardKey);
     startRef.current = performance.now();
+    // Tablero nuevo durante una pausa: la pausa cuenta desde ahora.
+    if (pausedAt.current !== null) pausedAt.current = startRef.current;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [boardKey]);
 
   const ready = boardKey !== null && activeKey === boardKey;
 
+  // Pausa: al reanudar, correr el inicio lo que duró la pausa.
+  useEffect(() => {
+    if (paused) pausedAt.current = performance.now();
+    else if (pausedAt.current !== null) {
+      startRef.current += performance.now() - pausedAt.current;
+      pausedAt.current = null;
+    }
+  }, [paused]);
+
   // Cronómetro.
   useEffect(() => {
-    if (!ready || solved) return;
+    if (!ready || solved || paused) return;
     const id = setInterval(
       () => setElapsed(Math.floor((performance.now() - startRef.current) / 1000)),
       500,
     );
     return () => clearInterval(id);
-  }, [ready, solved]);
+  }, [ready, solved, paused]);
 
   // Victoria.
   useEffect(() => {

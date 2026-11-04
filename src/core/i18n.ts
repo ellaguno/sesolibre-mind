@@ -47,6 +47,12 @@ const es: Dict = {
   'settings.sound': 'Sonido',
   'settings.animations': 'Animaciones',
   'settings.language': 'Idioma',
+  'settings.colorblind': 'Modo daltónico',
+  'settings.colorblindHint':
+    'Texturas en las zonas de color y tintas fáciles de distinguir.',
+  'color.orange': 'Naranja',
+  'color.pink': 'Rosa',
+  'color.black': 'Negro',
   'lang.auto': 'Automático',
   'lang.es': 'Español',
   'lang.en': 'Inglés',
@@ -210,6 +216,54 @@ const es: Dict = {
   'profile.note':
     'El Índice Seso (0–100) resume tus últimos resultados para que te compares contigo mismo. Es entretenimiento, no una evaluación médica.',
 
+  'tutorial.skip': 'Saltar',
+  'tutorial.prev': 'Atrás',
+  'tutorial.next': 'Siguiente',
+  'tutorial.done': '¡Entendido!',
+  'tut.crowns.1.title': 'Una corona por fila, columna y zona',
+  'tut.crowns.1.body':
+    'Cada fila, cada columna y cada zona de color lleva exactamente una corona.',
+  'tut.crowns.2.title': 'Las coronas no se tocan',
+  'tut.crowns.2.body': 'Dos coronas nunca pueden quedar juntas, ni siquiera en diagonal.',
+  'tut.crowns.3.title': 'Cómo marcar',
+  'tut.crowns.3.body':
+    'Toca una casilla una vez para marcar ✕ (aquí no va) y otra vez para poner 👑. Arrastra para marcar varias ✕.',
+  'tut.sunmoon.1.title': 'Mitad soles, mitad lunas',
+  'tut.sunmoon.1.body': 'Cada fila y cada columna lleva tantos ☀️ como 🌙.',
+  'tut.sunmoon.2.title': 'Nunca tres iguales seguidos',
+  'tut.sunmoon.2.body':
+    'No puede haber más de dos ☀️ (o 🌙) juntos, ni en horizontal ni en vertical.',
+  'tut.sunmoon.3.title': 'Las pistas = y ×',
+  'tut.sunmoon.3.body':
+    'Dos casillas unidas por = son iguales; unidas por × son opuestas. Toca para alternar vacía → ☀️ → 🌙.',
+  'tut.minisudoku.1.title': 'Cada cifra una vez',
+  'tut.minisudoku.1.body':
+    'Del 1 al 6, sin repetir, en cada fila, cada columna y cada caja de 2×3.',
+  'tut.minisudoku.2.title': 'Sin repetidos',
+  'tut.minisudoku.2.body':
+    'Si una cifra se repite en una fila, columna o caja, se marca en rojo y subrayada.',
+  'tut.minisudoku.3.title': 'Elige y escribe',
+  'tut.minisudoku.3.body':
+    'Toca una casilla y luego una cifra del teclado. Con ✏️ apuntas notas a lápiz.',
+  'tut.plots.1.title': 'Rectángulos con un número',
+  'tut.plots.1.body':
+    'Divide todo en rectángulos. Cada uno contiene un solo número, que es su cantidad de casillas.',
+  'tut.plots.2.title': 'Forma indicada',
+  'tut.plots.2.body':
+    'Si el número lleva un dibujo encima, la parcela debe ser cuadrada, alta o ancha, según el dibujo.',
+  'tut.plots.3.title': 'Traza arrastrando',
+  'tut.plots.3.body':
+    'Arrastra de una esquina a la otra para trazar una parcela. Tócala para borrarla.',
+  'tut.thread.1.title': 'Un solo trazo por todo',
+  'tut.thread.1.body':
+    'Traza un camino que pase por todas las casillas una vez, empezando en el 1.',
+  'tut.thread.2.title': 'Números en orden',
+  'tut.thread.2.body':
+    'Debes pasar por los números en orden (1, 2, 3…) y terminar en el último cuando hayas cubierto todo.',
+  'tut.thread.3.title': 'Rodea las paredes',
+  'tut.thread.3.body':
+    'Las líneas gruesas son paredes: el camino no puede cruzarlas. Arrastra desde la punta del trazo; vuelve atrás para deshacer.',
+
   'domain.speed': 'Velocidad',
   'domain.memory': 'Memoria',
   'domain.attention': 'Atención',
@@ -271,6 +325,11 @@ const en: Dict = {
   'settings.sound': 'Sound',
   'settings.animations': 'Animations',
   'settings.language': 'Language',
+  'settings.colorblind': 'Color-blind mode',
+  'settings.colorblindHint': 'Textures on color regions and easy-to-tell inks.',
+  'color.orange': 'Orange',
+  'color.pink': 'Pink',
+  'color.black': 'Black',
   'lang.auto': 'Automatic',
   'lang.es': 'Spanish',
   'lang.en': 'English',
@@ -429,6 +488,53 @@ const en: Dict = {
   'profile.noData': 'no data',
   'profile.note':
     'The Seso Index (0–100) sums up your latest results so you can compare yourself with yourself. It is entertainment, not a medical assessment.',
+
+  'tutorial.skip': 'Skip',
+  'tutorial.prev': 'Back',
+  'tutorial.next': 'Next',
+  'tutorial.done': 'Got it!',
+  'tut.crowns.1.title': 'One crown per row, column and region',
+  'tut.crowns.1.body':
+    'Every row, every column and every color region holds exactly one crown.',
+  'tut.crowns.2.title': 'Crowns never touch',
+  'tut.crowns.2.body': 'Two crowns can never be next to each other, not even diagonally.',
+  'tut.crowns.3.title': 'How to mark',
+  'tut.crowns.3.body':
+    'Tap a cell once to mark ✕ (no crown here) and again to place 👑. Drag to mark several ✕.',
+  'tut.sunmoon.1.title': 'Half suns, half moons',
+  'tut.sunmoon.1.body': 'Every row and every column has as many ☀️ as 🌙.',
+  'tut.sunmoon.2.title': 'Never three in a row',
+  'tut.sunmoon.2.body':
+    'No more than two ☀️ (or 🌙) side by side, horizontally or vertically.',
+  'tut.sunmoon.3.title': 'The = and × clues',
+  'tut.sunmoon.3.body':
+    'Cells joined by = are the same; joined by × they are opposite. Tap to cycle empty → ☀️ → 🌙.',
+  'tut.minisudoku.1.title': 'Each digit once',
+  'tut.minisudoku.1.body':
+    '1 to 6, no repeats, in every row, every column and every 2×3 box.',
+  'tut.minisudoku.2.title': 'No repeats',
+  'tut.minisudoku.2.body':
+    'If a digit repeats in a row, column or box it turns red and underlined.',
+  'tut.minisudoku.3.title': 'Pick and type',
+  'tut.minisudoku.3.body':
+    'Tap a cell, then a digit on the keypad. Use ✏️ for pencil notes.',
+  'tut.plots.1.title': 'Rectangles with one number',
+  'tut.plots.1.body':
+    'Split everything into rectangles. Each holds a single number: its number of cells.',
+  'tut.plots.2.title': 'Given shape',
+  'tut.plots.2.body':
+    'If the number has a little drawing above it, the plot must be square, tall or wide, as drawn.',
+  'tut.plots.3.title': 'Drag to draw',
+  'tut.plots.3.body':
+    'Drag from one corner to the other to draw a plot. Tap it to erase it.',
+  'tut.thread.1.title': 'One path through everything',
+  'tut.thread.1.body': 'Draw a path that goes through every cell once, starting at 1.',
+  'tut.thread.2.title': 'Numbers in order',
+  'tut.thread.2.body':
+    'Visit the numbers in order (1, 2, 3…) and finish on the last one once everything is covered.',
+  'tut.thread.3.title': 'Go around walls',
+  'tut.thread.3.body':
+    'Thick lines are walls: the path cannot cross them. Drag from the tip of the path; go back to undo.',
 
   'domain.speed': 'Speed',
   'domain.memory': 'Memory',

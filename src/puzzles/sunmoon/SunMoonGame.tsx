@@ -3,6 +3,8 @@ import type { GameProps } from '../../core/registry';
 import { useT } from '../../core/i18n';
 import { AudioService } from '../../core/AudioService';
 import PuzzleShell from '../common/PuzzleShell';
+import { useTutorialOpen } from '../../core/tutorials';
+import { sunmoonSlides } from './tutorial';
 import { useWorkerResult } from '../common/useWorkerResult';
 import { usePuzzleSession } from '../common/usePuzzleSession';
 import { boardSeed } from '../common/boardSeed';
@@ -55,10 +57,12 @@ export default function SunMoonGame({
   );
   const puzzle = generated?.puzzle;
 
+  const tutorialOpen = useTutorialOpen('sunmoon');
   const session = usePuzzleSession<Cell>({
     boardKey: generated ? key : null,
     initial: () => [...(puzzle?.givens ?? [])],
     isSolved: (cells) => !!puzzle && isSolved(puzzle, cells),
+    paused: tutorialOpen,
     onSolved: (secs, hints) => onScore(secs, { difficulty: variant.id, hints }),
   });
   const { cells, cellsRef, commit, solved } = session;
@@ -147,6 +151,7 @@ export default function SunMoonGame({
       onClear={clear}
       onHint={applyHint}
       notice={notice}
+      slides={sunmoonSlides(t)}
       rules={[
         t('sunmoon.rule1'),
         t('sunmoon.rule2'),

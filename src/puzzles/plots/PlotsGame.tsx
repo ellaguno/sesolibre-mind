@@ -3,6 +3,8 @@ import type { GameProps } from '../../core/registry';
 import { useT } from '../../core/i18n';
 import { AudioService } from '../../core/AudioService';
 import PuzzleShell from '../common/PuzzleShell';
+import { useTutorialOpen } from '../../core/tutorials';
+import { plotsSlides } from './tutorial';
 import { usePuzzleSession } from '../common/usePuzzleSession';
 import { boardSeed } from '../common/boardSeed';
 import { VARIANTS, dailyVariant, generatePlots } from './generator';
@@ -69,10 +71,12 @@ export default function PlotsGame({
   const generated = useMemo(() => generatePlots(bseed, variant), [bseed, variant]);
   const { puzzle } = generated;
 
+  const tutorialOpen = useTutorialOpen('plots');
   const session = usePuzzleSession<number>({
     boardKey: key,
     initial: () => new Array<number>(size * size).fill(0),
     isSolved: (cells) => isSolved(puzzle, cells),
+    paused: tutorialOpen,
     onSolved: (secs, hints) => onScore(secs, { difficulty: variant.id, hints }),
   });
   const { cells, cellsRef, commit, solved } = session;
@@ -184,6 +188,7 @@ export default function PlotsGame({
       }}
       onHint={applyHint}
       notice={notice}
+      slides={plotsSlides(t)}
       rules={[t('plots.rule1'), t('plots.rule2'), t('plots.rule3'), t('plots.rule4')]}
     >
       <div className="h-full w-full overflow-hidden rounded-xl border-[3px] border-slate-800 bg-slate-50">

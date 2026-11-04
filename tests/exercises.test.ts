@@ -104,3 +104,11 @@ describe('¿cuántos quedan?', () => {
     expect(rs[4].moves.length).toBeGreaterThan(rs[0].moves.length);
   });
 });
+
+describe('choque de colores · modo daltónico', () => {
+  it('usa sólo las tintas seguras para daltonismo', () => {
+    const ts = cc.trials(mulberry32(9), 200, cc.COLORS_CB);
+    const used = new Set(ts.flatMap((t) => [t.word, t.ink]));
+    expect([...used].sort()).toEqual([...cc.COLORS_CB].sort());
+  });
+});

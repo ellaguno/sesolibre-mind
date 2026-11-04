@@ -7,6 +7,7 @@ import SessionScreen from './hub/SessionScreen';
 import ProfileScreen from './hub/ProfileScreen';
 import { useSettings } from './core/settings';
 import { useRewards } from './core/RewardService';
+import { useTutorials } from './core/tutorials';
 import ParticleOverlay from './anim/ParticleOverlay';
 import RouteTransition from './anim/RouteTransition';
 import { resolveLang } from './core/i18n';
@@ -14,10 +15,12 @@ import { resolveLang } from './core/i18n';
 export default function App() {
   const hydrateSettings = useSettings((s) => s.hydrate);
   const hydrateRewards = useRewards((s) => s.hydrate);
+  const hydrateTutorials = useTutorials((s) => s.hydrate);
   useEffect(() => {
     void hydrateSettings();
     void hydrateRewards();
-  }, [hydrateSettings, hydrateRewards]);
+    void hydrateTutorials();
+  }, [hydrateSettings, hydrateRewards, hydrateTutorials]);
 
   // <html lang> sigue al idioma elegido (lectores de pantalla / TalkBack).
   const lang = useSettings((s) => s.lang);

@@ -1,4 +1,6 @@
 import { useState, type ReactNode } from 'react';
+import Tutorial, { type Slide } from '../../ui/Tutorial';
+import { useTutorialOpen, useTutorials } from '../../core/tutorials';
 import { useT } from '../../core/i18n';
 import { formatDuration } from '../../core/format';
 import { shareText } from './share';
@@ -33,6 +35,8 @@ interface Props {
   /** Mensaje bajo los botones (p. ej. la explicación de una pista). */
   notice?: string | null;
   rules: string[];
+  /** Tutorial ilustrado: se muestra la primera vez y con el botón «?». */
+  slides?: Slide[];
   /** Controles propios del puzzle entre el tablero y los botones (p. ej. teclado numérico). */
   controls?: ReactNode;
   children: ReactNode;
@@ -46,6 +50,11 @@ export default function PuzzleShell(p: Props) {
   const t = useT();
   const [shared, setShared] = useState(false);
   const title = t(`act.${p.activityId}.title`);
+  const tutorialOpen = useTutorialOpen(p.activityId);
+  const markSeen = useTutorials((s) => s.markSeen);
+  const openHelp = useTutorials((s) => s.openHelp);
+  const showTutorial = !!p.slides && tutorialOpen;
+  const closeTutorial = () => markSeen(p.activityId);
 
   const share = async () => {
     const text = shareText({ ...p, title });
@@ -65,6 +74,9 @@ export default function PuzzleShell(p: Props) {
 
   return (
     <main className="mx-auto flex min-h-app max-w-lg flex-col gap-4 px-4 py-4">
+      {showTutorial && (
+        <Tutorial title={title} slides={p.slides!} onClose={closeTutorial} />
+      )}
       <header className="flex items-center gap-3">
         <button
           onClick={p.onExit}
@@ -81,6 +93,15 @@ export default function PuzzleShell(p: Props) {
             </span>
           )}
         </h1>
+        {p.slides && (
+          <button
+            onClick={() => openHelp(p.activityId)}
+            aria-label={t('puzzle.howto')}
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-app-surface text-lg font-bold hover:bg-app-surface2"
+          >
+            ?
+          </button>
+        )}
         <span className="font-mono text-lg tabular-nums" aria-label={t('puzzle.time')}>
           {formatDuration(p.elapsed)}
         </span>

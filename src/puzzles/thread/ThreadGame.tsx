@@ -3,6 +3,8 @@ import type { GameProps } from '../../core/registry';
 import { useT } from '../../core/i18n';
 import { AudioService } from '../../core/AudioService';
 import PuzzleShell from '../common/PuzzleShell';
+import { useTutorialOpen } from '../../core/tutorials';
+import { threadSlides } from './tutorial';
 import { useWorkerResult } from '../common/useWorkerResult';
 import { usePuzzleSession } from '../common/usePuzzleSession';
 import { boardSeed } from '../common/boardSeed';
@@ -42,10 +44,12 @@ export default function ThreadGame({
   const walls = useMemo(() => (puzzle ? wallSet(puzzle) : new Set<number>()), [puzzle]);
   const order = useMemo(() => (puzzle ? clueOrder(puzzle) : []), [puzzle]);
 
+  const tutorialOpen = useTutorialOpen('thread');
   const session = usePuzzleSession<number>({
     boardKey: generated ? key : null,
     initial: () => (puzzle ? [puzzle.clues[0]] : []),
     isSolved: (path) => !!puzzle && isSolved(puzzle, path),
+    paused: tutorialOpen,
     onSolved: (secs, hints) => onScore(secs, { difficulty: variant.id, hints }),
   });
   const { cells: path, cellsRef, commit, preview, solved } = session;
@@ -166,6 +170,7 @@ export default function ThreadGame({
       }}
       onHint={applyHint}
       notice={notice}
+      slides={threadSlides(t)}
       rules={[t('thread.rule1'), t('thread.rule2'), t('thread.rule3'), t('thread.rule4')]}
     >
       {puzzle && (

@@ -6,21 +6,27 @@ import { useT } from '../core/i18n';
 
 function ToggleRow({
   label,
+  hint,
   checked,
   onChange,
 }: {
   label: string;
+  hint?: string;
   checked: boolean;
   onChange: () => void;
 }) {
   return (
-    <label className="flex cursor-pointer items-center justify-between rounded-xl border border-app-border bg-app-surface px-4 py-3">
-      <span className="font-medium">{label}</span>
+    <label className="flex cursor-pointer items-center justify-between gap-3 rounded-xl border border-app-border bg-app-surface px-4 py-3">
+      <span className="flex flex-col">
+        <span className="font-medium">{label}</span>
+        {hint && <span className="text-xs text-app-muted">{hint}</span>}
+      </span>
       <button
         role="switch"
         aria-checked={checked}
         onClick={onChange}
-        className={`relative h-6 w-11 rounded-full transition ${checked ? 'bg-brand' : 'bg-app-surface2'}`}
+        aria-label={label}
+        className={`relative h-6 w-11 shrink-0 rounded-full transition ${checked ? 'bg-brand' : 'bg-app-surface2'}`}
       >
         <span
           className={`absolute top-0.5 h-5 w-5 rounded-full bg-white transition ${checked ? 'left-[22px]' : 'left-0.5'}`}
@@ -41,8 +47,18 @@ function Row({ label, children }: { label: string; children: ReactNode }) {
 
 export default function SettingsScreen() {
   const t = useT();
-  const { theme, sound, motion, lang, toggleTheme, setSound, setMotion, setLang } =
-    useSettings();
+  const {
+    theme,
+    sound,
+    motion,
+    lang,
+    colorblind,
+    toggleTheme,
+    setSound,
+    setMotion,
+    setLang,
+    setColorblind,
+  } = useSettings();
 
   return (
     <Screen title={t('settings.title')}>
@@ -65,6 +81,12 @@ export default function SettingsScreen() {
           label={t('settings.animations')}
           checked={motion}
           onChange={() => setMotion(!motion)}
+        />
+        <ToggleRow
+          label={t('settings.colorblind')}
+          hint={t('settings.colorblindHint')}
+          checked={colorblind}
+          onChange={() => setColorblind(!colorblind)}
         />
         <Row label={t('settings.language')}>
           <select

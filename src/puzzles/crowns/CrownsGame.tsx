@@ -1,8 +1,12 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
 import type { GameProps } from '../../core/registry';
 import { useT } from '../../core/i18n';
+import { useSettings } from '../../core/settings';
+import { REGION_PATTERNS, layered, type Pattern } from '../../ui/patterns';
 import { AudioService } from '../../core/AudioService';
 import PuzzleShell from '../common/PuzzleShell';
+import { useTutorialOpen } from '../../core/tutorials';
+import { crownsSlides } from './tutorial';
 import { useWorkerResult } from '../common/useWorkerResult';
 import { usePuzzleSession } from '../common/usePuzzleSession';
 import { boardSeed } from '../common/boardSeed';
@@ -36,6 +40,12 @@ const REGION_COLORS = [
   '#5eead4',
   '#bef264',
 ];
+
+const CONFLICT: Pattern = {
+  image:
+    'repeating-linear-gradient(45deg, rgba(220,38,38,0.35) 0 6px, transparent 6px 12px)',
+  size: 'auto',
+};
 
 const makeWorker = () =>
   new Worker(new URL('./worker.ts', import.meta.url), { type: 'module' });
@@ -89,14 +99,17 @@ export default function CrownsGame({
   );
   const puzzle = generated?.puzzle;
 
+  const tutorialOpen = useTutorialOpen('crowns');
   const session = usePuzzleSession<CellState>({
     boardKey: generated ? key : null,
     initial: () => new Array<CellState>(size * size).fill(EMPTY),
     isSolved: (cells) => !!puzzle && isSolved(puzzle, cells),
+    paused: tutorialOpen,
     onSolved: (secs, hints) => onScore(secs, { difficulty: String(size), hints }),
   });
   const { cells, cellsRef, commit, preview, solved } = session;
   const dragRef = useRef<Drag | null>(null);
+  const colorblind = useSettings((s) => s.colorblind);
 
   const bad = useMemo(
     () => (puzzle && session.ready ? conflicts(puzzle, cells) : new Set<number>()),
@@ -203,6 +216,7 @@ export default function CrownsGame({
         commit(cellsRef.current, new Array<CellState>(size * size).fill(EMPTY))
       }
       onHint={applyHint}
+      slides={crownsSlides(t)}
       rules={[t('crowns.rule1'), t('crowns.rule2'), t('crowns.rule3')]}
     >
       {puzzle && (
@@ -250,9 +264,10 @@ export default function CrownsGame({
                 }`}
                 style={{
                   backgroundColor: REGION_COLORS[reg],
-                  backgroundImage: isBad
-                    ? 'repeating-linear-gradient(45deg, rgba(220,38,38,0.35) 0 6px, transparent 6px 12px)'
-                    : undefined,
+                  ...layered([
+                    isBad ? CONFLICT : null,
+                    colorblind ? REGION_PATTERNS[reg % REGION_PATTERNS.length] : null,
+                  ]),
                   borderTop: r > 0 ? edge(i - size) : undefined,
                   borderBottom: r < size - 1 ? edge(i + size) : undefined,
                   borderLeft: c > 0 ? edge(i - 1) : undefined,
