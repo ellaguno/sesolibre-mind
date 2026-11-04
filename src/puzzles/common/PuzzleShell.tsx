@@ -1,4 +1,5 @@
-import { useState, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
+import { PASSES_TO_PROMOTE, passesOf, useLevels } from '../../core/levels';
 import Tutorial, { type Slide } from '../../ui/Tutorial';
 import { useTutorialOpen, useTutorials } from '../../core/tutorials';
 import { useT } from '../../core/i18n';
@@ -55,6 +56,28 @@ export default function PuzzleShell(p: Props) {
   const openHelp = useTutorials((s) => s.openHelp);
   const showTutorial = !!p.slides && tutorialOpen;
   const closeTutorial = () => markSeen(p.activityId);
+
+  // Escalera de niveles: al resolver (con 0–1 pistas) cuenta como aprobado y,
+  // si toca, se propone el siguiente nivel.
+  const levels = useLevels();
+  const [suggest, setSuggest] = useState<string | null>(null);
+  const { solved, hints, variant, activityId } = p;
+  useEffect(() => {
+    if (!solved) {
+      setSuggest(null);
+      return;
+    }
+    if (variant) {
+      setSuggest(useLevels.getState().recordResult(activityId, variant, hints <= 1));
+    }
+  }, [solved, hints, variant, activityId]);
+  const goNext = () => {
+    if (!suggest) return;
+    levels.setLevel(p.activityId, suggest);
+    setShared(false);
+    setSuggest(null);
+  };
+  const labelOf = (id: string) => p.variants?.find((v) => v.id === id)?.label ?? id;
 
   const share = async () => {
     const text = shareText({ ...p, title });
@@ -128,6 +151,9 @@ export default function PuzzleShell(p: Props) {
               }`}
             >
               {v.label}
+              {passesOf(levels, p.activityId, v.id) >= PASSES_TO_PROMOTE && (
+                <span aria-label={t('level.passed')}> ✓</span>
+              )}
             </button>
           ))}
         </div>
@@ -153,7 +179,19 @@ export default function PuzzleShell(p: Props) {
                 {p.label} · {formatDuration(p.elapsed)}
                 {p.hints > 0 && ` · ${t('puzzle.hintsUsed', { n: p.hints })}`}
               </p>
-              <Button onClick={() => void share()} className="w-full">
+              {suggest && (
+                <div className="w-full rounded-xl bg-brand/15 p-3">
+                  <p className="text-sm font-semibold">⭐ {t('level.unlocked')}</p>
+                  <Button onClick={goNext} className="mt-2 w-full">
+                    {t('level.tryNext', { level: labelOf(suggest) })}
+                  </Button>
+                </div>
+              )}
+              <Button
+                variant={suggest ? 'ghost' : 'primary'}
+                onClick={() => void share()}
+                className="w-full"
+              >
                 {shared ? t('puzzle.shared') : t('puzzle.share')}
               </Button>
               {!p.daily && !p.inSession && (

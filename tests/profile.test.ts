@@ -7,9 +7,9 @@ const entry = (value: number, meta?: Record<string, unknown>) => ({ value, at: 0
 describe('Índice Seso', () => {
   it('tiempo: igualar el objetivo da 100 y tardar el doble da 50', () => {
     const qm = findActivity('quickmath')!;
-    expect(normalize(qm, '', entry(30))).toBe(100);
-    expect(normalize(qm, '', entry(60))).toBe(50);
-    expect(normalize(qm, '', entry(10))).toBe(100); // tope
+    expect(normalize(qm, '4', entry(30))).toBe(100);
+    expect(normalize(qm, '4', entry(60))).toBe(50);
+    expect(normalize(qm, '4', entry(10))).toBe(100); // tope
   });
 
   it('puntos: proporcional al objetivo de la variante', () => {
@@ -26,7 +26,7 @@ describe('Índice Seso', () => {
   it('todas las actividades disponibles tienen referencia', async () => {
     const { activities } = await import('../src/core/registry');
     for (const a of activities.filter((x) => x.available)) {
-      for (const v of a.variants ?? ['']) {
+      for (const v of a.variants) {
         expect(normalize(a, v, entry(1)), `${a.id}:${v}`).not.toBeNull();
       }
     }

@@ -5,6 +5,8 @@ import { useSettings } from '../../core/settings';
 import { REGION_PATTERNS, layered, type Pattern } from '../../ui/patterns';
 import { AudioService } from '../../core/AudioService';
 import PuzzleShell from '../common/PuzzleShell';
+import { useActivityLevel } from '../../core/levels';
+
 import { useTutorialOpen } from '../../core/tutorials';
 import { crownsSlides } from './tutorial';
 import { useWorkerResult } from '../common/useWorkerResult';
@@ -23,7 +25,7 @@ import {
   type CellState,
 } from './logic';
 
-export const SIZES = [6, 7, 8, 9] as const;
+export const SIZES = [4, 5, 6, 7, 8, 9] as const;
 const VARIANTS = SIZES.map((s) => ({ id: String(s), label: `${s}×${s}` }));
 
 // Pasteles legibles con texto oscuro en ambos temas. El orden no importa: las
@@ -87,7 +89,11 @@ export default function CrownsGame({
   inSession,
 }: GameProps) {
   const t = useT();
-  const [size, setSize] = useState<number>(() => (daily ? dailySize(new Date()) : 7));
+  const [level, setLevel] = useActivityLevel(
+    'crowns',
+    daily ? String(dailySize(new Date())) : undefined,
+  );
+  const size = Number(level);
   const [round, setRound] = useState(0);
   const bseed = boardSeed(seed, daily, round, String(size));
   const key = `${bseed}:${size}`;
@@ -205,7 +211,7 @@ export default function CrownsGame({
       variants={VARIANTS}
       variant={String(size)}
       onVariant={(id) => {
-        setSize(Number(id));
+        setLevel(id);
         setRound((r) => r + 1);
       }}
       onNew={() => setRound((r) => r + 1)}

@@ -4,9 +4,27 @@ import { type Rng } from '../../core/rng';
 
 export type Mode = 'A' | 'B';
 export const ITEMS = 16;
+
+export interface Level {
+  mode: Mode;
+  count: number;
+}
+
+export const LEVELS: Record<string, Level> = {
+  '5': { mode: 'A', count: 5 },
+  '10': { mode: 'A', count: 10 },
+  A: { mode: 'A', count: ITEMS },
+  B: { mode: 'B', count: ITEMS },
+  B20: { mode: 'B', count: 20 },
+};
+
+/** Nivel superado: como mucho dos toques equivocados. */
+export const passed = (errors: number) => errors <= 2;
 export const PENALTY_S = 2;
 /** Distancia mínima entre centros (en fracción del lado) y margen al borde. */
 const MIN_DIST = 0.19;
+/** Con muchos círculos la distancia mínima se reduce para que quepan. */
+const minDist = (count: number) => Math.min(MIN_DIST, 0.75 / Math.sqrt(count));
 const MARGIN = 0.08;
 
 export function labels(mode: Mode, count = ITEMS): string[] {
@@ -35,7 +53,8 @@ export function positions(rng: Rng, count = ITEMS): Point[] {
         x: MARGIN + rng() * (1 - 2 * MARGIN),
         y: MARGIN + rng() * (1 - 2 * MARGIN),
       };
-      if (pts.every((q) => Math.hypot(p.x - q.x, p.y - q.y) >= MIN_DIST)) pts.push(p);
+      if (pts.every((q) => Math.hypot(p.x - q.x, p.y - q.y) >= minDist(count)))
+        pts.push(p);
     }
     if (pts.length === count) return pts;
   }

@@ -93,7 +93,7 @@ describe('parcelas · generador', () => {
 });
 
 describe('parcelas · pista', () => {
-  const { puzzle, solution } = generatePlots(21, VARIANTS[0]);
+  const { puzzle, solution } = generatePlots(21, VARIANTS.find((v) => v.id === '6')!);
 
   it('quita primero una parcela equivocada', () => {
     const wrong = solution.find((q) => q.h * q.w >= 2)!;

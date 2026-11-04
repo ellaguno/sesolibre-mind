@@ -9,11 +9,13 @@ import ExerciseShell, { type RunProps } from '../common/ExerciseShell';
 import NumPad from '../common/NumPad';
 import Feedback from '../common/Feedback';
 import { useStopwatch } from '../common/useStopwatch';
-import { COUNT, check, problems, score } from './logic';
+import { LEVELS, check, passed, problems, score, type Level } from './logic';
+import { useActivityLevel } from '../../core/levels';
+import { levelOptions } from '../common/levelOptions';
 
-function Run({ seed, finish }: RunProps) {
+function Run({ seed, finish, lv }: RunProps & { lv: Level }) {
   const t = useT();
-  const list = useMemo(() => problems(mulberry32(seed)), [seed]);
+  const list = useMemo(() => problems(mulberry32(seed), lv), [seed, lv]);
   const [k, setK] = useState(0);
   const [typed, setTyped] = useState('');
   const [errors, setErrors] = useState(0);
@@ -27,16 +29,17 @@ function Run({ seed, finish }: RunProps) {
       setErrors(errs);
       setTyped('');
       if (k + 1 === list.length) {
-        const s = score(clock.ms(), errs);
+        const s = score(clock.ms(), errs, lv);
         finish({
           score: s,
           headline: formatDuration(s),
           detail: errorsText(t, errs),
           meta: { errors: errs },
+          passed: passed(errs),
         });
       } else setK(k + 1);
     },
-    [errors, k, list.length, clock, finish, t],
+    [errors, k, list.length, clock, finish, t, lv],
   );
 
   const onDigit = useCallback(
@@ -56,7 +59,7 @@ function Run({ seed, finish }: RunProps) {
     <div className="flex flex-1 flex-col gap-4">
       <div className="flex justify-between text-sm text-app-muted">
         <span>
-          {k + 1}/{COUNT}
+          {k + 1}/{list.length}
         </span>
         <span className="font-mono tabular-nums">{formatDuration(clock.elapsed)}</span>
       </div>
@@ -76,14 +79,23 @@ function Run({ seed, finish }: RunProps) {
 
 export default function QuickMathExercise(props: GameProps) {
   const t = useT();
+  const [level, setLevel] = useActivityLevel('quickmath');
+  const lv = LEVELS[level] ?? LEVELS['4'];
   return (
     <ExerciseShell
       {...props}
       activityId="quickmath"
       emoji="➗"
-      instructions={[t('quickmath.i1'), t('quickmath.i2'), t('quickmath.i3')]}
+      instructions={[
+        t('quickmath.i1', { n: lv.count }),
+        t('quickmath.i2'),
+        lv.penalty ? t('quickmath.i3', { s: lv.penalty }) : t('exercise.noPenalty'),
+      ]}
+      variants={levelOptions('quickmath', t)}
+      variant={level}
+      onVariant={setLevel}
     >
-      {(run) => <Run {...run} />}
+      {(run) => <Run {...run} lv={lv} />}
     </ExerciseShell>
   );
 }

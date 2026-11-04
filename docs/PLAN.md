@@ -243,6 +243,20 @@ Los tiempos se miden con `performance.now()`. La UI de respuesta es siempre tác
 - [x] `thread`: camino hamiltoniano aleatorio (zigzag + movimientos «backbite»), números y paredes añadidos hasta descartar toda solución alternativa; solver DFS con poda de conectividad, grados, paridad y movimiento forzado, y presupuesto de nodos. 6×6, 7×7 y 8×8 difícil (minimizado) en Web Worker; arrastre con interpolación, retroceso, recorte tocando el trazo.
 - [x] Componentes comunes (`puzzles/common/`): `PuzzleShell` (encabezado, cronómetro, variantes, victoria, compartir, botones, reglas), `usePuzzleSession` (celdas, deshacer, pistas, victoria), `useWorkerResult` (generación en Web Worker), `boardSeed`.
 
+### Fase 1.1 — Niveles para todos (de lo hiper-básico al reto)
+Objetivo: que personas mayores o con poca práctica empiecen desde muy abajo y
+vayan creciendo, sin limitar a quien ya juega bien.
+
+- [x] **Escalera de niveles** por actividad (registry `variants` + `normal`, `core/levels.ts`): todos los niveles se pueden elegir siempre; tras 2 resultados «superados» en el nivel actual se propone subir (nunca se fuerza ni se baja solo). Niveles superados marcados con ✓.
+  - Puzzles: 4×4 y 5×5 nuevos (Coronas 4–9, Sol y Luna 4/6/6🔥/8, Hilo 4–8, Parcelas 4–8, Sudoku mini 4×4 con cajas 2×2 / 6×6 / 6×6🔥). «Superado» = resuelto con 0–1 pistas.
+  - Cálculo: 5 sumas fáciles → 10 sumas/restas → 15 con × → 20 de una cifra → 20 con dos cifras.
+  - Colores: 2 colores siempre coincidentes → 3 → 4 → 30 casi siempre engañosos.
+  - Cuenta atrás: de 1 en 1 → 2 → 3 → 7. Retén la cifra: desde 2 / 3 en orden / 3 al revés.
+  - Sendero: 1–5 → 1–10 → 1–16 → 1→A→2→B (16) → (20). ¿Cuántos quedan?: 3 rondas lentas sólo entrando → 4 → 5.
+- [x] **Pregunta inicial** «¿Cómo quieres empezar?» (lo más básico / normal / reto) que fija el punto de partida; se cambia en Ajustes.
+- [ ] **Modo sereno** (Ajustes): sin cronómetro ni penalizaciones, letra y botones grandes, animaciones lentas, pistas gratis, auto-✕ en Coronas, tocar en vez de arrastrar, ánimo en vez de Índice, racha que perdona un día.
+- [ ] **Sesión diaria adaptada** al nivel de cada actividad (hoy los puzzles de la sesión y del reto diario siguen el tamaño por día de la semana).
+
 ### Fase 2 — MVP ejercicios + sesión diaria
 - [x] `quickmath`, `colorclash`, `countdown` (−7 / −3), `numberspan` (en orden / al revés), `trails` (A / B), `headcount`. Lógica pura en `exercises/<id>/logic.ts` con tests.
 - [x] `ExerciseShell` (instrucciones → 3-2-1 → ejercicio → resultado), `NumPad` con teclado físico, `Feedback` ✓/✗.

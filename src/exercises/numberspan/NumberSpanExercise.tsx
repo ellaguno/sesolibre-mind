@@ -8,20 +8,24 @@ import NumPad from '../common/NumPad';
 import Feedback from '../common/Feedback';
 import {
   GAP_MS,
+  LEVELS,
   MAX_LENGTH,
   SHOW_MS,
-  START_LENGTH,
   STRIKES,
   expected,
+  passed,
   sequence,
-  type Mode,
+  type Level,
 } from './logic';
+import { useActivityLevel } from '../../core/levels';
+import { levelOptions } from '../common/levelOptions';
 
-function Run({ seed, finish, mode }: RunProps & { mode: Mode }) {
+function Run({ seed, finish, lv }: RunProps & { lv: Level }) {
+  const { mode } = lv;
   const t = useT();
   const rng = useMemo(() => mulberry32(seed), [seed]);
-  const [length, setLength] = useState(START_LENGTH);
-  const [seq, setSeq] = useState<number[]>(() => sequence(rng, START_LENGTH));
+  const [length, setLength] = useState(lv.start);
+  const [seq, setSeq] = useState<number[]>(() => sequence(rng, lv.start));
   const [shown, setShown] = useState(0); // dígitos ya mostrados
   const [visible, setVisible] = useState<number | null>(null);
   const [typed, setTyped] = useState('');
@@ -69,7 +73,7 @@ function Run({ seed, finish, mode }: RunProps & { mode: Mode }) {
           finish({
             score: b,
             headline: t('numberspan.headline', { n: b }),
-            meta: { difficulty: mode },
+            passed: passed(b, lv),
           }),
         500,
       );
@@ -119,21 +123,23 @@ function Run({ seed, finish, mode }: RunProps & { mode: Mode }) {
 
 export default function NumberSpanExercise(props: GameProps) {
   const t = useT();
-  const [mode, setMode] = useState<Mode>('forward');
+  const [level, setLevel] = useActivityLevel('numberspan');
+  const lv = LEVELS[level] ?? LEVELS.forward;
   return (
     <ExerciseShell
       {...props}
       activityId="numberspan"
       emoji="🔢"
-      instructions={[t('numberspan.i1'), t('numberspan.i2'), t('numberspan.i3')]}
-      variants={[
-        { id: 'forward', label: t('numberspan.forward') },
-        { id: 'backward', label: t('numberspan.backward') },
+      instructions={[
+        t('numberspan.i1', { n: lv.start }),
+        t(lv.mode === 'forward' ? 'numberspan.i2' : 'numberspan.i2back'),
+        t('numberspan.i3'),
       ]}
-      variant={mode}
-      onVariant={(id) => setMode(id as Mode)}
+      variants={levelOptions('numberspan', t)}
+      variant={level}
+      onVariant={setLevel}
     >
-      {(run) => <Run {...run} mode={mode} />}
+      {(run) => <Run {...run} lv={lv} />}
     </ExerciseShell>
   );
 }

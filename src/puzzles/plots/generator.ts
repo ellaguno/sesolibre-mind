@@ -20,6 +20,8 @@ import {
  */
 
 export const VARIANTS = [
+  { id: '4', size: 4, shapes: true },
+  { id: '5', size: 5, shapes: true },
   { id: '6', size: 6, shapes: true },
   { id: '7', size: 7, shapes: true },
   { id: '8', size: 8, shapes: false },
@@ -95,5 +97,5 @@ export function generatePlots(seed: number, variant: Variant): GeneratedPlots {
 /** Reto diario: 6×6 lun–jue, 7×7 el viernes, 8×8 sin formas el fin de semana. */
 export function dailyVariant(date: Date): Variant {
   const day = date.getDay();
-  return VARIANTS[day === 0 || day === 6 ? 2 : day === 5 ? 1 : 0];
+  return VARIANTS[day === 0 || day === 6 ? 4 : day === 5 ? 3 : 2];
 }

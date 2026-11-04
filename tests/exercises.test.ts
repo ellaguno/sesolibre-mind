@@ -9,7 +9,7 @@ import * as hc from '../src/exercises/headcount/logic';
 
 describe('cálculo relámpago', () => {
   it('genera operaciones correctas de resultado entero y positivo', () => {
-    const ps = qm.problems(mulberry32(1), 200);
+    const ps = qm.problems(mulberry32(1), { ...qm.LEVELS['4'], count: 200 });
     for (const p of ps) {
       const v = { '+': p.a + p.b, '−': p.a - p.b, '×': p.a * p.b, '÷': p.a / p.b }[p.op];
       expect(v).toBe(p.answer);
@@ -43,11 +43,13 @@ describe('choque de colores', () => {
 describe('cuenta atrás', () => {
   it('el inicio no es múltiplo del paso y da para muchas restas', () => {
     for (let s = 0; s < 50; s++) {
-      for (const step of cd.STEPS) {
-        const v = cd.startValue(mulberry32(s), step);
-        expect(v % step).not.toBe(0);
+      for (const lv of [cd.LEVELS['3'], cd.LEVELS['7']]) {
+        const v = cd.startValue(mulberry32(s), lv);
+        expect(v % lv.step).not.toBe(0);
         expect(v).toBeGreaterThanOrEqual(80);
       }
+      // Paso 1 (nivel básico): cualquier inicio vale.
+      expect(cd.startValue(mulberry32(s), cd.LEVELS['1'])).toBeLessThanOrEqual(25);
     }
     expect(cd.canContinue(6, 7)).toBe(false);
   });
@@ -110,5 +112,52 @@ describe('choque de colores · modo daltónico', () => {
     const ts = cc.trials(mulberry32(9), 200, cc.COLORS_CB);
     const used = new Set(ts.flatMap((t) => [t.word, t.ink]));
     expect([...used].sort()).toEqual([...cc.COLORS_CB].sort());
+  });
+});
+
+describe('ejercicios · niveles', () => {
+  it('cálculo nivel 1: 5 sumas pequeñas sin penalización', () => {
+    const lv = qm.LEVELS['1'];
+    const ps = qm.problems(mulberry32(3), lv);
+    expect(ps).toHaveLength(5);
+    expect(ps.every((p) => p.op === '+' && p.answer <= 10)).toBe(true);
+    expect(qm.score(12_000, 3, lv)).toBe(12);
+  });
+
+  it('cálculo nivel 5: sumas y restas de dos cifras', () => {
+    const ps = qm.problems(mulberry32(4), qm.LEVELS['5']);
+    expect(ps.some((p) => (p.op === '+' || p.op === '−') && p.b >= 11)).toBe(true);
+  });
+
+  it('colores nivel 1: dos tintas y la palabra siempre coincide', () => {
+    const lv = cc.LEVELS['1'];
+    const ts = cc.trials(
+      mulberry32(5),
+      lv.count,
+      cc.COLORS.slice(0, lv.colors),
+      lv.congruent,
+    );
+    expect(ts).toHaveLength(8);
+    expect(ts.every((t) => t.word === t.ink)).toBe(true);
+    expect(new Set(ts.map((t) => t.ink)).size).toBeLessThanOrEqual(2);
+  });
+
+  it('sendero con 20 círculos cabe y nivel básico usa 5', () => {
+    expect(tr.positions(mulberry32(6), 20)).toHaveLength(20);
+    expect(tr.labels('A', tr.LEVELS['5'].count)).toEqual(['1', '2', '3', '4', '5']);
+  });
+
+  it('¿cuántos quedan? nivel 1: 3 rondas sólo entrando, de una en una', () => {
+    const rs = hc.rounds(mulberry32(7), hc.LEVELS['1']);
+    expect(rs).toHaveLength(3);
+    for (const r of rs)
+      expect(r.moves.every((m) => m.dir === 'in' && m.n === 1)).toBe(true);
+  });
+
+  it('criterios de nivel superado', () => {
+    expect(ns.passed(4, ns.LEVELS['2'])).toBe(true);
+    expect(ns.passed(4, ns.LEVELS.forward)).toBe(false);
+    expect(hc.passed(2, hc.LEVELS['1'])).toBe(true);
+    expect(qm.passed(2)).toBe(false);
   });
 });

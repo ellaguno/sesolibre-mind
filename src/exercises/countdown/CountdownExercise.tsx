@@ -9,11 +9,14 @@ import ExerciseShell, { type RunProps } from '../common/ExerciseShell';
 import NumPad from '../common/NumPad';
 import Feedback from '../common/Feedback';
 import { useStopwatch } from '../common/useStopwatch';
-import { DURATION_S, STEPS, canContinue, startValue } from './logic';
+import { LEVELS, canContinue, startValue, type Level } from './logic';
+import { useActivityLevel } from '../../core/levels';
+import { levelOptions } from '../common/levelOptions';
 
-function Run({ seed, finish, step }: RunProps & { step: number }) {
+function Run({ seed, finish, lv }: RunProps & { lv: Level }) {
   const t = useT();
-  const start = useMemo(() => startValue(mulberry32(seed), step), [seed, step]);
+  const { step } = lv;
+  const start = useMemo(() => startValue(mulberry32(seed), lv), [seed, lv]);
   const [current, setCurrent] = useState(start);
   const [typed, setTyped] = useState('');
   const [correct, setCorrect] = useState(0);
@@ -21,7 +24,7 @@ function Run({ seed, finish, step }: RunProps & { step: number }) {
   const [fb, setFb] = useState<'ok' | 'bad' | null>(null);
   const [reveal, setReveal] = useState<number | null>(null);
   const clock = useStopwatch();
-  const left = Math.max(0, DURATION_S - clock.elapsed);
+  const left = Math.max(0, lv.seconds - clock.elapsed);
   const done = useRef(false);
 
   const end = (c: number, e: number) => {
@@ -31,7 +34,8 @@ function Run({ seed, finish, step }: RunProps & { step: number }) {
       score: c,
       headline: t('countdown.headline', { n: c }),
       detail: errorsText(t, e),
-      meta: { errors: e, difficulty: String(step) },
+      meta: { errors: e },
+      passed: c >= lv.pass,
     });
   };
 
@@ -92,22 +96,23 @@ function Run({ seed, finish, step }: RunProps & { step: number }) {
 
 export default function CountdownExercise(props: GameProps) {
   const t = useT();
-  const [step, setStep] = useState<number>(STEPS[0]);
+  const [level, setLevel] = useActivityLevel('countdown');
+  const lv = LEVELS[level] ?? LEVELS['3'];
   return (
     <ExerciseShell
       {...props}
       activityId="countdown"
       emoji="➖"
       instructions={[
-        t('countdown.i1', { step }),
+        t('countdown.i1', { step: lv.step }),
         t('countdown.i2'),
-        t('countdown.i3', { s: DURATION_S }),
+        t('countdown.i3', { s: lv.seconds }),
       ]}
-      variants={STEPS.map((s) => ({ id: String(s), label: `−${s}` }))}
-      variant={String(step)}
-      onVariant={(id) => setStep(Number(id))}
+      variants={levelOptions('countdown', t)}
+      variant={level}
+      onVariant={setLevel}
     >
-      {(run) => <Run {...run} step={step} />}
+      {(run) => <Run {...run} lv={lv} />}
     </ExerciseShell>
   );
 }

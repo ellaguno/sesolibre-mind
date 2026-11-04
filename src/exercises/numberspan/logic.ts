@@ -11,6 +11,20 @@ export const GAP_MS = 250;
 
 export type Mode = 'forward' | 'backward';
 
+export interface Level {
+  start: number;
+  mode: Mode;
+}
+
+export const LEVELS: Record<string, Level> = {
+  '2': { start: 2, mode: 'forward' },
+  forward: { start: START_LENGTH, mode: 'forward' },
+  backward: { start: START_LENGTH, mode: 'backward' },
+};
+
+/** Nivel superado: llegar a dos cifras más que el inicio. */
+export const passed = (best: number, lv: Level) => best >= lv.start + 2;
+
 export function sequence(rng: Rng, length: number): number[] {
   const out: number[] = [];
   while (out.length < length) {

@@ -3,6 +3,8 @@ import type { GameProps } from '../../core/registry';
 import { useT } from '../../core/i18n';
 import { AudioService } from '../../core/AudioService';
 import PuzzleShell from '../common/PuzzleShell';
+import { useActivityLevel } from '../../core/levels';
+
 import { useTutorialOpen } from '../../core/tutorials';
 import { threadSlides } from './tutorial';
 import { useWorkerResult } from '../common/useWorkerResult';
@@ -24,8 +26,9 @@ export default function ThreadGame({
   inSession,
 }: GameProps) {
   const t = useT();
-  const [variantId, setVariantId] = useState<string>(() =>
-    daily ? dailyVariant(new Date()).id : VARIANTS[0].id,
+  const [variantId, setVariantId] = useActivityLevel(
+    'thread',
+    daily ? dailyVariant(new Date()).id : undefined,
   );
   const variant = VARIANTS.find((v) => v.id === variantId) ?? VARIANTS[0];
   const { size } = variant;

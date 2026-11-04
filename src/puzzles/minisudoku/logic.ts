@@ -1,14 +1,11 @@
 /**
- * Sudoku mini: 6×6 con cajas de 2 filas × 3 columnas, cifras 1–6.
- * Cada fila, columna y caja contiene cada cifra una sola vez.
+ * Sudoku mini: 6×6 con cajas de 2×3 (cifras 1–6) o 4×4 con cajas de 2×2
+ * (cifras 1–4, el nivel más básico). Cada fila, columna y caja contiene cada
+ * cifra una sola vez.
  *
- * Tablero en array plano (i = fila * 6 + columna); 0 = vacía.
+ * Tablero en array plano (i = fila * n + columna); 0 = vacía. La forma del
+ * tablero se deduce de su longitud (16 → 4×4, 36 → 6×6).
  */
-
-export const N = 6;
-export const BOX_ROWS = 2;
-export const BOX_COLS = 3;
-export const DIGITS = [1, 2, 3, 4, 5, 6] as const;
 
 export type Grid = number[];
 export type UnitKind = 'row' | 'col' | 'box';
@@ -19,53 +16,84 @@ export interface Unit {
   cells: number[];
 }
 
-export const rowOf = (i: number) => Math.floor(i / N);
-export const colOf = (i: number) => i % N;
-export const boxOf = (i: number) =>
-  Math.floor(rowOf(i) / BOX_ROWS) * (N / BOX_COLS) + Math.floor(colOf(i) / BOX_COLS);
+export interface Spec {
+  n: number;
+  boxRows: number;
+  boxCols: number;
+  digits: number[];
+  units: Unit[];
+  /** Celdas que comparten fila, columna o caja con cada celda. */
+  peers: number[][];
+  rowOf: (i: number) => number;
+  colOf: (i: number) => number;
+  boxOf: (i: number) => number;
+}
 
-export const UNITS: Unit[] = (() => {
+function makeSpec(n: number, boxRows: number, boxCols: number): Spec {
+  const rowOf = (i: number) => Math.floor(i / n);
+  const colOf = (i: number) => i % n;
+  const boxOf = (i: number) =>
+    Math.floor(rowOf(i) / boxRows) * (n / boxCols) + Math.floor(colOf(i) / boxCols);
   const units: Unit[] = [];
-  for (let k = 0; k < N; k++) {
+  for (let k = 0; k < n; k++) {
     units.push({
       kind: 'row',
       index: k,
-      cells: Array.from({ length: N }, (_, j) => k * N + j),
+      cells: Array.from({ length: n }, (_, j) => k * n + j),
     });
     units.push({
       kind: 'col',
       index: k,
-      cells: Array.from({ length: N }, (_, j) => j * N + k),
+      cells: Array.from({ length: n }, (_, j) => j * n + k),
     });
   }
-  for (let b = 0; b < N; b++) {
+  for (let b = 0; b < n; b++) {
     units.push({
       kind: 'box',
       index: b,
-      cells: Array.from({ length: N * N }, (_, i) => i).filter((i) => boxOf(i) === b),
+      cells: Array.from({ length: n * n }, (_, i) => i).filter((i) => boxOf(i) === b),
     });
   }
-  return units;
-})();
+  const peers = Array.from({ length: n * n }, (_, i) => {
+    const set = new Set<number>();
+    for (const u of units)
+      if (u.cells.includes(i)) u.cells.forEach((c) => c !== i && set.add(c));
+    return [...set];
+  });
+  const digits = Array.from({ length: n }, (_, k) => k + 1);
+  return { n, boxRows, boxCols, digits, units, peers, rowOf, colOf, boxOf };
+}
 
-/** Celdas que comparten fila, columna o caja con cada celda. */
-export const PEERS: number[][] = Array.from({ length: N * N }, (_, i) => {
-  const set = new Set<number>();
-  for (const u of UNITS)
-    if (u.cells.includes(i)) u.cells.forEach((c) => c !== i && set.add(c));
-  return [...set];
-});
+export const SPEC6 = makeSpec(6, 2, 3);
+export const SPEC4 = makeSpec(4, 2, 2);
+
+/** Forma del tablero según su número de celdas. */
+export function specFor(cells: number): Spec {
+  return cells === 16 ? SPEC4 : SPEC6;
+}
+
+// Compatibilidad: constantes del 6×6.
+export const N = SPEC6.n;
+export const BOX_ROWS = SPEC6.boxRows;
+export const BOX_COLS = SPEC6.boxCols;
+export const DIGITS = SPEC6.digits;
+export const UNITS = SPEC6.units;
+export const PEERS = SPEC6.peers;
+export const rowOf = SPEC6.rowOf;
+export const colOf = SPEC6.colOf;
+export const boxOf = SPEC6.boxOf;
 
 export function candidates(grid: readonly number[], i: number): number[] {
   if (grid[i] !== 0) return [];
-  const used = new Set(PEERS[i].map((p) => grid[p]));
-  return DIGITS.filter((d) => !used.has(d));
+  const spec = specFor(grid.length);
+  const used = new Set(spec.peers[i].map((p) => grid[p]));
+  return spec.digits.filter((d) => !used.has(d));
 }
 
 /** Celdas cuyo valor se repite en alguna fila, columna o caja. */
 export function conflicts(grid: readonly number[]): Set<number> {
   const bad = new Set<number>();
-  for (const u of UNITS) {
+  for (const u of specFor(grid.length).units) {
     const seen = new Map<number, number[]>();
     for (const c of u.cells) {
       const v = grid[c];
@@ -141,9 +169,10 @@ export function nextDeduction(
     }
   }
   if (allowed.includes('hidden')) {
-    for (const u of UNITS) {
+    const spec = specFor(grid.length);
+    for (const u of spec.units) {
       const present = new Set(u.cells.map((c) => grid[c]));
-      for (const d of DIGITS) {
+      for (const d of spec.digits) {
         if (present.has(d)) continue;
         const spots = u.cells.filter(
           (c) => grid[c] === 0 && candidates(grid, c).includes(d),

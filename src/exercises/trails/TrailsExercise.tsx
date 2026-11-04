@@ -7,11 +7,13 @@ import { mulberry32 } from '../../core/rng';
 import { errorsText } from '../common/text';
 import ExerciseShell, { type RunProps } from '../common/ExerciseShell';
 import { useStopwatch } from '../common/useStopwatch';
-import { labels, positions, score, type Mode } from './logic';
+import { LEVELS, labels, passed, positions, score, type Level } from './logic';
+import { useActivityLevel } from '../../core/levels';
+import { levelOptions } from '../common/levelOptions';
 
-function Run({ seed, finish, mode }: RunProps & { mode: Mode }) {
+function Run({ seed, finish, lv }: RunProps & { lv: Level }) {
   const t = useT();
-  const items = useMemo(() => labels(mode), [mode]);
+  const items = useMemo(() => labels(lv.mode, lv.count), [lv]);
   const pts = useMemo(
     () => positions(mulberry32(seed), items.length),
     [seed, items.length],
@@ -37,7 +39,8 @@ function Run({ seed, finish, mode }: RunProps & { mode: Mode }) {
         score: s,
         headline: formatDuration(s),
         detail: errorsText(t, errors),
-        meta: { errors, difficulty: mode },
+        meta: { errors },
+        passed: passed(errors),
       });
     }
     setNext(k + 1);
@@ -90,21 +93,23 @@ function Run({ seed, finish, mode }: RunProps & { mode: Mode }) {
 
 export default function TrailsExercise(props: GameProps) {
   const t = useT();
-  const [mode, setMode] = useState<Mode>('B');
+  const [level, setLevel] = useActivityLevel('trails');
+  const lv = LEVELS[level] ?? LEVELS.A;
   return (
     <ExerciseShell
       {...props}
       activityId="trails"
       emoji="🔗"
-      instructions={[t('trails.i1'), t('trails.i2'), t('trails.i3')]}
-      variants={[
-        { id: 'A', label: t('trails.modeA') },
-        { id: 'B', label: t('trails.modeB') },
+      instructions={[
+        t('trails.i1', { n: lv.count }),
+        t(lv.mode === 'A' ? 'trails.i2a' : 'trails.i2'),
+        t('trails.i3'),
       ]}
-      variant={mode}
-      onVariant={(id) => setMode(id as Mode)}
+      variants={levelOptions('trails', t)}
+      variant={level}
+      onVariant={setLevel}
     >
-      {(run) => <Run {...run} mode={mode} />}
+      {(run) => <Run {...run} lv={lv} />}
     </ExerciseShell>
   );
 }

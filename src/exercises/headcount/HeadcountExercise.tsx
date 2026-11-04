@@ -5,13 +5,16 @@ import { AudioService } from '../../core/AudioService';
 import { mulberry32 } from '../../core/rng';
 import ExerciseShell, { type RunProps } from '../common/ExerciseShell';
 import NumPad from '../common/NumPad';
-import { ROUNDS, rounds } from './logic';
+import { LEVELS, passed, rounds, type Level } from './logic';
+import { useActivityLevel } from '../../core/levels';
+import { levelOptions } from '../common/levelOptions';
 
 type Stage = 'ready' | 'moving' | 'ask' | 'feedback';
 
-function Run({ seed, finish }: RunProps) {
+function Run({ seed, finish, lv }: RunProps & { lv: Level }) {
   const t = useT();
-  const list = useMemo(() => rounds(mulberry32(seed)), [seed]);
+  const list = useMemo(() => rounds(mulberry32(seed), lv), [seed, lv]);
+  const ROUNDS = list.length;
   const [r, setR] = useState(0);
   const [stage, setStage] = useState<Stage>('ready');
   const [move, setMove] = useState(0);
@@ -44,7 +47,7 @@ function Run({ seed, finish }: RunProps) {
       }, 1400);
       return () => clearTimeout(id);
     }
-  }, [stage, move, round, r]);
+  }, [stage, move, round, r, ROUNDS]);
 
   const submit = () => {
     if (stage !== 'ask' || typed === '') return;
@@ -61,6 +64,7 @@ function Run({ seed, finish }: RunProps) {
             score: s,
             headline: `${s}/${ROUNDS}`,
             detail: t('headcount.detail'),
+            passed: passed(s, lv),
           }),
         1400,
       );
@@ -136,14 +140,23 @@ function Run({ seed, finish }: RunProps) {
 
 export default function HeadcountExercise(props: GameProps) {
   const t = useT();
+  const [level, setLevel] = useActivityLevel('headcount');
+  const lv = LEVELS[level] ?? LEVELS['3'];
   return (
     <ExerciseShell
       {...props}
       activityId="headcount"
       emoji="🏠"
-      instructions={[t('headcount.i1'), t('headcount.i2'), t('headcount.i3')]}
+      instructions={[
+        lv.onlyIn ? t('headcount.i1easy') : t('headcount.i1'),
+        t('headcount.i2'),
+        t('headcount.i3', { n: lv.rounds }),
+      ]}
+      variants={levelOptions('headcount', t)}
+      variant={level}
+      onVariant={setLevel}
     >
-      {(run) => <Run {...run} />}
+      {(run) => <Run {...run} lv={lv} />}
     </ExerciseShell>
   );
 }

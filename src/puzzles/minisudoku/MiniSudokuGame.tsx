@@ -3,25 +3,15 @@ import type { GameProps } from '../../core/registry';
 import { useT } from '../../core/i18n';
 import { AudioService } from '../../core/AudioService';
 import PuzzleShell from '../common/PuzzleShell';
+import { useActivityLevel } from '../../core/levels';
+
 import { useTutorialOpen } from '../../core/tutorials';
 import { minisudokuSlides } from './tutorial';
 import { useWorkerResult } from '../common/useWorkerResult';
 import { usePuzzleSession } from '../common/usePuzzleSession';
 import { boardSeed } from '../common/boardSeed';
 import { VARIANTS, dailyVariant, generateSudoku, type Difficulty } from './generator';
-import {
-  BOX_COLS,
-  BOX_ROWS,
-  DIGITS,
-  N,
-  PEERS,
-  boxOf,
-  colOf,
-  conflicts,
-  hint as computeHint,
-  isSolved,
-  rowOf,
-} from './logic';
+import { conflicts, hint as computeHint, isSolved, specFor } from './logic';
 
 /**
  * Cada celda se guarda como un número: cifra en los 3 bits bajos y notas a
@@ -34,8 +24,8 @@ const withNotes = (notes: number) => notes << 3;
 
 const makeWorker = () =>
   new Worker(new URL('./worker.ts', import.meta.url), { type: 'module' });
-const generateInline = (a: { seed: number; difficulty: Difficulty }) =>
-  generateSudoku(a.seed, a.difficulty);
+const generateInline = (a: { seed: number; difficulty: Difficulty; size: 4 | 6 }) =>
+  generateSudoku(a.seed, a.difficulty, a.size);
 
 export default function MiniSudokuGame({
   onScore,
@@ -45,10 +35,22 @@ export default function MiniSudokuGame({
   inSession,
 }: GameProps) {
   const t = useT();
-  const [variantId, setVariantId] = useState<string>(() =>
-    daily ? dailyVariant(new Date()).id : VARIANTS[0].id,
+  const [variantId, setVariantId] = useActivityLevel(
+    'minisudoku',
+    daily ? dailyVariant(new Date()).id : undefined,
   );
-  const variant = VARIANTS.find((v) => v.id === variantId) ?? VARIANTS[0];
+  const variant = VARIANTS.find((v) => v.id === variantId) ?? VARIANTS[1];
+  const spec = specFor(variant.size * variant.size);
+  const {
+    n: N,
+    boxRows: BOX_ROWS,
+    boxCols: BOX_COLS,
+    digits: DIGITS,
+    peers: PEERS,
+    rowOf,
+    colOf,
+    boxOf,
+  } = spec;
   const [round, setRound] = useState(0);
   const [notice, setNotice] = useState<string | null>(null);
   const [selected, setSelected] = useState<number | null>(null);
@@ -59,7 +61,7 @@ export default function MiniSudokuGame({
   const generated = useWorkerResult(
     key,
     makeWorker,
-    { seed: bseed, difficulty: variant.difficulty },
+    { seed: bseed, difficulty: variant.difficulty, size: variant.size },
     generateInline,
   );
   const givens = generated?.givens;
@@ -176,7 +178,8 @@ export default function MiniSudokuGame({
 
   const sel = selected;
   const selValue = sel !== null ? values[sel] : 0;
-  const label = variant.difficulty === 'hard' ? '6×6 🔥' : '6×6';
+  const label =
+    variant.size === 4 ? '4×4' : variant.difficulty === 'hard' ? '6×6 🔥' : '6×6';
 
   return (
     <PuzzleShell
@@ -189,7 +192,10 @@ export default function MiniSudokuGame({
       solved={solved}
       hints={session.hints}
       label={label}
-      variants={VARIANTS.map((v) => ({ id: v.id, label: t(`difficulty.${v.id}`) }))}
+      variants={VARIANTS.map((v) => ({
+        id: v.id,
+        label: v.size === 4 ? '4×4' : t(`difficulty.${v.id}`),
+      }))}
       variant={variant.id}
       onVariant={(id) => {
         setVariantId(id);
@@ -209,7 +215,10 @@ export default function MiniSudokuGame({
       slides={minisudokuSlides(t)}
       rules={[t('minisudoku.rule1'), t('minisudoku.rule2'), t('minisudoku.rule3')]}
       controls={
-        <div className="grid grid-cols-8 gap-1.5">
+        <div
+          className="grid gap-1.5"
+          style={{ gridTemplateColumns: `repeat(${DIGITS.length + 2}, minmax(0, 1fr))` }}
+        >
           {DIGITS.map((d) => (
             <button
               key={d}
@@ -308,7 +317,7 @@ export default function MiniSudokuGame({
                   notesOf(cell) !== 0 && (
                     <span
                       aria-hidden
-                      className="grid h-full w-full grid-cols-3 p-0.5 text-[min(2.6vw,0.7rem)] leading-none text-slate-500"
+                      className={`grid h-full w-full ${N === 4 ? 'grid-cols-2' : 'grid-cols-3'} p-0.5 text-[min(2.6vw,0.7rem)] leading-none text-slate-500`}
                     >
                       {DIGITS.map((d) => (
                         <span key={d} className="flex items-center justify-center">

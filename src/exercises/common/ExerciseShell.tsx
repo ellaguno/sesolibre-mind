@@ -4,6 +4,7 @@ import { useT } from '../../core/i18n';
 import { AudioService } from '../../core/AudioService';
 import Button from '../../ui/Button';
 import { boardSeed } from '../../puzzles/common/boardSeed';
+import { PASSES_TO_PROMOTE, passesOf, useLevels } from '../../core/levels';
 
 export interface ExerciseResult {
   /** Valor que se guarda como puntuación (según el scoreKind de la actividad). */
@@ -13,6 +14,8 @@ export interface ExerciseResult {
   /** Detalle opcional (p. ej. "2 errores"). */
   detail?: string;
   meta?: Record<string, unknown>;
+  /** ¿Cumple el criterio de «nivel superado»? (cuenta para proponer subir). */
+  passed: boolean;
 }
 
 export interface RunProps {
@@ -44,6 +47,8 @@ export default function ExerciseShell(p: Props) {
   const [count, setCount] = useState(3);
   const [attempt, setAttempt] = useState(0);
   const [result, setResult] = useState<ExerciseResult | null>(null);
+  const [suggest, setSuggest] = useState<string | null>(null);
+  const levels = useLevels();
   const finished = useRef(false);
   const title = t(`act.${p.activityId}.title`);
 
@@ -64,7 +69,7 @@ export default function ExerciseShell(p: Props) {
     setPhase('countdown');
   };
 
-  const { onScore } = p;
+  const { onScore, activityId, variant } = p;
   const finish = useCallback(
     (r: ExerciseResult) => {
       if (finished.current) return;
@@ -72,14 +77,30 @@ export default function ExerciseShell(p: Props) {
       setResult(r);
       setPhase('done');
       AudioService.play('win');
-      onScore(r.score, r.meta);
+      onScore(r.score, { ...r.meta, difficulty: variant });
+      setSuggest(
+        variant ? useLevels.getState().recordResult(activityId, variant, r.passed) : null,
+      );
     },
-    [onScore],
+    [onScore, activityId, variant],
   );
 
   const retry = () => {
+    setSuggest(null);
     setAttempt((a) => a + 1);
     start();
+  };
+
+  const labelOf = (id: string) => p.variants?.find((v) => v.id === id)?.label ?? id;
+  const goNext = () => {
+    if (!suggest) return;
+    levels.setLevel(p.activityId, suggest);
+    setSuggest(null);
+    // Fuera de la sesión y del reto diario, empezar ya el nivel nuevo.
+    if (canRetry) {
+      setAttempt((a) => a + 1);
+      start();
+    }
   };
 
   const seed = boardSeed(p.seed, p.daily, attempt, p.variant ?? '');
@@ -129,9 +150,17 @@ export default function ExerciseShell(p: Props) {
                   }`}
                 >
                   {v.label}
+                  {passesOf(levels, p.activityId, v.id) >= PASSES_TO_PROMOTE && (
+                    <span aria-label={t('level.passed')}> ✓</span>
+                  )}
                 </button>
               ))}
             </div>
+          )}
+          {p.variant && (
+            <p className="text-sm text-app-muted">
+              {t(`lvl.${p.activityId}.${p.variant}`)}
+            </p>
           )}
           <Button onClick={start} className="mt-auto py-4 text-lg">
             {t('exercise.start')}
@@ -162,6 +191,16 @@ export default function ExerciseShell(p: Props) {
           <p className="text-5xl font-black tabular-nums">{result.headline}</p>
           {result.detail && <p className="text-app-muted">{result.detail}</p>}
           <div className="mt-4 flex w-full max-w-xs flex-col gap-2">
+            {suggest && (
+              <div className="rounded-xl bg-brand/15 p-3">
+                <p className="text-sm font-semibold">⭐ {t('level.unlocked')}</p>
+                <Button onClick={goNext} className="mt-2 w-full">
+                  {canRetry
+                    ? t('level.tryNext', { level: labelOf(suggest) })
+                    : t('level.setNext', { level: labelOf(suggest) })}
+                </Button>
+              </div>
+            )}
             {canRetry && (
               <Button onClick={retry} className="w-full">
                 {t('exercise.retry')}

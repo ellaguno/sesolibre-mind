@@ -8,6 +8,8 @@ import { formatActivityScore } from '../core/format';
 import { useT } from '../core/i18n';
 import { dailyPlan, isComplete, loadSession } from '../core/session';
 import StreakCalendar from './StreakCalendar';
+import StartChoiceDialog from './StartChoiceDialog';
+import { useLevels } from '../core/levels';
 
 function ActivityTile({ activity }: { activity: ActivityMeta }) {
   const t = useT();
@@ -75,6 +77,7 @@ function Section({ kind, title }: { kind: ActivityKind; title: string }) {
 export default function HubScreen() {
   const t = useT();
   const rewards = useRewards();
+  const askStart = useLevels((s) => s.loaded && s.start === null);
   const today = dateKey(new Date());
   const streak = currentStreak(rewards, today);
   const [sessionDone, setSessionDone] = useState(false);
@@ -88,6 +91,7 @@ export default function HubScreen() {
 
   return (
     <main className="mx-auto flex min-h-full max-w-2xl flex-col gap-6 px-4 py-6">
+      {askStart && <StartChoiceDialog />}
       <header className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">🧠 {t('app.title')}</h1>

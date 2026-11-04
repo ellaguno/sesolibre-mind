@@ -45,10 +45,12 @@ export interface ActivityMeta {
   accent: string; // color de acento en hex
   load?: () => Promise<{ default: ComponentType<GameProps> }>;
   /**
-   * Variantes con récord propio (p. ej. tamaños de tablero), de la más fácil a
-   * la más difícil. La actividad las indica en onScore(score, { difficulty }).
+   * Niveles con récord propio, del más fácil al más difícil (escalera de
+   * niveles). La actividad indica el jugado en onScore(score, { difficulty }).
    */
-  variants?: readonly string[];
+  variants: readonly string[];
+  /** Nivel de partida para quien elige «Normal» en la pregunta inicial. */
+  normal: string;
   /** Para scoreKind 'points': clave i18n con {n} para mostrar la unidad (p. ej. "8 cifras"). */
   pointsKey?: string;
 }
@@ -82,6 +84,8 @@ export const activities: ActivityMeta[] = [
     higherIsBetter: false,
     available: true,
     accent: '#f97316',
+    variants: ['1', '2', '3', '4', '5'],
+    normal: '4',
     load: () => import('../exercises/quickmath/QuickMathExercise'),
   },
   {
@@ -93,6 +97,8 @@ export const activities: ActivityMeta[] = [
     higherIsBetter: false,
     available: true,
     accent: '#ec4899',
+    variants: ['1', '2', '3', '4'],
+    normal: '3',
     load: () => import('../exercises/colorclash/ColorClashExercise'),
   },
   {
@@ -105,7 +111,8 @@ export const activities: ActivityMeta[] = [
     available: true,
     accent: '#a855f7',
     pointsKey: 'unit.correct',
-    variants: ['3', '7'],
+    variants: ['1', '2', '3', '7'],
+    normal: '3',
     load: () => import('../exercises/countdown/CountdownExercise'),
   },
   {
@@ -118,7 +125,8 @@ export const activities: ActivityMeta[] = [
     available: true,
     accent: '#8b5cf6',
     pointsKey: 'unit.digits',
-    variants: ['forward', 'backward'],
+    variants: ['2', 'forward', 'backward'],
+    normal: 'forward',
     load: () => import('../exercises/numberspan/NumberSpanExercise'),
   },
   {
@@ -130,7 +138,8 @@ export const activities: ActivityMeta[] = [
     higherIsBetter: false,
     available: true,
     accent: '#14b8a6',
-    variants: ['A', 'B'],
+    variants: ['5', '10', 'A', 'B', 'B20'],
+    normal: 'A',
     load: () => import('../exercises/trails/TrailsExercise'),
   },
   {
@@ -143,6 +152,8 @@ export const activities: ActivityMeta[] = [
     available: true,
     accent: '#eab308',
     pointsKey: 'unit.ofFive',
+    variants: ['1', '2', '3'],
+    normal: '3',
     load: () => import('../exercises/headcount/HeadcountExercise'),
   },
 
@@ -156,8 +167,8 @@ export const activities: ActivityMeta[] = [
     higherIsBetter: false,
     available: true,
     accent: '#a78bfa',
-    // Lado del tablero; deben coincidir con SIZES (puzzles/crowns/CrownsGame.tsx).
-    variants: ['6', '7', '8', '9'],
+    variants: ['4', '5', '6', '7', '8', '9'],
+    normal: '6',
     load: () => import('../puzzles/crowns/CrownsGame'),
   },
   {
@@ -169,8 +180,8 @@ export const activities: ActivityMeta[] = [
     higherIsBetter: false,
     available: true,
     accent: '#f59e0b',
-    // Deben coincidir con VARIANTS (puzzles/sunmoon/generator.ts).
-    variants: ['6', '6h', '8'],
+    variants: ['4', '6', '6h', '8'],
+    normal: '6',
     load: () => import('../puzzles/sunmoon/SunMoonGame'),
   },
   {
@@ -182,8 +193,8 @@ export const activities: ActivityMeta[] = [
     higherIsBetter: false,
     available: true,
     accent: '#22c55e',
-    // Deben coincidir con VARIANTS (puzzles/thread/generator.ts).
-    variants: ['6', '7', '8'],
+    variants: ['4', '5', '6', '7', '8'],
+    normal: '6',
     load: () => import('../puzzles/thread/ThreadGame'),
   },
   {
@@ -195,8 +206,8 @@ export const activities: ActivityMeta[] = [
     higherIsBetter: false,
     available: true,
     accent: '#06b6d4',
-    // Deben coincidir con VARIANTS (puzzles/plots/generator.ts).
-    variants: ['6', '7', '8'],
+    variants: ['4', '5', '6', '7', '8'],
+    normal: '6',
     load: () => import('../puzzles/plots/PlotsGame'),
   },
   {
@@ -208,8 +219,8 @@ export const activities: ActivityMeta[] = [
     higherIsBetter: false,
     available: true,
     accent: '#3b82f6',
-    // Deben coincidir con VARIANTS (puzzles/minisudoku/generator.ts).
-    variants: ['easy', 'hard'],
+    variants: ['4', 'easy', 'hard'],
+    normal: 'easy',
     load: () => import('../puzzles/minisudoku/MiniSudokuGame'),
   },
 ];

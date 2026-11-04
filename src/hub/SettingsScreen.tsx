@@ -3,6 +3,7 @@ import Screen from '../ui/Screen';
 import { useSettings, type LangSetting } from '../core/settings';
 import { AudioService } from '../core/AudioService';
 import { useT } from '../core/i18n';
+import { useLevels, type StartChoice } from '../core/levels';
 
 function ToggleRow({
   label,
@@ -36,10 +37,21 @@ function ToggleRow({
   );
 }
 
-function Row({ label, children }: { label: string; children: ReactNode }) {
+function Row({
+  label,
+  hint,
+  children,
+}: {
+  label: string;
+  hint?: string;
+  children: ReactNode;
+}) {
   return (
-    <div className="flex items-center justify-between rounded-xl border border-app-border bg-app-surface px-4 py-3">
-      <span className="font-medium">{label}</span>
+    <div className="flex items-center justify-between gap-3 rounded-xl border border-app-border bg-app-surface px-4 py-3">
+      <span className="flex flex-col">
+        <span className="font-medium">{label}</span>
+        {hint && <span className="text-xs text-app-muted">{hint}</span>}
+      </span>
       {children}
     </div>
   );
@@ -59,6 +71,8 @@ export default function SettingsScreen() {
     setLang,
     setColorblind,
   } = useSettings();
+  const start = useLevels((s) => s.start);
+  const chooseStart = useLevels((s) => s.choose);
 
   return (
     <Screen title={t('settings.title')}>
@@ -88,6 +102,18 @@ export default function SettingsScreen() {
           checked={colorblind}
           onChange={() => setColorblind(!colorblind)}
         />
+        <Row label={t('settings.startLevel')} hint={t('settings.startLevelHint')}>
+          <select
+            value={start ?? 'normal'}
+            aria-label={t('settings.startLevel')}
+            onChange={(e) => chooseStart(e.target.value as StartChoice)}
+            className="rounded-lg border border-app-border bg-app-surface2 p-2 text-app-text"
+          >
+            <option value="basic">{t('start.basic')}</option>
+            <option value="normal">{t('start.normal')}</option>
+            <option value="challenge">{t('start.challenge')}</option>
+          </select>
+        </Row>
         <Row label={t('settings.language')}>
           <select
             value={lang}

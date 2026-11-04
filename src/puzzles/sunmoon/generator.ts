@@ -115,6 +115,7 @@ export function generateSunMoon(
 
 /** Variantes jugables (con récord propio). */
 export const VARIANTS = [
+  { id: '4', size: 4, difficulty: 'easy' },
   { id: '6', size: 6, difficulty: 'easy' },
   { id: '6h', size: 6, difficulty: 'hard' },
   { id: '8', size: 8, difficulty: 'hard' },
@@ -124,5 +125,5 @@ export type Variant = (typeof VARIANTS)[number];
 /** Reto diario: 6×6 fácil de lunes a jueves, 6×6 difícil el viernes, 8×8 el fin de semana. */
 export function dailyVariant(date: Date): Variant {
   const day = date.getDay();
-  return VARIANTS[day === 0 || day === 6 ? 2 : day === 5 ? 1 : 0];
+  return VARIANTS[day === 0 || day === 6 ? 3 : day === 5 ? 2 : 1];
 }

@@ -13,7 +13,7 @@ import { orthoNeighbors, solve, type CrownsPuzzle } from './logic';
  *    intentos sigue sin ser única, vuelve a empezar.
  */
 
-export const MIN_SIZE = 5;
+export const MIN_SIZE = 4;
 export const MAX_SIZE = 10;
 
 export interface GeneratedCrowns {

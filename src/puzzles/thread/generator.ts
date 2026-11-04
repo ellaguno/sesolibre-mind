@@ -16,6 +16,8 @@ import { edgeKey, search, type ThreadPuzzle } from './logic';
  */
 
 export const VARIANTS = [
+  { id: '4', size: 4, hard: false },
+  { id: '5', size: 5, hard: false },
   { id: '6', size: 6, hard: false },
   { id: '7', size: 7, hard: false },
   { id: '8', size: 8, hard: true },
@@ -164,5 +166,5 @@ export function generateThread(seed: number, variant: Variant): GeneratedThread 
 /** Reto diario: 6×6 lun–jue, 7×7 el viernes, 8×8 difícil el fin de semana. */
 export function dailyVariant(date: Date): Variant {
   const day = date.getDay();
-  return VARIANTS[day === 0 || day === 6 ? 2 : day === 5 ? 1 : 0];
+  return VARIANTS[day === 0 || day === 6 ? 4 : day === 5 ? 3 : 2];
 }

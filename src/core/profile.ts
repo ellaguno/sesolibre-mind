@@ -18,17 +18,17 @@ import { ScoreService, type ScoreEntry } from './ScoreService';
 
 /** Referencia por actividad y variante: tiempo objetivo (s) o puntos objetivo. */
 const TARGET: Record<string, Record<string, number>> = {
-  quickmath: { '': 30 },
-  colorclash: { '': 22 },
-  trails: { A: 16, B: 24 },
-  countdown: { '7': 15, '3': 20 },
-  numberspan: { forward: 8, backward: 7 },
-  headcount: { '': 5 },
-  crowns: { '6': 60, '7': 90, '8': 150, '9': 240 },
-  sunmoon: { '6': 60, '6h': 120, '8': 240 },
-  minisudoku: { easy: 90, hard: 180 },
-  plots: { '6': 60, '7': 100, '8': 180 },
-  thread: { '6': 45, '7': 80, '8': 150 },
+  quickmath: { '1': 15, '2': 25, '3': 30, '4': 30, '5': 45 },
+  colorclash: { '1': 10, '2': 14, '3': 22, '4': 32 },
+  trails: { '5': 6, '10': 12, A: 16, B: 24, B20: 32 },
+  countdown: { '1': 20, '2': 18, '3': 20, '7': 15 },
+  numberspan: { '2': 6, forward: 8, backward: 7 },
+  headcount: { '1': 3, '2': 4, '3': 5 },
+  crowns: { '4': 20, '5': 35, '6': 60, '7': 90, '8': 150, '9': 240 },
+  sunmoon: { '4': 25, '6': 60, '6h': 120, '8': 240 },
+  minisudoku: { '4': 30, easy: 90, hard: 180 },
+  plots: { '4': 20, '5': 35, '6': 60, '7': 100, '8': 180 },
+  thread: { '4': 15, '5': 28, '6': 45, '7': 80, '8': 150 },
 };
 /** Puntos que resta cada pista usada en un puzzle. */
 const HINT_COST = 10;
@@ -42,7 +42,7 @@ export function normalize(
   variant: string,
   entry: ScoreEntry,
 ): number | null {
-  const target = TARGET[a.id]?.[variant] ?? TARGET[a.id]?.[''];
+  const target = TARGET[a.id]?.[variant];
   if (!target) return null;
   const hints = Number(entry.meta?.hints ?? 0);
   const raw =
@@ -63,8 +63,8 @@ export async function computeProfile(): Promise<DomainIndex[]> {
   const byDomain = new Map<Domain, { at: number; v: number }[]>();
   for (const a of activities) {
     if (!a.available) continue;
-    for (const variant of a.variants ?? ['']) {
-      const { history } = await ScoreService.get(scoreKey(a.id, variant || null));
+    for (const variant of a.variants) {
+      const { history } = await ScoreService.get(scoreKey(a.id, variant));
       for (const e of history) {
         const v = normalize(a, variant, e);
         if (v === null) continue;
