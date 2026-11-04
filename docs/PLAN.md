@@ -250,13 +250,14 @@ Los tiempos se miden con `performance.now()`. La UI de respuesta es siempre tác
 - [x] Calendario de constancia (5 semanas) en el hub.
 
 ### Fase 3 — Perfil y pulido
-- [ ] Índice Seso por habilidad + radar + tendencia.
+- [x] Índice Seso por habilidad (`core/profile.ts`, pantalla `#/profile`): barras por habilidad (más legibles que un radar con un solo jugador), índice global, mejor racha y días activos. Pendiente: tendencia semanal.
 - [ ] Tutorial interactivo por actividad (primer uso).
-- [ ] Identidad visual propia: ícono, paleta, ilustraciones.
+- [x] Ícono propio (`scripts/build-icons.py`, adaptado de sesolibre-games: grafotipo SesoLibre sobre índigo + fichas con los colores de los puzzles). Pendiente: ilustraciones.
 - [ ] Accesibilidad: modo daltónico, etiquetas ARIA, pruebas con TalkBack.
 
 ### Fase 4 — Lanzamiento Android
-- [ ] Capacitor Android, CI (traer workflows), Play Games (logros/rankings del reto diario).
+- [x] Capacitor Android: `npm run android:apk` (`scripts/android-apk.sh`) genera el APK de depuración.
+- [ ] CI (traer workflows), Play Games (logros/rankings del reto diario).
 - [ ] Política de privacidad, ficha de Play Store, notificación local opcional de recordatorio diario.
 
 ### Fase 5+ — Expansión

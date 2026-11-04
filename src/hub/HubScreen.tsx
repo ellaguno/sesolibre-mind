@@ -93,13 +93,22 @@ export default function HubScreen() {
           <h1 className="text-2xl font-bold">🧠 {t('app.title')}</h1>
           <p className="text-sm text-app-muted">{t('hub.tagline')}</p>
         </div>
-        <Link
-          to="/settings"
-          aria-label={t('nav.settings')}
-          className="rounded-lg bg-app-surface px-3 py-2 text-lg hover:bg-app-surface2"
-        >
-          ⚙️
-        </Link>
+        <nav className="flex gap-2">
+          <Link
+            to="/profile"
+            aria-label={t('nav.profile')}
+            className="rounded-lg bg-app-surface px-3 py-2 text-lg hover:bg-app-surface2"
+          >
+            📊
+          </Link>
+          <Link
+            to="/settings"
+            aria-label={t('nav.settings')}
+            className="rounded-lg bg-app-surface px-3 py-2 text-lg hover:bg-app-surface2"
+          >
+            ⚙️
+          </Link>
+        </nav>
       </header>
 
       <section className="rounded-2xl bg-gradient-to-br from-brand to-brand-dark p-5 text-white">

@@ -29,6 +29,15 @@ npm run test     # tests de lógica (Vitest)
 npm run lint     # ESLint
 ```
 
+## APK de Android
+
+```bash
+npm run android:apk   # genera android/ la primera vez y compila el APK de depuración
+adb install -r android/app/build/outputs/apk/debug/app-debug.apk
+```
+
+Requiere JDK 21 y el SDK de Android (`ANDROID_HOME`, por defecto `~/Android/Sdk`).
+
 ## Documentación
 
 Ver [`docs/PLAN.md`](./docs/PLAN.md): visión, reglas de propiedad intelectual,

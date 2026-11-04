@@ -15,7 +15,8 @@
     "test:watch": "vitest",
     "cap:add": "cap add android",
     "cap:sync": "cap sync android",
-    "android:apk": "npm run build && cap sync android && cd android && ./gradlew assembleDebug"
+    "android:apk": "./scripts/android-apk.sh",
+    "icons": "python3 scripts/build-icons.py"
   },
   "dependencies": {
     "@capacitor/android": "^8.4.2",
@@ -27,6 +28,7 @@
     "zustand": "^5.0.0"
   },
   "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
     "@capacitor/cli": "^8.4.2",
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.0",

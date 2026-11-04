@@ -200,6 +200,16 @@ const es: Dict = {
   'calendar.active': 'con actividad',
   'calendar.inactive': 'sin actividad',
 
+  'nav.profile': 'Mi perfil',
+  'profile.title': 'Mi perfil',
+  'profile.overall': 'Índice Seso',
+  'profile.bestStreak': 'Mejor racha',
+  'profile.activeDays': 'Días activos',
+  'profile.byDomain': 'Por habilidad',
+  'profile.noData': 'sin datos',
+  'profile.note':
+    'El Índice Seso (0–100) resume tus últimos resultados para que te compares contigo mismo. Es entretenimiento, no una evaluación médica.',
+
   'domain.speed': 'Velocidad',
   'domain.memory': 'Memoria',
   'domain.attention': 'Atención',
@@ -409,6 +419,16 @@ const en: Dict = {
   'calendar.weekdays': 'M,T,W,T,F,S,S',
   'calendar.active': 'active',
   'calendar.inactive': 'no activity',
+
+  'nav.profile': 'My profile',
+  'profile.title': 'My profile',
+  'profile.overall': 'Seso Index',
+  'profile.bestStreak': 'Best streak',
+  'profile.activeDays': 'Active days',
+  'profile.byDomain': 'By skill',
+  'profile.noData': 'no data',
+  'profile.note':
+    'The Seso Index (0–100) sums up your latest results so you can compare yourself with yourself. It is entertainment, not a medical assessment.',
 
   'domain.speed': 'Speed',
   'domain.memory': 'Memory',

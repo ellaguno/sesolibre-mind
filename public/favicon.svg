@@ -10,12 +10,12 @@
     <stop offset="1" stop-color="#e5007e"/>
   </linearGradient>
   <radialGradient id="bg" cx="0.5" cy="0.38" r="0.78">
-    <stop offset="0" stop-color="#3b1450"/>
-    <stop offset="0.55" stop-color="#24093a"/>
-    <stop offset="1" stop-color="#12041f"/>
+    <stop offset="0" stop-color="#2e3a9e"/>
+    <stop offset="0.55" stop-color="#1b2170"/>
+    <stop offset="1" stop-color="#0c0f3a"/>
   </radialGradient>
   <radialGradient id="halo" cx="0.5" cy="0.5" r="0.5">
-    <stop offset="0" stop-color="#ff5a3c" stop-opacity="0.55"/>
+    <stop offset="0" stop-color="#6d7bff" stop-opacity="0.5"/>
     <stop offset="0.45" stop-color="#e5007e" stop-opacity="0.18"/>
     <stop offset="1" stop-color="#e5007e" stop-opacity="0"/>
   </radialGradient>

@@ -4,6 +4,7 @@ import HubScreen from './hub/HubScreen';
 import GameHost from './hub/GameHost';
 import SettingsScreen from './hub/SettingsScreen';
 import SessionScreen from './hub/SessionScreen';
+import ProfileScreen from './hub/ProfileScreen';
 import { useSettings } from './core/settings';
 import { useRewards } from './core/RewardService';
 import ParticleOverlay from './anim/ParticleOverlay';
@@ -32,6 +33,7 @@ export default function App() {
           <Route path="/" element={<HubScreen />} />
           <Route path="/settings" element={<SettingsScreen />} />
           <Route path="/session" element={<SessionScreen />} />
+          <Route path="/profile" element={<ProfileScreen />} />
           <Route path="/play/:id" element={<GameHost />} />
         </Routes>
       </RouteTransition>
