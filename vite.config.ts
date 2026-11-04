@@ -20,6 +20,8 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+      // El registro se hace a mano en main.tsx, sólo en la web (ver allí).
+      injectRegister: false,
       includeAssets: ['favicon.svg', 'icons/apple-touch-icon.png'],
       manifest: {
         name: 'SesoLibre Mind',

@@ -16,9 +16,9 @@ export default function StartChoiceDialog() {
       role="dialog"
       aria-modal="true"
       aria-labelledby="start-title"
-      className="fixed inset-0 z-40 flex items-end justify-center bg-slate-950/70 p-3 sm:items-center"
+      className="fixed inset-0 z-40 flex items-end justify-center overflow-y-auto bg-slate-950/70 p-3 pt-[max(0.75rem,env(safe-area-inset-top))] sm:items-center"
     >
-      <div className="overlay-pop flex w-full max-w-md flex-col gap-3 rounded-3xl bg-app-surface p-6 shadow-2xl">
+      <div className="overlay-pop my-auto flex max-h-full w-full max-w-md flex-col overflow-y-auto gap-3 rounded-3xl bg-app-surface p-6 shadow-2xl">
         <p className="text-4xl" aria-hidden>
           🧠
         </p>
