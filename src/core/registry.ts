@@ -161,8 +161,11 @@ export const activities: ActivityMeta[] = [
     emoji: '🧵',
     scoreKind: 'time',
     higherIsBetter: false,
-    available: false,
+    available: true,
     accent: '#22c55e',
+    // Deben coincidir con VARIANTS (puzzles/thread/generator.ts).
+    variants: ['6', '7', '8'],
+    load: () => import('../puzzles/thread/ThreadGame'),
   },
   {
     id: 'plots',

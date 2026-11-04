@@ -68,7 +68,7 @@ puzzles concretos** sí. Por eso:
 |---|---|---|---|---|
 | `crowns` | Coronas / Crowns | Star Battle (1 por unidad) | N×N con N zonas de color; una corona por fila, columna y zona; ninguna se toca, ni en diagonal | **MVP ✅** |
 | `sunmoon` | Sol y Luna / Sun & Moon | Takuzu / Binairo | 6×6 u 8×8; igual nº de ☀️ y 🌙 por fila/columna; máximo 2 iguales seguidos; pistas `=` (iguales) y `×` (opuestos) | **MVP ✅** |
-| `thread` | Hilo / Thread | Camino hamiltoniano con números (Numbrix/Hidato + paredes) | Un solo trazo que pasa por todas las casillas, visita los números en orden y no cruza paredes | **MVP** |
+| `thread` | Hilo / Thread | Camino hamiltoniano con números (Numbrix/Hidato + paredes) | Un solo trazo que pasa por todas las casillas, visita los números en orden y no cruza paredes | **MVP ✅** |
 | `plots` | Parcelas / Plots | Shikaku | Partir la cuadrícula en rectángulos; cada uno contiene un número = su área (y, opcional, su forma: cuadrado/alto/ancho) | **MVP ✅** |
 | `minisudoku` | Sudoku mini / Mini Sudoku | Sudoku 6×6 (cajas 2×3) | Clásico, cifras 1–6 | **MVP ✅** |
 | `futoshiki` | Mayor que / Greater Than | Futoshiki | Cuadrado latino con desigualdades `<` `>` entre celdas | v2 |
@@ -240,7 +240,7 @@ Los tiempos se miden con `performance.now()`. La UI de respuesta es siempre tác
 - [x] `sunmoon`: generador/solver con pistas `=`/`×`; variantes 6×6, 6×6 difícil y 8×8. El generador sólo acepta tableros que se resuelven **por deducción fila/columna** (nunca hay que adivinar) y la pista explica qué fila o columna obliga el valor. Reto diario: 6×6 lun–jue, 6×6 difícil el viernes, 8×8 el fin de semana.
 - [x] `minisudoku`: generador propio 6×6 (cajas 2×3) inspirado en el de sesolibre-games: solución única + resoluble sólo con «único candidato» (fácil) o además «único lugar» (difícil, y se exige que haga falta). Teclado 1–6, notas a lápiz que se limpian solas, teclado físico, pista explicada. Reto diario: fácil lun–jue, difícil vie–dom.
 - [x] `plots`: partición aleatoria en rectángulos + pistas con área y (en 6×6 y 7×7) forma; sólo se aceptan tableros resolubles por deducción (celdas comunes a todas las opciones de una pista / celda cubrible por una sola pista). Arrastrar traza, tocar borra; parcelas válidas en color, inválidas rayadas. Reto diario: 6×6 lun–jue, 7×7 vie, 8×8 sin formas el fin de semana.
-- [ ] `thread`: camino hamiltoniano aleatorio + paredes + números; verificación de unicidad.
+- [x] `thread`: camino hamiltoniano aleatorio (zigzag + movimientos «backbite»), números y paredes añadidos hasta descartar toda solución alternativa; solver DFS con poda de conectividad, grados, paridad y movimiento forzado, y presupuesto de nodos. 6×6, 7×7 y 8×8 difícil (minimizado) en Web Worker; arrastre con interpolación, retroceso, recorte tocando el trazo.
 - [x] Componentes comunes (`puzzles/common/`): `PuzzleShell` (encabezado, cronómetro, variantes, victoria, compartir, botones, reglas), `usePuzzleSession` (celdas, deshacer, pistas, victoria), `useWorkerResult` (generación en Web Worker), `boardSeed`.
 
 ### Fase 2 — MVP ejercicios + sesión diaria

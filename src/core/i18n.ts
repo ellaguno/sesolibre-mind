@@ -115,6 +115,15 @@ const es: Dict = {
   'plots.clueCell': 'Fila {r}, columna {c}: pista {n}',
   'plots.inPlot': 'en una parcela',
 
+  'thread.rule1': 'Traza un solo camino que pase por todas las casillas una vez.',
+  'thread.rule2': 'Empieza en el 1 y visita los números en orden hasta el último.',
+  'thread.rule3': 'Avanza en horizontal o vertical; las líneas gruesas son paredes.',
+  'thread.rule4':
+    'Arrastra desde el final del trazo; vuelve atrás para deshacer o toca una casilla del trazo para recortarlo ahí.',
+  'thread.hintBack': 'El camino se desviaba aquí: lo recorté.',
+  'thread.hintExtend': 'El camino sigue por aquí.',
+  'thread.visited': 'en el camino',
+
   'domain.speed': 'Velocidad',
   'domain.memory': 'Memoria',
   'domain.attention': 'Atención',
@@ -239,6 +248,15 @@ const en: Dict = {
   'plots.hintPlace': "Here's where the {n} plot goes.",
   'plots.clueCell': 'Row {r}, column {c}: clue {n}',
   'plots.inPlot': 'in a plot',
+
+  'thread.rule1': 'Draw a single path that goes through every cell once.',
+  'thread.rule2': 'Start at 1 and visit the numbers in order up to the last one.',
+  'thread.rule3': 'Move horizontally or vertically; thick lines are walls.',
+  'thread.rule4':
+    'Drag from the end of the path; go back to undo, or tap a cell on the path to cut it there.',
+  'thread.hintBack': 'The path went wrong here, so I cut it back.',
+  'thread.hintExtend': 'The path continues this way.',
+  'thread.visited': 'on the path',
 
   'domain.speed': 'Speed',
   'domain.memory': 'Memory',
