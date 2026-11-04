@@ -134,11 +134,14 @@ datos). Actualizar si se integra monetización o Google Play Juegos.
 | Recurso | Archivo / estado |
 |---|---|
 | Ícono 512×512 | `assets/play/icon-512.png` (subir a mano en la consola) |
-| Gráfico de funciones 1024×500 | **Pendiente** (se puede generar como en sesolibre-games) |
-| Capturas de teléfono (mín. 2) | **Pendiente**: hub con la sesión del día, un puzzle (p. ej. Hilo), un ejercicio y el perfil |
+| Gráfico de funciones 1024×500 | `assets/play/feature-graphic.png` (es) y `feature-graphic-en.png` (en), generados con `python3 scripts/build-feature-graphic.py` |
+| Capturas de teléfono (6, 960×1920) | `assets/play/screenshots/`: 1 inicio con sesión del día y constancia · 2 Hilo · 3 Coronas · 4 Choque de colores · 5 perfil (Índice Seso) · 6 Sudoku mini |
 
-Las capturas se pueden sacar del teléfono conectado con
-`adb exec-out screencap -p > captura.png`.
+Las capturas se tomaron en un Pixel 9 Pro con datos de demostración (racha y
+resultados de ejemplo) y se recortaron a 960×1920: Play exige que el lado largo
+no supere el doble del corto, y la pantalla completa (960×2142) lo excede.
+Para rehacerlas: `adb exec-out screencap -p > raw.png` y
+`convert raw.png -crop 960x1920+0+150 +repage captura.png`.
 
 ---
 
