@@ -135,8 +135,11 @@ export const activities: ActivityMeta[] = [
     emoji: '👑',
     scoreKind: 'time',
     higherIsBetter: false,
-    available: false,
+    available: true,
     accent: '#a78bfa',
+    // Lado del tablero; deben coincidir con SIZES (puzzles/crowns/CrownsGame.tsx).
+    variants: ['6', '7', '8', '9'],
+    load: () => import('../puzzles/crowns/CrownsGame'),
   },
   {
     id: 'sunmoon',

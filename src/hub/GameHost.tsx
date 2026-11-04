@@ -54,7 +54,14 @@ export default function GameHost() {
           </div>
         }
       >
-        <Lazy onScore={onScore} onExit={onExit} seed={seed} daily={daily} />
+        {/* key: pasar de práctica a reto del día (misma ruta) debe empezar de cero. */}
+        <Lazy
+          key={`${activity.id}:${daily}`}
+          onScore={onScore}
+          onExit={onExit}
+          seed={seed}
+          daily={daily}
+        />
       </Suspense>
     </div>
   );

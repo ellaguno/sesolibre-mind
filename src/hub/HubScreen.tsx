@@ -15,31 +15,43 @@ function ActivityTile({ activity }: { activity: ActivityMeta }) {
   }, [activity]);
 
   return (
-    <Link
-      to={`/play/${activity.id}`}
-      className="flex items-start gap-3 rounded-2xl border border-app-border bg-app-surface p-4 transition hover:bg-app-surface2 active:scale-[0.98]"
+    <div
+      className="flex flex-col gap-3 rounded-2xl border border-app-border bg-app-surface p-4"
       style={{ borderLeft: `4px solid ${activity.accent}` }}
     >
-      <span className="text-3xl" aria-hidden>
-        {activity.emoji}
-      </span>
-      <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-        <span className="flex items-center gap-2">
-          <span className="font-semibold">{t(`act.${activity.id}.title`)}</span>
-          {!activity.available && (
-            <span className="rounded-full bg-app-surface2 px-2 py-0.5 text-[10px] uppercase tracking-wide text-app-muted">
-              {t('common.soon')}
-            </span>
-          )}
+      <Link
+        to={`/play/${activity.id}`}
+        className="flex items-start gap-3 transition active:scale-[0.98]"
+      >
+        <span className="text-3xl" aria-hidden>
+          {activity.emoji}
         </span>
-        <span className="text-sm text-app-muted">{t(`act.${activity.id}.desc`)}</span>
-        <span className="text-xs text-app-muted">
-          {t(`domain.${activity.domain}`)}
-          {best &&
-            ` · ${t(`best.${activity.scoreKind}`, { v: formatScore(best.value, activity.scoreKind) })}`}
+        <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+          <span className="flex items-center gap-2">
+            <span className="font-semibold">{t(`act.${activity.id}.title`)}</span>
+            {!activity.available && (
+              <span className="rounded-full bg-app-surface2 px-2 py-0.5 text-[10px] uppercase tracking-wide text-app-muted">
+                {t('common.soon')}
+              </span>
+            )}
+          </span>
+          <span className="text-sm text-app-muted">{t(`act.${activity.id}.desc`)}</span>
+          <span className="text-xs text-app-muted">
+            {t(`domain.${activity.domain}`)}
+            {best &&
+              ` · ${t(`best.${activity.scoreKind}`, { v: formatScore(best.value, activity.scoreKind) })}`}
+          </span>
         </span>
-      </span>
-    </Link>
+      </Link>
+      {activity.available && activity.kind === 'puzzle' && (
+        <Link
+          to={`/play/${activity.id}?daily=1`}
+          className="self-start rounded-lg bg-brand px-3 py-1.5 text-sm font-semibold text-white hover:bg-brand-dark"
+        >
+          📅 {t('hub.dailyChallenge')}
+        </Link>
+      )}
+    </div>
   );
 }
 
