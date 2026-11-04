@@ -1,0 +1,87 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Tokens de color como canales RGB (para soportar opacidad con /xx). */
+:root {
+  --c-bg: 238 242 247;
+  --c-surface: 255 255 255;
+  --c-surface-2: 226 232 240;
+  --c-border: 203 213 225;
+  --c-text: 15 23 42;
+  --c-muted: 100 116 139;
+  color-scheme: light;
+}
+
+.dark {
+  --c-bg: 15 23 42;
+  --c-surface: 30 41 59;
+  --c-surface-2: 51 65 85;
+  --c-border: 51 65 85;
+  --c-text: 241 245 249;
+  --c-muted: 148 163 184;
+  color-scheme: dark;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+/* Altura mínima de pantalla de juego: el viewport visible menos las safe
+   areas (que ya ocupa el padding del body). A diferencia de min-h-screen no
+   desborda en móviles con notch, y a diferencia de min-h-full no se colapsa
+   cuando el contenedor padre no tiene altura definida (permite anclar los
+   controles abajo con mt-auto). */
+@layer utilities {
+  .min-h-app {
+    min-height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+    min-height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+  }
+}
+
+body {
+  @apply bg-app-bg text-app-text antialiased;
+  margin: 0;
+  /* Respetar notch / safe areas en móvil */
+  padding: env(safe-area-inset-top) env(safe-area-inset-right)
+    env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
+/* ---------- Animaciones procedurales ligeras (CSS) ---------- */
+
+/* Entrada de pantalla al navegar */
+/* Solo opacidad: un transform (o filter) en el contenedor crearía un bloque
+   contenedor para los fondos `fixed inset-0` del Hub/GameHost, que durante la
+   animación se posicionarían respecto al contenedor y saltarían al terminar. */
+@keyframes route-enter {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.route-enter {
+  animation: route-enter 0.28s ease-out;
+}
+
+/* Entrada del panel de fin de partida (victoria / sin jugadas) */
+@keyframes overlay-pop {
+  0% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.85);
+  }
+  60% {
+    transform: scale(1.04);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+.overlay-pop {
+  animation: overlay-pop 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
