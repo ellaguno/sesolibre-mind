@@ -25,13 +25,13 @@ function LevelProgress() {
       <p className="mb-3 text-sm text-app-muted">
         {t('profile.levelsPassed', { n: passed })}
       </p>
-      <ul className="flex flex-col gap-3">
+      <ul className="flex flex-col gap-2">
         {list.map((a) => {
           const cur = levelOf(levels, a);
           const idx = a.variants.indexOf(cur);
           return (
             <li key={a.id} className="flex items-center gap-3">
-              <span className="text-2xl" aria-hidden>
+              <span className="text-xl" aria-hidden>
                 {a.emoji}
               </span>
               <span className="flex flex-1 flex-col">

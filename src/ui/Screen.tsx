@@ -13,8 +13,8 @@ export default function Screen({ title, children, back = true }: Props) {
   const location = useLocation();
   const t = useT();
   return (
-    <main className="mx-auto flex min-h-full max-w-2xl flex-col px-4 py-6">
-      <header className="mb-6 flex items-center gap-3">
+    <main className="mx-auto flex min-h-full max-w-2xl flex-col px-4 py-4">
+      <header className="mb-4 flex items-center gap-3">
         {back && (
           <button
             // Entrada directa (enlace a #/records…): no hay historial propio,

@@ -105,9 +105,11 @@ export default function HubScreen() {
   return (
     <main className="mx-auto flex min-h-full max-w-2xl flex-col gap-6 px-4 py-6">
       {askStart && <StartChoiceDialog />}
-      <header className="flex items-start justify-between gap-2">
+      <header className="flex items-start justify-between gap-1.5">
         <div className="min-w-0 flex-1">
-          <h1 className="truncate text-xl font-bold sm:text-2xl">🧠 {t('app.title')}</h1>
+          <h1 className="truncate text-base font-bold min-[400px]:text-xl sm:text-2xl">
+            🧠 {t('app.title')}
+          </h1>
           {profileCount > 1 ? (
             // Con varios perfiles, se ve quién juega (y se cambia tocando).
             <Link
@@ -123,25 +125,25 @@ export default function HubScreen() {
             <p className="text-sm text-app-muted">{t('hub.tagline')}</p>
           )}
         </div>
-        <nav className="flex shrink-0 gap-1.5">
+        <nav className="flex shrink-0 gap-1">
           <Link
             to="/profiles"
             aria-label={t('profiles.title')}
-            className="rounded-lg bg-app-surface px-2.5 py-2 text-lg hover:bg-app-surface2"
+            className="rounded-lg bg-app-surface px-2 py-1.5 text-lg hover:bg-app-surface2"
           >
             {profile.emoji}
           </Link>
           <Link
             to="/profile"
             aria-label={t('nav.profile')}
-            className="rounded-lg bg-app-surface px-2.5 py-2 text-lg hover:bg-app-surface2"
+            className="rounded-lg bg-app-surface px-2 py-1.5 text-lg hover:bg-app-surface2"
           >
             📊
           </Link>
           <Link
             to="/settings"
             aria-label={t('nav.settings')}
-            className="rounded-lg bg-app-surface px-2.5 py-2 text-lg hover:bg-app-surface2"
+            className="rounded-lg bg-app-surface px-2 py-1.5 text-lg hover:bg-app-surface2"
           >
             ⚙️
           </Link>

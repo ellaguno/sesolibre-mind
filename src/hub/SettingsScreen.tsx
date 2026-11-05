@@ -23,7 +23,7 @@ function ToggleRow({
   onChange: () => void;
 }) {
   return (
-    <label className="flex cursor-pointer items-center justify-between gap-3 rounded-xl border border-app-border bg-app-surface px-4 py-3">
+    <label className="flex cursor-pointer items-center justify-between gap-3 rounded-xl border border-app-border bg-app-surface px-4 py-2.5">
       <span className="flex flex-col">
         <span className="font-medium">{label}</span>
         {hint && <span className="text-xs text-app-muted">{hint}</span>}
@@ -53,7 +53,7 @@ function Row({
   children: ReactNode;
 }) {
   return (
-    <div className="flex items-center justify-between gap-3 rounded-xl border border-app-border bg-app-surface px-4 py-3">
+    <div className="flex items-center justify-between gap-3 rounded-xl border border-app-border bg-app-surface px-4 py-2.5">
       <span className="flex flex-col">
         <span className="font-medium">{label}</span>
         {hint && <span className="text-xs text-app-muted">{hint}</span>}
@@ -104,7 +104,7 @@ export default function SettingsScreen() {
 
   return (
     <Screen title={t('settings.title')}>
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-2">
         <ToggleRow
           label={t('settings.darkTheme')}
           checked={theme === 'dark'}

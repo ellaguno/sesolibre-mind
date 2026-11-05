@@ -145,7 +145,7 @@ export default function PuzzleShell(p: Props) {
   };
 
   return (
-    <main className="mx-auto flex min-h-app max-w-lg flex-col gap-4 px-4 py-4">
+    <main className="mx-auto flex min-h-app max-w-lg flex-col gap-3 px-4 py-3">
       {showTutorial && (
         <Tutorial title={title} slides={p.slides!} onClose={closeTutorial} />
       )}

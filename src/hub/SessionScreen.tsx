@@ -169,8 +169,8 @@ export default function SessionScreen() {
     <Screen title={complete ? t('session.summary') : t('hub.dailyTitle')}>
       <div className="flex flex-col gap-3">
         {complete && (
-          <div className="overlay-pop rounded-2xl bg-gradient-to-br from-brand to-brand-dark p-5 text-center text-white">
-            <p className="text-4xl" aria-hidden>
+          <div className="overlay-pop rounded-2xl bg-gradient-to-br from-brand to-brand-dark p-4 text-center text-white">
+            <p className="text-3xl" aria-hidden>
               🎉
             </p>
             <p className="mt-1 text-lg font-bold">{t('session.done')}</p>
@@ -186,10 +186,10 @@ export default function SessionScreen() {
             return (
               <li
                 key={id}
-                className="flex items-center gap-3 rounded-2xl border border-app-border bg-app-surface p-4"
+                className="flex items-center gap-3 rounded-2xl border border-app-border bg-app-surface px-3 py-2.5"
                 style={{ borderLeft: `4px solid ${a.accent}` }}
               >
-                <span className="text-3xl" aria-hidden>
+                <span className="text-2xl" aria-hidden>
                   {a.emoji}
                 </span>
                 <span className="flex flex-1 flex-col">
