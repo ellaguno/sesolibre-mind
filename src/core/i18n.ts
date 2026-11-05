@@ -396,8 +396,8 @@ const es: Dict = {
     '🤝 Te reto en SesoLibre Mind: {emoji} {title} (nivel {level}) — mi resultado: {score}. ¿Lo superas? Abre la app → Retos y escribe el código: {code}',
 
   'profile.thisWeek': 'Esta semana',
-  'profile.weekUp': '{n} días activos esta semana, más que la anterior ({prev}). ¡Bien!',
-  'profile.weekCompare': '{n} días activos esta semana · {prev} la anterior',
+  'profile.weekUp': 'Días activos esta semana: {n}, más que la anterior ({prev}). ¡Bien!',
+  'profile.weekCompare': 'Días activos esta semana: {n} · la anterior: {prev}',
   'profile.trend': 'Tendencia semanal: {n}',
   'history.title': 'Historial por actividad',
   'history.level': 'Nivel',
@@ -812,8 +812,8 @@ const en: Dict = {
     '🤝 I challenge you in SesoLibre Mind: {emoji} {title} (level {level}) — my result: {score}. Can you beat it? Open the app → Challenges and enter the code: {code}',
 
   'profile.thisWeek': 'This week',
-  'profile.weekUp': '{n} active days this week, more than last week ({prev}). Nice!',
-  'profile.weekCompare': '{n} active days this week · {prev} last week',
+  'profile.weekUp': 'Active days this week: {n}, more than last week ({prev}). Nice!',
+  'profile.weekCompare': 'Active days this week: {n} · last week: {prev}',
   'profile.trend': 'Weekly trend: {n}',
   'history.title': 'History by activity',
   'history.level': 'Level',
