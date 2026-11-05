@@ -25,7 +25,7 @@ export default defineConfig({
       includeAssets: ['favicon.svg', 'icons/apple-touch-icon.png'],
       manifest: {
         name: 'SesoLibre Mind',
-        short_name: 'SesoMind',
+        short_name: 'Seso Mind',
         description: 'Ejercicios mentales y puzzles de lógica diarios',
         theme_color: '#0f172a',
         background_color: '#0f172a',
