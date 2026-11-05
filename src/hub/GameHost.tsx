@@ -2,6 +2,7 @@ import { Suspense, lazy, useCallback, useMemo } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { findActivity } from '../core/registry';
 import { recordResult } from '../core/play';
+import { decodeChallenge } from '../core/challenge';
 import { dailySeed, dateKey, randomSeed } from '../core/rng';
 import GamePlaceholder from './GamePlaceholder';
 
@@ -12,6 +13,12 @@ export default function GameHost() {
   const navigate = useNavigate();
   const activity = findActivity(id);
   const daily = search.get('daily') === '1';
+  // Reto de un amigo: el código fija actividad, nivel y semilla.
+  const code = search.get('reto');
+  const challenge = useMemo(() => {
+    const c = code ? decodeChallenge(code) : null;
+    return c && c.activityId === id ? c : undefined;
+  }, [code, id]);
 
   const Lazy = useMemo(
     () => (activity?.load ? lazy(activity.load) : null),
@@ -20,8 +27,13 @@ export default function GameHost() {
   );
   // Semilla fija durante la vida de la pantalla (el reto diario, la del día).
   const seed = useMemo(
-    () => (daily && id ? dailySeed(dateKey(new Date()), id) : randomSeed()),
-    [daily, id],
+    () =>
+      challenge
+        ? challenge.seed
+        : daily && id
+          ? dailySeed(dateKey(new Date()), id)
+          : randomSeed(),
+    [daily, id, challenge],
   );
 
   // Callbacks estables: las actividades los tienen en dependencias de efectos.
@@ -46,11 +58,12 @@ export default function GameHost() {
       >
         {/* key: pasar de práctica a reto del día (misma ruta) debe empezar de cero. */}
         <Lazy
-          key={`${activity.id}:${daily}`}
+          key={`${activity.id}:${daily}:${code ?? ''}`}
           onScore={onScore}
           onExit={onExit}
           seed={seed}
           daily={daily}
+          challenge={challenge}
         />
       </Suspense>
     </div>

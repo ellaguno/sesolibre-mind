@@ -106,6 +106,7 @@ export default function ColorClashExercise(props: GameProps) {
   const [level, setLevel] = useActivityLevel(
     'colorclash',
     props.daily || !!props.inSession,
+    props.challenge?.level,
   );
   const lv = LEVELS[level] ?? LEVELS['3'];
   return (

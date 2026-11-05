@@ -174,6 +174,19 @@ export default function HubScreen() {
 
       <StreakCalendar />
 
+      <Link
+        to="/challenge"
+        className="flex items-center gap-3 rounded-2xl border border-app-border bg-app-surface p-4 transition hover:bg-app-surface2 active:scale-[0.98]"
+      >
+        <span className="text-3xl" aria-hidden>
+          🤝
+        </span>
+        <span className="flex flex-col">
+          <span className="font-semibold">{t('challenge.hubTitle')}</span>
+          <span className="text-sm text-app-muted">{t('challenge.hubDesc')}</span>
+        </span>
+      </Link>
+
       <Section kind="exercise" title={t('hub.exercises')} />
       <Section kind="puzzle" title={t('hub.puzzles')} />
 

@@ -89,16 +89,23 @@ export default function CrownsGame({
   seed,
   daily,
   inSession,
+  challenge,
 }: GameProps) {
   const t = useT();
-  const [level, setLevel] = useActivityLevel('crowns', daily || !!inSession);
+  const [level, setLevel] = useActivityLevel(
+    'crowns',
+    daily || !!inSession,
+    challenge?.level,
+  );
   const size = Number(level);
   const [round, setRound] = useState(0);
   // Partida en curso: si hay una guardada de este nivel, se regenera su tablero.
   const savedGame = useSavedPuzzle('crowns', daily);
   const resumeSeed =
-    round === 0 && savedGame.saved?.level === String(size) ? savedGame.saved.seed : null;
-  const bseed = resumeSeed ?? boardSeed(seed, daily, round, String(size));
+    !challenge && round === 0 && savedGame.saved?.level === String(size)
+      ? savedGame.saved.seed
+      : null;
+  const bseed = resumeSeed ?? boardSeed(seed, daily || !!challenge, round, String(size));
   const key = `${bseed}:${size}`;
   const generated = useWorkerResult(
     key,
@@ -114,13 +121,15 @@ export default function CrownsGame({
     initial: () => new Array<CellState>(size * size).fill(EMPTY),
     isSolved: (cells) => !!puzzle && isSolved(puzzle, cells),
     paused: tutorialOpen,
-    persist: {
-      activityId: 'crowns',
-      daily,
-      seed: bseed,
-      level: String(size),
-      restore: resumeSeed !== null ? savedGame.saved : null,
-    },
+    persist: challenge
+      ? undefined
+      : {
+          activityId: 'crowns',
+          daily,
+          seed: bseed,
+          level: String(size),
+          restore: resumeSeed !== null ? savedGame.saved : null,
+        },
     onSolved: (secs, hints) => onScore(secs, { difficulty: String(size), hints }),
   });
   const { cells, cellsRef, commit, preview, solved } = session;
@@ -217,6 +226,8 @@ export default function CrownsGame({
       activityId="crowns"
       daily={daily}
       inSession={inSession}
+      challenge={challenge}
+      boardSeed={bseed}
       ready={!!puzzle && session.ready}
       elapsed={session.elapsed}
       solved={solved}

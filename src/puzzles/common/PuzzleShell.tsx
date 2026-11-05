@@ -1,6 +1,10 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { PASSES_TO_PROMOTE, passesOf, useLevels } from '../../core/levels';
 import { useSettings } from '../../core/settings';
+import { beatsChallenge, type Challenge } from '../../core/challenge';
+import { shareChallenge } from '../../core/challengeShare';
+import { findActivity } from '../../core/registry';
+import { formatActivityScore } from '../../core/format';
 import { cheer } from '../../core/cheer';
 import Tutorial, { type Slide } from '../../ui/Tutorial';
 import { useTutorialOpen, useTutorials } from '../../core/tutorials';
@@ -20,6 +24,10 @@ interface Props {
   activityId: string;
   daily: boolean;
   inSession?: boolean;
+  /** Reto de un amigo (mismo tablero; se compara al resolver). */
+  challenge?: Challenge;
+  /** Semilla del tablero actual (para generar el código de un reto). */
+  boardSeed?: number;
   ready: boolean;
   elapsed: number;
   solved: boolean;
@@ -69,7 +77,7 @@ export default function PuzzleShell(p: Props) {
   const [suggest, setSuggest] = useState<string | null>(null);
   // En el reto del día y en la sesión el tablero en curso no cambia: subir de
   // nivel queda para la próxima vez.
-  const deferred = p.daily || !!p.inSession;
+  const deferred = p.daily || !!p.inSession || !!p.challenge;
   const [scheduled, setScheduled] = useState<string | null>(null);
   const { solved, hints, variant, activityId } = p;
   useEffect(() => {
@@ -92,6 +100,25 @@ export default function PuzzleShell(p: Props) {
     setSuggest(null);
   };
   const labelOf = (id: string) => p.variants?.find((v) => v.id === id)?.label ?? id;
+
+  // Reto entre amigos: retar con este tablero o devolver el reto recibido.
+  const [challengeSent, setChallengeSent] = useState(false);
+  useEffect(() => {
+    if (!p.solved) setChallengeSent(false);
+  }, [p.solved]);
+  const activity = findActivity(p.activityId);
+  const canChallenge = !p.inSession && p.boardSeed !== undefined && !!p.variant;
+  const sendChallenge = async () => {
+    if (!canChallenge) return;
+    const ok = await shareChallenge(t, {
+      activityId: p.activityId,
+      level: p.variant!,
+      seed: p.boardSeed!,
+      score: p.elapsed,
+    });
+    if (ok) setChallengeSent(true);
+  };
+  const won = p.challenge ? beatsChallenge(p.challenge, p.elapsed) : false;
 
   const [showResumed, setShowResumed] = useState(false);
   useEffect(() => {
@@ -132,7 +159,12 @@ export default function PuzzleShell(p: Props) {
         </button>
         <h1 className="min-w-0 flex-1 truncate text-lg font-bold sm:text-xl">
           {p.emoji} {title}
-          {p.daily && (
+          {p.challenge && (
+            <span className="ml-2 rounded-full bg-amber-500 px-2 py-0.5 align-middle text-xs text-white">
+              🤝 {t('challenge.badge')}
+            </span>
+          )}
+          {p.daily && !p.challenge && (
             <span className="ml-2 rounded-full bg-brand px-2 py-0.5 align-middle text-xs text-white">
               {t('puzzle.daily')}
             </span>
@@ -154,7 +186,7 @@ export default function PuzzleShell(p: Props) {
         )}
       </header>
 
-      {!p.daily && !p.inSession && p.variants && (
+      {!p.daily && !p.inSession && !p.challenge && p.variants && (
         <div
           className="flex flex-wrap items-center gap-2"
           role="group"
@@ -207,6 +239,34 @@ export default function PuzzleShell(p: Props) {
                   : `${p.label} · ${formatDuration(p.elapsed)}`}
                 {!serene && p.hints > 0 && ` · ${t('puzzle.hintsUsed', { n: p.hints })}`}
               </p>
+              {p.challenge && activity && (
+                <div
+                  className={`w-full rounded-xl p-3 ${won ? 'bg-green-600/20' : 'bg-amber-500/20'}`}
+                >
+                  <p className="font-bold">
+                    {won ? `🏆 ${t('challenge.won')}` : `💪 ${t('challenge.lost')}`}
+                  </p>
+                  <p className="text-sm text-app-muted">
+                    {t('challenge.vs', {
+                      mine: formatActivityScore(activity, p.elapsed),
+                      theirs: formatActivityScore(activity, p.challenge.score),
+                    })}
+                  </p>
+                </div>
+              )}
+              {canChallenge && (
+                <Button
+                  variant={p.challenge ? 'primary' : 'ghost'}
+                  onClick={() => void sendChallenge()}
+                  className="w-full"
+                >
+                  {challengeSent
+                    ? `✓ ${t('challenge.sent')}`
+                    : p.challenge
+                      ? `🤝 ${t('challenge.reply')}`
+                      : `🤝 ${t('challenge.send')}`}
+                </Button>
+              )}
               {suggest && (
                 <div className="w-full rounded-xl bg-brand/15 p-3">
                   <p className="text-sm font-semibold">⭐ {t('level.unlocked')}</p>
@@ -229,7 +289,7 @@ export default function PuzzleShell(p: Props) {
               >
                 {shared ? t('puzzle.shared') : t('puzzle.share')}
               </Button>
-              {!p.daily && !p.inSession && (
+              {!p.daily && !p.inSession && !p.challenge && (
                 <Button variant="ghost" onClick={startNew} className="w-full">
                   {t('puzzle.new')}
                 </Button>

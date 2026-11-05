@@ -8,6 +8,9 @@ import { PASSES_TO_PROMOTE, passesOf, useLevels } from '../../core/levels';
 import { SERENE_SLOWDOWN, useSettings } from '../../core/settings';
 import { cheer } from '../../core/cheer';
 import { findActivity } from '../../core/registry';
+import { beatsChallenge } from '../../core/challenge';
+import { shareChallenge } from '../../core/challengeShare';
+import { formatActivityScore } from '../../core/format';
 
 export interface ExerciseResult {
   /** Valor que se guarda como puntuación (según el scoreKind de la actividad). */
@@ -95,6 +98,7 @@ export default function ExerciseShell(p: Props) {
 
   const retry = () => {
     setSuggest(null);
+    setChallengeSent(false);
     setAttempt((a) => a + 1);
     start();
   };
@@ -112,8 +116,23 @@ export default function ExerciseShell(p: Props) {
     }
   };
 
-  const seed = boardSeed(p.seed, p.daily, attempt, p.variant ?? '');
-  const canRetry = !p.daily && !p.inSession;
+  // En un reto, la semilla es la del código (mismo ejercicio que el amigo).
+  const seed = p.challenge
+    ? p.challenge.seed
+    : boardSeed(p.seed, p.daily, attempt, p.variant ?? '');
+  const canRetry = !p.daily && !p.inSession && !p.challenge;
+  const [challengeSent, setChallengeSent] = useState(false);
+  const activity = findActivity(p.activityId);
+  const sendChallenge = async () => {
+    if (!result || !p.variant) return;
+    const ok = await shareChallenge(t, {
+      activityId: p.activityId,
+      level: p.variant,
+      seed,
+      score: result.score,
+    });
+    if (ok) setChallengeSent(true);
+  };
 
   return (
     <main className="mx-auto flex min-h-app max-w-lg flex-col gap-4 px-4 py-4">
@@ -127,7 +146,12 @@ export default function ExerciseShell(p: Props) {
         </button>
         <h1 className="min-w-0 flex-1 truncate text-lg font-bold sm:text-xl">
           {p.emoji} {title}
-          {p.daily && !p.inSession && (
+          {p.challenge && (
+            <span className="ml-2 rounded-full bg-amber-500 px-2 py-0.5 align-middle text-xs text-white">
+              🤝 {t('challenge.badge')}
+            </span>
+          )}
+          {p.daily && !p.inSession && !p.challenge && (
             <span className="ml-2 rounded-full bg-brand px-2 py-0.5 align-middle text-xs text-white">
               {t('puzzle.daily')}
             </span>
@@ -145,7 +169,7 @@ export default function ExerciseShell(p: Props) {
               ))}
             </ul>
           </div>
-          {!p.daily && !p.inSession && p.variants && (
+          {!p.daily && !p.inSession && !p.challenge && p.variants && (
             <div className="flex flex-wrap gap-2" role="group">
               {p.variants.map((v) => (
                 <button
@@ -212,7 +236,41 @@ export default function ExerciseShell(p: Props) {
               {result.detail && <p className="text-app-muted">{result.detail}</p>}
             </>
           )}
+          {p.challenge && activity && (
+            <div
+              className={`w-full max-w-xs rounded-xl p-3 ${
+                beatsChallenge(p.challenge, result.score)
+                  ? 'bg-green-600/20'
+                  : 'bg-amber-500/20'
+              }`}
+            >
+              <p className="font-bold">
+                {beatsChallenge(p.challenge, result.score)
+                  ? `🏆 ${t('challenge.won')}`
+                  : `💪 ${t('challenge.lost')}`}
+              </p>
+              <p className="text-sm text-app-muted">
+                {t('challenge.vs', {
+                  mine: formatActivityScore(activity, result.score),
+                  theirs: formatActivityScore(activity, p.challenge.score),
+                })}
+              </p>
+            </div>
+          )}
           <div className="mt-4 flex w-full max-w-xs flex-col gap-2">
+            {!p.inSession && p.variant && (
+              <Button
+                variant={p.challenge ? 'primary' : 'ghost'}
+                onClick={() => void sendChallenge()}
+                className="w-full"
+              >
+                {challengeSent
+                  ? `✓ ${t('challenge.sent')}`
+                  : p.challenge
+                    ? `🤝 ${t('challenge.reply')}`
+                    : `🤝 ${t('challenge.send')}`}
+              </Button>
+            )}
             {suggest && (
               <div className="rounded-xl bg-brand/15 p-3">
                 <p className="text-sm font-semibold">⭐ {t('level.unlocked')}</p>

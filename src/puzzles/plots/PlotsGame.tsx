@@ -57,9 +57,14 @@ export default function PlotsGame({
   seed,
   daily,
   inSession,
+  challenge,
 }: GameProps) {
   const t = useT();
-  const [variantId, setVariantId] = useActivityLevel('plots', daily || !!inSession);
+  const [variantId, setVariantId] = useActivityLevel(
+    'plots',
+    daily || !!inSession,
+    challenge?.level,
+  );
   const variant = VARIANTS.find((v) => v.id === variantId) ?? VARIANTS[0];
   const { size } = variant;
   const [round, setRound] = useState(0);
@@ -73,8 +78,10 @@ export default function PlotsGame({
   // Partida en curso: si hay una guardada de este nivel, se regenera su tablero.
   const savedGame = useSavedPuzzle('plots', daily);
   const resumeSeed =
-    round === 0 && savedGame.saved?.level === variant.id ? savedGame.saved.seed : null;
-  const bseed = resumeSeed ?? boardSeed(seed, daily, round, variant.id);
+    !challenge && round === 0 && savedGame.saved?.level === variant.id
+      ? savedGame.saved.seed
+      : null;
+  const bseed = resumeSeed ?? boardSeed(seed, daily || !!challenge, round, variant.id);
   const key = `${bseed}:${variant.id}`;
   // Generar es casi instantáneo (< 15 ms): no hace falta Web Worker.
   const generated = useMemo(() => generatePlots(bseed, variant), [bseed, variant]);
@@ -86,13 +93,15 @@ export default function PlotsGame({
     initial: () => new Array<number>(size * size).fill(0),
     isSolved: (cells) => isSolved(puzzle, cells),
     paused: tutorialOpen,
-    persist: {
-      activityId: 'plots',
-      daily,
-      seed: bseed,
-      level: variant.id,
-      restore: resumeSeed !== null ? savedGame.saved : null,
-    },
+    persist: challenge
+      ? undefined
+      : {
+          activityId: 'plots',
+          daily,
+          seed: bseed,
+          level: variant.id,
+          restore: resumeSeed !== null ? savedGame.saved : null,
+        },
     onSolved: (secs, hints) => onScore(secs, { difficulty: variant.id, hints }),
   });
   const { cells, cellsRef, commit, solved } = session;
@@ -194,6 +203,8 @@ export default function PlotsGame({
       activityId="plots"
       daily={daily}
       inSession={inSession}
+      challenge={challenge}
+      boardSeed={bseed}
       ready={session.ready}
       elapsed={session.elapsed}
       solved={solved}

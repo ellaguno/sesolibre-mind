@@ -88,6 +88,7 @@ export default function QuickMathExercise(props: GameProps) {
   const [level, setLevel] = useActivityLevel(
     'quickmath',
     props.daily || !!props.inSession,
+    props.challenge?.level,
   );
   const lv = LEVELS[level] ?? LEVELS['4'];
   return (

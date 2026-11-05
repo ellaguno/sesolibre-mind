@@ -285,6 +285,8 @@ vayan creciendo, sin limitar a quien ya juega bien.
 - [x] **Guardar partida en curso** en los 5 puzzles (`core/progress.ts`): tablero (semilla + nivel), marcas, tiempo y pistas; una partida libre y otra del reto del día (válida ese día, compartida con la sesión). Aviso «Continuando tu partida» y etiqueta «En curso» en el hub.
 
 ### Fase 5+ — Expansión
+- [x] **Modo familia** (`core/profiles.ts`, `#/profiles`): varios perfiles en el dispositivo, cada uno con su espacio de almacenamiento (`p:<id>:`); el principal conserva los datos existentes. Todo local, sin cuentas.
+- [x] **Reto entre amigos** sin servidor (`core/challenge.ts`, `#/challenge`): código de 16 caracteres (base32 Crockford con control) con actividad, nivel, semilla y resultado; «Retar a un amigo» al terminar, «Devolver el reto» y comparación al jugar el mismo tablero/ejercicio.
 - [ ] Ejercicios v2 (N-back, Corsi, Go/No-Go, búsqueda visual, cambio, reloj, cambio de regla).
 - [ ] Puzzles v2/v3 (Futoshiki, Calcudoku, Nonograma, Faroles, Rascacielos, Tachar).
 - [ ] Juegos de palabras (requieren diccionarios con licencia libre por idioma).

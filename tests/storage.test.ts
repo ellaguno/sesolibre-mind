@@ -29,7 +29,8 @@ describe('storage por perfil (modo familia)', () => {
   });
 
   it('cada perfil ve sólo sus datos; el principal no usa prefijo', async () => {
-    const { setStorageNamespace, profilePrefix, rawStorage } = await import('../src/core/storage');
+    const { setStorageNamespace, profilePrefix, rawStorage } =
+      await import('../src/core/storage');
     setStorageNamespace(profilePrefix('main'));
     await storage.set('levels:state', 'principal');
     setStorageNamespace(profilePrefix('abc'));

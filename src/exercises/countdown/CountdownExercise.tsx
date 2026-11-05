@@ -108,6 +108,7 @@ export default function CountdownExercise(props: GameProps) {
   const [level, setLevel] = useActivityLevel(
     'countdown',
     props.daily || !!props.inSession,
+    props.challenge?.level,
   );
   const lv = LEVELS[level] ?? LEVELS['3'];
   return (

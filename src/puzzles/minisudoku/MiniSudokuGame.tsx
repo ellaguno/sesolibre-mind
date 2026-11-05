@@ -34,9 +34,14 @@ export default function MiniSudokuGame({
   seed,
   daily,
   inSession,
+  challenge,
 }: GameProps) {
   const t = useT();
-  const [variantId, setVariantId] = useActivityLevel('minisudoku', daily || !!inSession);
+  const [variantId, setVariantId] = useActivityLevel(
+    'minisudoku',
+    daily || !!inSession,
+    challenge?.level,
+  );
   const variant = VARIANTS.find((v) => v.id === variantId) ?? VARIANTS[1];
   const spec = specFor(variant.size * variant.size);
   const {
@@ -57,8 +62,10 @@ export default function MiniSudokuGame({
   // Partida en curso: si hay una guardada de este nivel, se regenera su tablero.
   const savedGame = useSavedPuzzle('minisudoku', daily);
   const resumeSeed =
-    round === 0 && savedGame.saved?.level === variant.id ? savedGame.saved.seed : null;
-  const bseed = resumeSeed ?? boardSeed(seed, daily, round, variant.id);
+    !challenge && round === 0 && savedGame.saved?.level === variant.id
+      ? savedGame.saved.seed
+      : null;
+  const bseed = resumeSeed ?? boardSeed(seed, daily || !!challenge, round, variant.id);
   const key = `${bseed}:${variant.id}`;
   const generated = useWorkerResult(
     key,
@@ -74,13 +81,15 @@ export default function MiniSudokuGame({
     initial: () => [...(givens ?? [])],
     isSolved: (cells) => isSolved(cells.map(valueOf)),
     paused: tutorialOpen,
-    persist: {
-      activityId: 'minisudoku',
-      daily,
-      seed: bseed,
-      level: variant.id,
-      restore: resumeSeed !== null ? savedGame.saved : null,
-    },
+    persist: challenge
+      ? undefined
+      : {
+          activityId: 'minisudoku',
+          daily,
+          seed: bseed,
+          level: variant.id,
+          restore: resumeSeed !== null ? savedGame.saved : null,
+        },
     onSolved: (secs, hints) => onScore(secs, { difficulty: variant.id, hints }),
   });
   const { cells, cellsRef, commit, solved } = session;
@@ -196,6 +205,8 @@ export default function MiniSudokuGame({
       activityId="minisudoku"
       daily={daily}
       inSession={inSession}
+      challenge={challenge}
+      boardSeed={bseed}
       ready={!!givens && session.ready}
       elapsed={session.elapsed}
       solved={solved}

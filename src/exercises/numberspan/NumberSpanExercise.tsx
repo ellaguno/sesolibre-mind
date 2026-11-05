@@ -131,6 +131,7 @@ export default function NumberSpanExercise(props: GameProps) {
   const [level, setLevel] = useActivityLevel(
     'numberspan',
     props.daily || !!props.inSession,
+    props.challenge?.level,
   );
   const lv = LEVELS[level] ?? LEVELS.forward;
   return (

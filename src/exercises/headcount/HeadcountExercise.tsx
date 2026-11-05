@@ -149,6 +149,7 @@ export default function HeadcountExercise(props: GameProps) {
   const [level, setLevel] = useActivityLevel(
     'headcount',
     props.daily || !!props.inSession,
+    props.challenge?.level,
   );
   const lv = LEVELS[level] ?? LEVELS['3'];
   return (

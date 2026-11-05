@@ -131,6 +131,8 @@ async function persist(get: () => LevelsState) {
 export function useActivityLevel(
   activityId: string,
   freeze = false,
+  /** Nivel impuesto (p. ej. el de un reto): no se puede cambiar. */
+  override?: string,
 ): [string, (level: string) => void] {
   const level = useLevels((s) => {
     const a = findActivity(activityId);
@@ -141,5 +143,6 @@ export function useActivityLevel(
   // Hasta hidratar el store el nivel puede cambiar; después, se congela.
   const frozen = useRef(level);
   if (!freeze || !loaded) frozen.current = level;
-  return [freeze ? frozen.current : level, (l: string) => setLevel(activityId, l)];
+  const current = override ?? (freeze ? frozen.current : level);
+  return [current, (l: string) => setLevel(activityId, l)];
 }

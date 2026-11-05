@@ -371,6 +371,30 @@ const es: Dict = {
   'profiles.save': 'Guardar',
   'profiles.createAndUse': 'Crear y usar',
 
+  'challenge.title': 'Retos',
+  'challenge.badge': 'Reto',
+  'challenge.hubTitle': 'Retos entre amigos',
+  'challenge.hubDesc': '¿Te retaron? Escribe su código y juega el mismo tablero.',
+  'challenge.intro':
+    'Escribe el código que te mandó tu amigo. Jugarás exactamente su mismo tablero o ejercicio.',
+  'challenge.codeLabel': 'Código del reto',
+  'challenge.invalid':
+    'Ese código no es válido. Revisa que esté completo y bien escrito.',
+  'challenge.toBeatTime': 'Tiempo a vencer: {score}',
+  'challenge.toBeatPoints': 'Resultado a superar: {score}',
+  'challenge.accept': 'Aceptar el reto',
+  'challenge.howTitle': '¿Cómo reto a alguien?',
+  'challenge.how':
+    'Al terminar cualquier puzzle o ejercicio, toca «Retar a un amigo» y mándale el mensaje por WhatsApp, SMS o como quieras. No hace falta internet ni cuenta.',
+  'challenge.send': 'Retar a un amigo',
+  'challenge.reply': 'Devolver el reto',
+  'challenge.sent': '¡Reto listo para enviar!',
+  'challenge.won': '¡Ganaste el reto!',
+  'challenge.lost': 'Esta vez ganó tu amigo',
+  'challenge.vs': 'Tú: {mine} · Tu amigo: {theirs}',
+  'challenge.shareText':
+    '🤝 Te reto en SesoLibre Mind: {emoji} {title} (nivel {level}) — mi resultado: {score}. ¿Lo superas? Abre la app → Retos y escribe el código: {code}',
+
   'domain.speed': 'Velocidad',
   'domain.memory': 'Memoria',
   'domain.attention': 'Atención',
@@ -748,6 +772,30 @@ const en: Dict = {
   'profiles.avatar': 'Avatar',
   'profiles.save': 'Save',
   'profiles.createAndUse': 'Create and use',
+
+  'challenge.title': 'Challenges',
+  'challenge.badge': 'Challenge',
+  'challenge.hubTitle': 'Challenge a friend',
+  'challenge.hubDesc': 'Got challenged? Enter the code and play the same board.',
+  'challenge.intro':
+    'Enter the code your friend sent you. You will play exactly the same board or exercise.',
+  'challenge.codeLabel': 'Challenge code',
+  'challenge.invalid':
+    'That code is not valid. Check it is complete and typed correctly.',
+  'challenge.toBeatTime': 'Time to beat: {score}',
+  'challenge.toBeatPoints': 'Score to beat: {score}',
+  'challenge.accept': 'Accept the challenge',
+  'challenge.howTitle': 'How do I challenge someone?',
+  'challenge.how':
+    'When you finish any puzzle or exercise, tap “Challenge a friend” and send the message by WhatsApp, SMS or however you like. No internet or account needed.',
+  'challenge.send': 'Challenge a friend',
+  'challenge.reply': 'Challenge them back',
+  'challenge.sent': 'Challenge ready to send!',
+  'challenge.won': 'You won the challenge!',
+  'challenge.lost': 'Your friend won this time',
+  'challenge.vs': 'You: {mine} · Your friend: {theirs}',
+  'challenge.shareText':
+    '🤝 I challenge you in SesoLibre Mind: {emoji} {title} (level {level}) — my result: {score}. Can you beat it? Open the app → Challenges and enter the code: {code}',
 
   'domain.speed': 'Speed',
   'domain.memory': 'Memory',

@@ -1,3 +1,4 @@
+import type { Challenge } from './challenge';
 import type { ComponentType } from 'react';
 
 export type ScoreKind = 'points' | 'time' | 'moves';
@@ -31,6 +32,8 @@ export interface GameProps {
    * terminar, el botón principal es "Continuar" (que llama a onExit).
    */
   inSession?: boolean;
+  /** Reto de un amigo: mismo tablero (semilla y nivel) y resultado a superar. */
+  challenge?: Challenge;
   difficulty?: string;
 }
 

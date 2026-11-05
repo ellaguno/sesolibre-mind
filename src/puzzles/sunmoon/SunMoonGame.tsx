@@ -40,9 +40,14 @@ export default function SunMoonGame({
   seed,
   daily,
   inSession,
+  challenge,
 }: GameProps) {
   const t = useT();
-  const [variantId, setVariantId] = useActivityLevel('sunmoon', daily || !!inSession);
+  const [variantId, setVariantId] = useActivityLevel(
+    'sunmoon',
+    daily || !!inSession,
+    challenge?.level,
+  );
   const variant = VARIANTS.find((v) => v.id === variantId) ?? VARIANTS[0];
   const { size, difficulty } = variant;
   const [round, setRound] = useState(0);
@@ -51,8 +56,10 @@ export default function SunMoonGame({
   // Partida en curso: si hay una guardada de este nivel, se regenera su tablero.
   const savedGame = useSavedPuzzle('sunmoon', daily);
   const resumeSeed =
-    round === 0 && savedGame.saved?.level === variant.id ? savedGame.saved.seed : null;
-  const bseed = resumeSeed ?? boardSeed(seed, daily, round, variant.id);
+    !challenge && round === 0 && savedGame.saved?.level === variant.id
+      ? savedGame.saved.seed
+      : null;
+  const bseed = resumeSeed ?? boardSeed(seed, daily || !!challenge, round, variant.id);
   const key = `${bseed}:${variant.id}`;
   const generated = useWorkerResult(
     key,
@@ -68,13 +75,15 @@ export default function SunMoonGame({
     initial: () => [...(puzzle?.givens ?? [])],
     isSolved: (cells) => !!puzzle && isSolved(puzzle, cells),
     paused: tutorialOpen,
-    persist: {
-      activityId: 'sunmoon',
-      daily,
-      seed: bseed,
-      level: variant.id,
-      restore: resumeSeed !== null ? savedGame.saved : null,
-    },
+    persist: challenge
+      ? undefined
+      : {
+          activityId: 'sunmoon',
+          daily,
+          seed: bseed,
+          level: variant.id,
+          restore: resumeSeed !== null ? savedGame.saved : null,
+        },
     onSolved: (secs, hints) => onScore(secs, { difficulty: variant.id, hints }),
   });
   const { cells, cellsRef, commit, solved } = session;
@@ -141,6 +150,8 @@ export default function SunMoonGame({
       activityId="sunmoon"
       daily={daily}
       inSession={inSession}
+      challenge={challenge}
+      boardSeed={bseed}
       ready={!!puzzle && session.ready}
       elapsed={session.elapsed}
       solved={solved}

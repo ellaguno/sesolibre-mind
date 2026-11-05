@@ -7,6 +7,7 @@ import SettingsScreen from './hub/SettingsScreen';
 import SessionScreen from './hub/SessionScreen';
 import ProfileScreen from './hub/ProfileScreen';
 import ProfilesScreen from './hub/ProfilesScreen';
+import ChallengeScreen from './hub/ChallengeScreen';
 import { useProfiles } from './core/profiles';
 import { useSettings } from './core/settings';
 import { useRewards } from './core/RewardService';
@@ -61,6 +62,7 @@ export default function App() {
           <Route path="/session" element={<SessionScreen />} />
           <Route path="/profile" element={<ProfileScreen />} />
           <Route path="/profiles" element={<ProfilesScreen />} />
+          <Route path="/challenge" element={<ChallengeScreen />} />
           <Route path="/play/:id" element={<GameHost />} />
         </Routes>
       </RouteTransition>
