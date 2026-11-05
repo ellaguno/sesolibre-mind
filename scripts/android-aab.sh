@@ -3,7 +3,7 @@
 # Genera el Android App Bundle de release para Google Play:
 #   android/app/build/outputs/bundle/release/app-release.aab   (SIN firmar)
 # y, si se indica el keystore, una copia firmada con la upload key:
-#   sesolibre-mind-<versionName>-<versionCode>.aab
+#   sesolibre-mind-<versionName>-<versionCode>.aab   (sólo existe si la firma salió bien)
 #
 # Uso:
 #   ./scripts/android-aab.sh                         # sólo compila (sin firmar)
@@ -25,6 +25,10 @@ fi
 
 KEYSTORE="${1:-}"
 ALIAS="${2:-upload}"
+if [ -n "$KEYSTORE" ] && [ ! -f "$KEYSTORE" ]; then
+  echo "No existe el keystore: $KEYSTORE" >&2
+  exit 1
+fi
 VC="${VERSION_CODE:-$(git rev-list --count HEAD)}"
 VN="$(node -p "require('./package.json').version")"
 
@@ -53,12 +57,32 @@ echo "versionCode=${VC} versionName=${VN}"
 AAB=android/app/build/outputs/bundle/release/app-release.aab
 MAP=android/app/build/outputs/mapping/release/mapping.txt
 [ -s "$MAP" ] || { echo "R8 no generó mapping.txt: el AAB no está optimizado" >&2; exit 1; }
-echo "AAB sin firmar: $ROOT/$AAB"
+echo "AAB intermedio (sin firmar, NO subir a Play): $ROOT/$AAB"
 
-if [ -n "$KEYSTORE" ]; then
-  OUT="sesolibre-mind-${VN}-${VC}.aab"
-  cp "$AAB" "$OUT"
-  jarsigner -sigalg SHA256withRSA -digestalg SHA-256 -keystore "$KEYSTORE" "$OUT" "$ALIAS"
-  jarsigner -verify "$OUT"
-  echo "AAB firmado para Google Play: $ROOT/$OUT"
+if [ -z "$KEYSTORE" ]; then
+  echo "Sin keystore: el AAB queda SIN FIRMAR (Play no lo acepta)."
+  exit 0
 fi
+
+# Se firma una copia temporal y sólo si la firma se verifica se le da el nombre
+# final: así nunca queda en la carpeta un sesolibre-mind-*.aab sin firmar.
+OUT="sesolibre-mind-${VN}-${VC}.aab"
+TMP="$(mktemp --suffix=.aab)"
+trap 'rm -f "$TMP"' EXIT
+cp "$AAB" "$TMP"
+echo
+echo "Firmando con $KEYSTORE (alias $ALIAS). Escribe la contraseña y pulsa Enter:"
+if ! jarsigner -sigalg SHA256withRSA -digestalg SHA-256 -keystore "$KEYSTORE" "$TMP" "$ALIAS"; then
+  echo "✗ No se pudo firmar (¿contraseña o alias incorrectos?). No se generó $OUT." >&2
+  exit 1
+fi
+# (Sin tubería a grep -q: con pipefail, cortar la salida haría fallar la verificación.)
+VERIFY="$(jarsigner -verify "$TMP" 2>&1 || true)"
+if [[ "$VERIFY" != *"jar verified"* ]]; then
+  echo "✗ La firma no se pudo verificar. No se generó $OUT." >&2
+  exit 1
+fi
+mv "$TMP" "$OUT"
+trap - EXIT
+echo
+echo "✓ AAB FIRMADO para Google Play: $ROOT/$OUT"
