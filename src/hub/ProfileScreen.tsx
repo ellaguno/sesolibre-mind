@@ -39,16 +39,16 @@ function LevelProgress() {
                 <span className="truncate font-medium">{t(`act.${a.id}.title`)}</span>
                 <span className="text-xs text-app-muted">
                   {t('profile.levelOf', { n: idx + 1, total: a.variants.length })}
+                  <span aria-hidden className="ml-2 tracking-tight">
+                    {a.variants.map((v) =>
+                      passesOf(levels, a.id, v) >= PASSES_TO_PROMOTE
+                        ? '⭐'
+                        : v === cur
+                          ? '🔸'
+                          : '·',
+                    )}
+                  </span>
                 </span>
-              </span>
-              <span aria-hidden className="shrink-0 tracking-tight">
-                {a.variants.map((v) =>
-                  passesOf(levels, a.id, v) >= PASSES_TO_PROMOTE
-                    ? '⭐'
-                    : v === cur
-                      ? '🔸'
-                      : '·',
-                )}
               </span>
             </li>
           );
@@ -153,17 +153,17 @@ export default function ProfileScreen() {
           <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-app-muted">
             {t('history.title')}
           </h2>
-          <ul className="grid grid-cols-2 gap-2">
+          <ul className="flex flex-wrap gap-1.5">
             {activities
               .filter((a) => a.available)
               .map((a) => (
                 <li key={a.id}>
                   <Link
                     to={`/history/${a.id}`}
-                    className="flex items-center gap-2 rounded-xl bg-app-surface2 px-2.5 py-2 text-sm font-medium hover:bg-app-border"
+                    className="flex items-center gap-1.5 whitespace-nowrap rounded-xl bg-app-surface2 px-2.5 py-1.5 text-sm font-medium hover:bg-app-border"
                   >
                     <span aria-hidden>{a.emoji}</span>
-                    <span className="truncate">{t(`act.${a.id}.title`)}</span>
+                    <span>{t(`act.${a.id}.title`)}</span>
                   </Link>
                 </li>
               ))}
