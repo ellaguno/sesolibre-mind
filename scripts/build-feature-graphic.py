@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Gráfico de funciones de Google Play (1024×500), en español e inglés.
 
-Reutiliza el grafotipo, los degradados y las fichas de build-icons.py y lo
+Reutiliza la mascota (cerebro con pesa) y los degradados de build-icons.py y lo
 rasteriza con Chrome headless.
 
 Salidas: assets/play/feature-graphic.png (es) y assets/play/feature-graphic-en.png
@@ -43,8 +43,7 @@ def graphic(lang: str) -> str:
 <rect width="{W}" height="{H}" fill="url(#bgw)"/>
 <g fill="#ffffff" fill-opacity="0.05">{dots}</g>
 <ellipse cx="235" cy="230" rx="230" ry="160" fill="url(#halo)"/>
-{icons.mark(235, 215, 350, fill='url(#brand)', extra='filter="url(#glow)"')}
-{icons.tiles(235, 320, 42, 13)}
+{icons.brain(235, 250, 0.68)}
 <g font-family="Roboto, 'Noto Sans', Arial, sans-serif" fill="#ffffff">
   <text x="470" y="160" font-size="28" font-weight="700" fill="#c7d2fe" letter-spacing="2">SESOLIBRE MIND</text>
   <text x="470" y="226" font-size="46" font-weight="800">{title}</text>

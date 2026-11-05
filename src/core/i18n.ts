@@ -314,7 +314,8 @@ const es: Dict = {
   'lvl.trails.B20': 'Alternando 1→A→2→B… (20).',
   'lvl.headcount.1': '3 rondas lentas; la gente sólo entra.',
   'lvl.headcount.2': '4 rondas; entran y salen.',
-  'lvl.headcount.3': '5 rondas, cada vez más rápidas.',
+  'lvl.headcount.3': '5 rondas a paso tranquilo.',
+  'lvl.headcount.4': '5 rondas rápidas; cada vez más.',
 
   'settings.serene': 'Modo sereno',
   'settings.sereneHint':
@@ -730,7 +731,8 @@ const en: Dict = {
   'lvl.trails.B20': 'Alternating 1→A→2→B… (20).',
   'lvl.headcount.1': '3 slow rounds; people only walk in.',
   'lvl.headcount.2': '4 rounds; in and out.',
-  'lvl.headcount.3': '5 rounds, faster each time.',
+  'lvl.headcount.3': '5 rounds at a calm pace.',
+  'lvl.headcount.4': '5 fast rounds, faster each time.',
 
   'settings.serene': 'Calm mode',
   'settings.sereneHint':

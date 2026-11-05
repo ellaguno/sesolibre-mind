@@ -155,7 +155,7 @@ export const activities: ActivityMeta[] = [
     available: true,
     accent: '#eab308',
     pointsKey: 'unit.ofFive',
-    variants: ['1', '2', '3'],
+    variants: ['1', '2', '3', '4'],
     normal: '3',
     load: () => import('../exercises/headcount/HeadcountExercise'),
   },

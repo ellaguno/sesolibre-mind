@@ -108,13 +108,13 @@ function Run({ seed, finish, lv }: RunProps & { lv: Level }) {
           </div>
         )}
         {stage === 'ready' && (
-          <p className="absolute top-3 rounded-full bg-white/80 px-3 py-1 text-sm font-semibold text-slate-800">
+          <p className="absolute top-3 z-20 rounded-full bg-white/90 px-3 py-1 text-sm font-semibold text-slate-800">
             {r === 0 ? t('headcount.empty') : t('headcount.watch')}
           </p>
         )}
         {stage === 'feedback' && (
           <p
-            className={`overlay-pop absolute top-3 rounded-full px-3 py-1 text-sm font-bold text-white ${
+            className={`overlay-pop absolute top-3 z-20 rounded-full px-3 py-1 text-sm font-bold text-white ${
               lastOk ? 'bg-green-600' : 'bg-red-600'
             }`}
           >

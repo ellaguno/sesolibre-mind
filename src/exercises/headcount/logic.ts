@@ -16,6 +16,8 @@ export interface Level {
   speedUp: number;
   /** Sólo entran (nadie sale): el nivel más básico. */
   onlyIn?: boolean;
+  /** Las dos primeras rondas mueven a 1–2 personas; desde la tercera, hasta maxN. */
+  rampN?: boolean;
 }
 
 export const LEVELS: Record<string, Level> = {
@@ -29,13 +31,25 @@ export const LEVELS: Record<string, Level> = {
     onlyIn: true,
   },
   '2': { rounds: 4, baseMoves: 3, movesPerRound: 1, maxN: 2, stepMs: 1400, speedUp: 80 },
+  // Nivel normal: a paso tranquilo (la última ronda va a ~1.1 s por movimiento).
   '3': {
+    rounds: ROUNDS,
+    baseMoves: 4,
+    movesPerRound: 2,
+    maxN: 3,
+    stepMs: 1600,
+    speedUp: 120,
+    rampN: true,
+  },
+  // Rápido: para quien domina el normal (la última ronda va a ~0.6 s).
+  '4': {
     rounds: ROUNDS,
     baseMoves: 4,
     movesPerRound: 2,
     maxN: 3,
     stepMs: 1150,
     speedUp: 140,
+    rampN: true,
   },
 };
 
@@ -58,8 +72,7 @@ export function makeRound(rng: Rng, r: number, lv: Level = LEVELS['3']): Round {
   const moves: Move[] = [{ dir: 'in', n: randInt(rng, 1, Math.min(3, lv.maxN)) }];
   let inside = moves[0].n;
   const count = lv.baseMoves + r * lv.movesPerRound;
-  // En el nivel normal las dos primeras rondas mueven a 1–2 personas.
-  const maxN = lv === LEVELS['3'] ? (r >= 2 ? 3 : 2) : lv.maxN;
+  const maxN = lv.rampN && r < 2 ? Math.min(2, lv.maxN) : lv.maxN;
   while (moves.length < count) {
     const dir = lv.onlyIn || inside === 0 || rng() < 0.5 ? 'in' : 'out';
     const n = randInt(rng, 1, dir === 'out' ? Math.min(maxN, inside) : maxN);

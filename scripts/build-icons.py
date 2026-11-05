@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Genera TODOS los íconos de SesoLibre Mind desde vectores (adaptado de sesolibre-games) (fuente única de verdad).
 
-Fuente: assets/src/grafotipo.path (trazo vectorial del logo oficial de
-SesoLibre: alas + cabeza, sin el texto). El diseño se compone aquí en SVG y se
+Ícono: un cerebro levantando una pesa, con la paleta de SesoLibre. El grafotipo
+(assets/src/grafotipo.path: alas + cabeza del logo oficial) sigue disponible
+vía mark() para la gráfica de Play. El diseño se compone aquí en SVG y se
 rasteriza con Chrome headless (mismo motor que la PWA), así que cualquier
 tamaño sale nítido.
 
@@ -19,7 +20,7 @@ Salidas:
   assets/play/icon-512.png        ícono de la ficha de Google Play
 
 Uso:  npm run icons   (= python3 scripts/build-icons.py; requiere google-chrome / chromium)
-Luego: npm run assets:android  para regenerar los mipmaps locales.
+Los mipmaps de Android se regeneran solos en scripts/android-apk.sh y android-aab.sh.
 """
 from __future__ import annotations
 
@@ -27,6 +28,7 @@ import os
 import shutil
 import subprocess
 import sys
+import math
 import tempfile
 from pathlib import Path
 
@@ -136,6 +138,84 @@ def tiles(cx: float, cy: float, size: float, gap: float) -> str:
         )
     return f'<g filter="url(#drop)">{"".join(out)}</g>'
 
+# --- Mascota: un cerebro levantando una pesa -------------------------------
+# Dibujado en coordenadas de 1024 alrededor de (512, BRAIN_CY); `brain()` lo
+# coloca y escala. Ocupa aprox. x 250..774, y 284..722: cabe en el círculo
+# seguro del ícono adaptativo (radio ~313) a escala 1.
+BRAIN_CY = 503
+
+def _scallop(cx, cy, rx, ry, n, bulge, a0, a1):
+    """Contorno festoneado sobre un arco de elipse (ángulos en grados, sentido horario en pantalla)."""
+    pts=[]
+    for k in range(n+1):
+        a=math.radians(a0+(a1-a0)*k/n)
+        pts.append((cx+rx*math.cos(a), cy+ry*math.sin(a)))
+    d=f'M{pts[0][0]:.1f} {pts[0][1]:.1f}'
+    for k in range(n):
+        am=math.radians(a0+(a1-a0)*(k+0.5)/n)
+        qx=cx+(rx+bulge)*math.cos(am); qy=cy+(ry+bulge)*math.sin(am)
+        x,y=pts[k+1]
+        d+=f' Q{qx:.1f} {qy:.1f} {x:.1f} {y:.1f}'
+    return d
+
+def _hemi(side):
+    # side -1 izquierda, +1 derecha. Centro del hemisferio desplazado del eje.
+    cx=512+side*92; cy=572; rx=130; ry=150
+    if side<0:
+        d=_scallop(cx,cy,rx,ry,7,34,90,270)  # de abajo, por la izquierda, a arriba
+        d+=f' L512 {cy-ry+8} L512 {cy+ry-6} Z'
+    else:
+        d=_scallop(cx,cy,rx,ry,7,34,-90,90)
+        d+=f' L512 {cy+ry-6} L512 {cy-ry+8} Z'
+    return d
+
+BRAIN_D = _hemi(-1)+' '+_hemi(1)
+
+GYRI = ' '.join([
+  'M432 452 C 462 470, 462 500, 436 516',
+  'M592 452 C 562 470, 562 500, 588 516',
+  'M372 520 C 402 520, 412 540, 404 562',
+  'M652 520 C 622 520, 612 540, 620 562',
+  'M360 640 C 384 626, 402 640, 404 664',
+  'M664 640 C 640 626, 622 640, 620 664',
+])
+
+def _brain_body() -> str:
+    face=('<ellipse cx="466" cy="612" rx="27" ry="31" fill="#fff"/>'
+          '<ellipse cx="558" cy="612" rx="27" ry="31" fill="#fff"/>'
+          '<circle cx="471" cy="618" r="15" fill="#1b1036"/>'
+          '<circle cx="553" cy="618" r="15" fill="#1b1036"/>'
+          '<circle cx="476" cy="611" r="5" fill="#fff"/><circle cx="558" cy="611" r="5" fill="#fff"/>'
+          '<path d="M480 672 Q 512 700, 544 672" fill="none" stroke="#1b1036" stroke-width="11" stroke-linecap="round"/>'
+          '<ellipse cx="428" cy="668" rx="21" ry="12" fill="#ff7aa8" opacity="0.6"/>'
+          '<ellipse cx="596" cy="668" rx="21" ry="12" fill="#ff7aa8" opacity="0.6"/>')
+    db=('<rect x="352" y="330" width="320" height="22" rx="11" fill="#c9d0ff"/>'
+        '<rect x="328" y="284" width="40" height="114" rx="12" fill="#eef0ff"/>'
+        '<rect x="304" y="302" width="28" height="78" rx="10" fill="#b7bff7"/>'
+        '<rect x="656" y="284" width="40" height="114" rx="12" fill="#eef0ff"/>'
+        '<rect x="692" y="302" width="28" height="78" rx="10" fill="#b7bff7"/>'
+        '<rect x="335" y="292" width="11" height="98" rx="5.5" fill="#fff"/>'
+        '<rect x="663" y="292" width="11" height="98" rx="5.5" fill="#fff"/>')
+    arms='M384 580 C 300 590, 250 520, 268 456 C 282 404, 350 392, 384 342 M640 580 C 724 590, 774 520, 756 456 C 742 404, 674 392, 640 342'
+    hands='<circle cx="384" cy="341" r="27" fill="#5a0838"/><circle cx="640" cy="341" r="27" fill="#5a0838"/><circle cx="384" cy="341" r="20" fill="#ffc46b"/><circle cx="640" cy="341" r="20" fill="#ff6b9a"/>'
+    shine='<path d="M400 470 C 420 440, 455 428, 480 432" fill="none" stroke="#fff" stroke-opacity="0.45" stroke-width="16" stroke-linecap="round"/>'
+    return (
+      '<defs><linearGradient id="arm" gradientUnits="userSpaceOnUse" x1="250" y1="0" x2="774" y2="0"><stop offset="0" stop-color="#ffc46b"/><stop offset="1" stop-color="#ff6b9a"/></linearGradient></defs>'
+      '<g filter="url(#drop)">'
+      f'<path d="{arms}" fill="none" stroke="#5a0838" stroke-width="46" stroke-linecap="round"/>'
+      f'<path d="{arms}" fill="none" stroke="url(#arm)" stroke-width="30" stroke-linecap="round"/>'
+      f'{db}{hands}'
+      f'<path d="{BRAIN_D}" fill="url(#brand)" filter="url(#glow)"/>'
+      '<path d="M512 432 L512 716" stroke="#8a0a4e" stroke-opacity="0.6" stroke-width="10" stroke-linecap="round"/>'
+      f'<path d="{GYRI}" fill="none" stroke="#8a0a4e" stroke-opacity="0.5" stroke-width="11" stroke-linecap="round"/>'
+      f'{shine}{face}</g>')
+
+
+def brain(cx: float, cy: float, scale: float = 1.0) -> str:
+    tx = cx - 512 * scale
+    ty = cy - BRAIN_CY * scale
+    return f'<g transform="translate({tx:.2f},{ty:.2f}) scale({scale:.4f})">{_brain_body()}</g>'
+
 
 def background(size: int = 1024) -> str:
     c = size / 2
@@ -156,15 +236,7 @@ def background(size: int = 1024) -> str:
 def foreground(size: int = 1024, scale: float = 1.0) -> str:
     """Contenido central. `scale` 1.0 = cabe en la zona segura adaptativa (61%)."""
     c = size / 2
-    # Las puntas de las alas son lo más alejado del centro: con 0.58 y la marca
-    # casi centrada quedan dentro del círculo seguro de 66/108 dp.
-    w = size * 0.58 * scale
-    mark_cy = c - size * 0.03 * scale
-    tile = size * 0.072 * scale
-    return (
-        mark(c, mark_cy, w, fill='url(#brand)', extra='filter="url(#glow)"')
-        + tiles(c, c + size * 0.14 * scale, tile, tile * 0.3)
-    )
+    return brain(c, c, size / 1024 * scale)
 
 
 def svg(body: str, size: int = 1024, *, rounded: float | None = None) -> str:
@@ -214,10 +286,9 @@ def main() -> None:
     pwa = svg(background() + foreground(scale=1.3), rounded=200)
     fg_only = svg(foreground())
     bg_only = svg(background())
-    # Favicon: sin textura ni fichas (ilegibles a 16-32px), esquinas redondeadas.
+    # Favicon: sin textura (ilegible a 16-32px), esquinas redondeadas.
     fav = svg(
-        f'<rect width="1024" height="1024" fill="url(#bg)"/>'
-        + mark(512, 512, 900, fill='url(#brand)'),
+        f'<rect width="1024" height="1024" fill="url(#bg)"/>' + brain(512, 512, 1.75),
         rounded=220,
     )
 

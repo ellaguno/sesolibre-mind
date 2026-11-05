@@ -23,7 +23,7 @@ const TARGET: Record<string, Record<string, number>> = {
   trails: { '5': 6, '10': 12, A: 16, B: 24, B20: 32 },
   countdown: { '1': 20, '2': 18, '3': 20, '7': 15 },
   numberspan: { '2': 6, forward: 8, backward: 7 },
-  headcount: { '1': 3, '2': 4, '3': 5 },
+  headcount: { '1': 3, '2': 4, '3': 5, '4': 5 },
   crowns: { '4': 20, '5': 35, '6': 60, '7': 90, '8': 150, '9': 240 },
   sunmoon: { '4': 25, '6': 60, '6h': 120, '8': 240 },
   minisudoku: { '4': 30, easy: 90, hard: 180 },
