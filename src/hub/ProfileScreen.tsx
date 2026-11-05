@@ -35,13 +35,13 @@ function LevelProgress() {
               <span className="text-xl" aria-hidden>
                 {a.emoji}
               </span>
-              <span className="flex flex-1 flex-col">
-                <span className="font-medium">{t(`act.${a.id}.title`)}</span>
+              <span className="flex min-w-0 flex-1 flex-col">
+                <span className="truncate font-medium">{t(`act.${a.id}.title`)}</span>
                 <span className="text-xs text-app-muted">
                   {t('profile.levelOf', { n: idx + 1, total: a.variants.length })}
                 </span>
               </span>
-              <span aria-hidden className="tracking-tight">
+              <span aria-hidden className="shrink-0 tracking-tight">
                 {a.variants.map((v) =>
                   passesOf(levels, a.id, v) >= PASSES_TO_PROMOTE
                     ? '⭐'
