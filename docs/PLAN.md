@@ -270,7 +270,7 @@ vayan creciendo, sin limitar a quien ya juega bien.
 - [x] Calendario de constancia (5 semanas) en el hub.
 
 ### Fase 3 — Perfil y pulido
-- [x] Índice Seso por habilidad (`core/profile.ts`, pantalla `#/profile`): barras por habilidad (más legibles que un radar con un solo jugador), índice global, mejor racha y días activos. Pendiente: tendencia semanal.
+- [x] Índice Seso por habilidad (`core/profile.ts`, pantalla `#/profile`): barras por habilidad (más legibles que un radar con un solo jugador), índice global, mejor racha y días activos. Tendencia semanal por habilidad (▲/▼ últimos 7 días vs los 7 anteriores), «Esta semana» (días activos) e **historial por actividad** (`#/history/:id`): gráfica por nivel (más arriba = mejor), mejor/promedio/último y lista; se guardan hasta 60 resultados por nivel.
 - [x] Tutorial ilustrado de primer uso en cada puzzle (mini tableros con ejemplos ✓/✗, reabrible con «?», pausa el cronómetro). Los ejercicios explican sus reglas en la pantalla previa.
 - [x] Ícono propio (`scripts/build-icons.py`, adaptado de sesolibre-games: grafotipo SesoLibre sobre índigo + fichas con los colores de los puzzles). Pendiente: ilustraciones.
 - [x] Modo daltónico (Ajustes): texturas por zona en Coronas y tintas validadas para protan/deutan/tritan en Choque de colores (azul, naranja, rosa, negro); errores del Sudoku subrayados además de en rojo.

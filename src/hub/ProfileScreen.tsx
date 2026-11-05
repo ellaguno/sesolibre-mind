@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import Screen from '../ui/Screen';
 import { useT } from '../core/i18n';
-import { computeProfile, type DomainIndex } from '../core/profile';
+import { computeProfile, weeklyActiveDays, type DomainIndex } from '../core/profile';
+import { Link } from 'react-router-dom';
 import { useRewards } from '../core/RewardService';
 import { useSettings } from '../core/settings';
 import { PASSES_TO_PROMOTE, levelOf, passesOf, useLevels } from '../core/levels';
@@ -62,7 +63,8 @@ export default function ProfileScreen() {
   const t = useT();
   const [profile, setProfile] = useState<DomainIndex[] | null>(null);
   const bestStreak = useRewards((s) => s.bestStreak);
-  const activeDays = useRewards((s) => s.activeDays.length);
+  const activeDayList = useRewards((s) => s.activeDays);
+  const week = weeklyActiveDays(activeDayList);
   const serene = useSettings((s) => s.serene);
 
   useEffect(() => {
@@ -81,7 +83,7 @@ export default function ProfileScreen() {
           {[
             serene ? ['🌱', t('profile.calm')] : [overall ?? '—', t('profile.overall')],
             [bestStreak, t('profile.bestStreak')],
-            [activeDays, t('profile.activeDays')],
+            [`${week.thisWeek}/7`, t('profile.thisWeek')],
           ].map(([v, label]) => (
             <div
               key={label}
@@ -92,6 +94,12 @@ export default function ProfileScreen() {
             </div>
           ))}
         </section>
+
+        <p className="-mt-1 text-center text-sm text-app-muted">
+          {week.thisWeek > week.lastWeek
+            ? `📈 ${t('profile.weekUp', { n: week.thisWeek, prev: week.lastWeek })}`
+            : t('profile.weekCompare', { n: week.thisWeek, prev: week.lastWeek })}
+        </p>
 
         {serene && <LevelProgress />}
         <section
@@ -108,7 +116,17 @@ export default function ProfileScreen() {
                 <li key={d.domain}>
                   <div className="mb-1 flex items-baseline justify-between text-sm">
                     <span className="font-medium">{t(`domain.${d.domain}`)}</span>
-                    <span className="tabular-nums text-app-muted">
+                    <span className="flex items-baseline gap-2 tabular-nums text-app-muted">
+                      {d.delta !== null && d.delta !== 0 && (
+                        <span
+                          className={`text-xs font-semibold ${
+                            d.delta > 0 ? 'text-green-600' : 'text-app-muted'
+                          }`}
+                          aria-label={t('profile.trend', { n: d.delta })}
+                        >
+                          {d.delta > 0 ? `▲ +${d.delta}` : `▼ ${d.delta}`}
+                        </span>
+                      )}
                       {d.value === null ? t('profile.noData') : `${d.value}/100`}
                     </span>
                   </div>
@@ -129,6 +147,27 @@ export default function ProfileScreen() {
               ))}
             </ul>
           )}
+        </section>
+
+        <section className="rounded-2xl border border-app-border bg-app-surface p-4">
+          <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-app-muted">
+            {t('history.title')}
+          </h2>
+          <ul className="grid grid-cols-2 gap-2">
+            {activities
+              .filter((a) => a.available)
+              .map((a) => (
+                <li key={a.id}>
+                  <Link
+                    to={`/history/${a.id}`}
+                    className="flex items-center gap-2 rounded-xl bg-app-surface2 px-2.5 py-2 text-sm font-medium hover:bg-app-border"
+                  >
+                    <span aria-hidden>{a.emoji}</span>
+                    <span className="truncate">{t(`act.${a.id}.title`)}</span>
+                  </Link>
+                </li>
+              ))}
+          </ul>
         </section>
 
         <p className="text-center text-xs text-app-muted">

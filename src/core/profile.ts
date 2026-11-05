@@ -57,6 +57,40 @@ export interface DomainIndex {
   /** null si aún no hay resultados de esa habilidad. */
   value: number | null;
   samples: number;
+  /** Tendencia semanal: promedio de los últimos 7 días menos el de los 7
+   *  anteriores (null si falta alguna de las dos semanas). */
+  delta: number | null;
+}
+
+const DAY = 86_400_000;
+const avg = (xs: number[]) => xs.reduce((s, x) => s + x, 0) / xs.length;
+
+/** Diferencia semanal de una lista de resultados normalizados con fecha. */
+export function weeklyDelta(
+  items: { at: number; v: number }[],
+  now = Date.now(),
+): number | null {
+  const recent = items.filter((r) => r.at > now - 7 * DAY && r.at <= now).map((r) => r.v);
+  const prev = items
+    .filter((r) => r.at > now - 14 * DAY && r.at <= now - 7 * DAY)
+    .map((r) => r.v);
+  return recent.length && prev.length ? Math.round(avg(recent) - avg(prev)) : null;
+}
+
+/** Días con actividad en los últimos 7 días (incluido hoy) y en los 7 anteriores. */
+export function weeklyActiveDays(
+  activeDays: readonly string[],
+  today: Date = new Date(),
+): { thisWeek: number; lastWeek: number } {
+  const t = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
+  let thisWeek = 0;
+  let lastWeek = 0;
+  for (const d of activeDays) {
+    const ago = Math.round((t - Date.parse(d + 'T00:00:00Z')) / DAY);
+    if (ago >= 0 && ago < 7) thisWeek++;
+    else if (ago >= 7 && ago < 14) lastWeek++;
+  }
+  return { thisWeek, lastWeek };
 }
 
 export async function computeProfile(): Promise<DomainIndex[]> {
@@ -74,12 +108,12 @@ export async function computeProfile(): Promise<DomainIndex[]> {
   }
   return DOMAINS.filter((d) => activities.some((a) => a.available && a.domain === d)).map(
     (domain) => {
-      const recent = (byDomain.get(domain) ?? [])
-        .sort((x, y) => y.at - x.at)
-        .slice(0, RECENT);
+      const all = byDomain.get(domain) ?? [];
+      const recent = [...all].sort((x, y) => y.at - x.at).slice(0, RECENT);
       return {
         domain,
         samples: recent.length,
+        delta: weeklyDelta(all),
         value: recent.length
           ? Math.round(recent.reduce((s, r) => s + r.v, 0) / recent.length)
           : null,

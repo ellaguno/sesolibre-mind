@@ -12,7 +12,7 @@ export interface GameScores {
   history: ScoreEntry[]; // más recientes primero, acotado
 }
 
-const MAX_HISTORY = 20;
+const MAX_HISTORY = 60;
 const key = (id: string) => `scores:${id}`;
 
 /** Id de la actividad de una clave de récords (`crowns:9x9` → `crowns`). */
