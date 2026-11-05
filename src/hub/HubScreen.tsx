@@ -11,6 +11,7 @@ import { dailyPlan, isComplete, loadSession } from '../core/session';
 import StreakCalendar from './StreakCalendar';
 import StartChoiceDialog from './StartChoiceDialog';
 import { hasProgress } from '../core/progress';
+import { useActiveProfile, useProfiles } from '../core/profiles';
 import { useLevels } from '../core/levels';
 
 function ActivityTile({ activity }: { activity: ActivityMeta }) {
@@ -88,6 +89,8 @@ export default function HubScreen() {
   const rewards = useRewards();
   const serene = useSettings((s) => s.serene);
   const askStart = useLevels((s) => s.loaded && s.start === null);
+  const profile = useActiveProfile();
+  const profileCount = useProfiles((s) => s.list.length);
   const today = dateKey(new Date());
   const streak = currentStreak(rewards, today, serene);
   const [sessionDone, setSessionDone] = useState(false);
@@ -108,6 +111,20 @@ export default function HubScreen() {
           <p className="text-sm text-app-muted">{t('hub.tagline')}</p>
         </div>
         <nav className="flex gap-2">
+          <Link
+            to="/profiles"
+            aria-label={t('profiles.title')}
+            className="flex items-center gap-1.5 rounded-lg bg-app-surface px-3 py-2 hover:bg-app-surface2"
+          >
+            <span className="text-lg" aria-hidden>
+              {profile.emoji}
+            </span>
+            {profileCount > 1 && (
+              <span className="max-w-[6rem] truncate text-sm font-semibold">
+                {profile.name || t('profiles.me')}
+              </span>
+            )}
+          </Link>
           <Link
             to="/profile"
             aria-label={t('nav.profile')}

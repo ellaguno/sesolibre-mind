@@ -350,6 +350,26 @@ const es: Dict = {
   'reminder.body3': 'Un ratito para tu mente: la sesión de hoy está lista.',
   'reminder.body4': 'Mantén tu racha: la sesión de hoy te espera. 🔥',
 
+  'common.cancel': 'Cancelar',
+  'profiles.title': 'Perfiles',
+  'profiles.intro':
+    'Cada persona de la familia puede tener su propio perfil, con su nivel, su racha y sus récords.',
+  'profiles.me': 'Yo',
+  'profiles.active': 'En uso',
+  'profiles.tapToUse': 'Toca para usar este perfil',
+  'profiles.use': 'Usar el perfil de {name}',
+  'profiles.edit': 'Editar el perfil de {name}',
+  'profiles.delete': 'Borrar el perfil de {name}',
+  'profiles.confirmDelete': '¿Borrar?',
+  'profiles.deleteWarning':
+    'Se borrarán su progreso, récords y ajustes. Toca «¿Borrar?» para confirmar.',
+  'profiles.add': 'Añadir perfil',
+  'profiles.name': 'Nombre',
+  'profiles.namePlaceholder': 'Por ejemplo: Abuela',
+  'profiles.avatar': 'Dibujo',
+  'profiles.save': 'Guardar',
+  'profiles.createAndUse': 'Crear y usar',
+
   'domain.speed': 'Velocidad',
   'domain.memory': 'Memoria',
   'domain.attention': 'Atención',
@@ -706,6 +726,26 @@ const en: Dict = {
   'reminder.body2': 'Your puzzle of the day is waiting. 🧩',
   'reminder.body3': "A little time for your mind: today's session is ready.",
   'reminder.body4': "Keep your streak: today's session is waiting. 🔥",
+
+  'common.cancel': 'Cancel',
+  'profiles.title': 'Profiles',
+  'profiles.intro':
+    'Each person in the family can have their own profile, with their own level, streak and records.',
+  'profiles.me': 'Me',
+  'profiles.active': 'In use',
+  'profiles.tapToUse': 'Tap to use this profile',
+  'profiles.use': "Use {name}'s profile",
+  'profiles.edit': "Edit {name}'s profile",
+  'profiles.delete': "Delete {name}'s profile",
+  'profiles.confirmDelete': 'Delete?',
+  'profiles.deleteWarning':
+    'Their progress, records and settings will be deleted. Tap “Delete?” to confirm.',
+  'profiles.add': 'Add profile',
+  'profiles.name': 'Name',
+  'profiles.namePlaceholder': 'For example: Grandma',
+  'profiles.avatar': 'Avatar',
+  'profiles.save': 'Save',
+  'profiles.createAndUse': 'Create and use',
 
   'domain.speed': 'Speed',
   'domain.memory': 'Memory',

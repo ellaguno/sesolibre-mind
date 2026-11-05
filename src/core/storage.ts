@@ -11,6 +11,8 @@ export interface Storage {
   get<T>(key: string): Promise<T | null>;
   set<T>(key: string, value: T): Promise<void>;
   remove(key: string): Promise<void>;
+  /** Todas las claves guardadas (sin prefijo de perfil en el almacén crudo). */
+  keys(): Promise<string[]>;
 }
 
 /** JSON corrupto => null (como si no existiera) en vez de romper la
@@ -51,6 +53,15 @@ class WebStorage implements Storage {
   async remove(key: string): Promise<void> {
     this.backend.removeItem(key);
   }
+
+  async keys(): Promise<string[]> {
+    try {
+      if (typeof localStorage !== 'undefined') return Object.keys(localStorage);
+    } catch {
+      /* localStorage bloqueado */
+    }
+    return [...this.memory.keys()];
+  }
 }
 
 class NativeStorage implements Storage {
@@ -69,8 +80,36 @@ class NativeStorage implements Storage {
     const { Preferences } = await import('@capacitor/preferences');
     await Preferences.remove({ key });
   }
+
+  async keys(): Promise<string[]> {
+    const { Preferences } = await import('@capacitor/preferences');
+    return (await Preferences.keys()).keys;
+  }
 }
 
-export const storage: Storage = Capacitor.isNativePlatform()
+/** Almacén sin prefijo: datos globales del dispositivo (lista de perfiles). */
+export const rawStorage: Storage = Capacitor.isNativePlatform()
   ? new NativeStorage()
   : new WebStorage();
+
+/**
+ * Modo familia: cada perfil guarda sus datos con un prefijo `p:<id>:`. El
+ * perfil principal no usa prefijo, así que conserva los datos de siempre.
+ */
+let namespace = '';
+export function setStorageNamespace(prefix: string): void {
+  namespace = prefix;
+}
+export const profilePrefix = (profileId: string) =>
+  profileId === 'main' ? '' : `p:${profileId}:`;
+
+/** Almacén del perfil activo (el que usan todos los servicios). */
+export const storage: Storage = {
+  get: (key) => rawStorage.get(namespace + key),
+  set: (key, value) => rawStorage.set(namespace + key, value),
+  remove: (key) => rawStorage.remove(namespace + key),
+  keys: async () =>
+    (await rawStorage.keys())
+      .filter((k) => k.startsWith(namespace) && (namespace || !k.startsWith('p:')))
+      .map((k) => k.slice(namespace.length)),
+};
