@@ -23,6 +23,13 @@
   color-scheme: dark;
 }
 
+/* Letra base 15 px (un poco menor que la del navegador): en Android el
+   tamaño de letra del sistema la agranda, y con 16 px se partían títulos y
+   botones. El modo sereno la sube (ver core/settings.ts). */
+html {
+  font-size: 93.75%;
+}
+
 html,
 body,
 #root {
@@ -45,8 +52,8 @@ body {
   @apply bg-app-bg text-app-text antialiased;
   margin: 0;
   /* Respetar notch / safe areas en móvil */
-  padding: env(safe-area-inset-top) env(safe-area-inset-right)
-    env(safe-area-inset-bottom) env(safe-area-inset-left);
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom)
+    env(safe-area-inset-left);
 }
 
 /* ---------- Animaciones procedurales ligeras (CSS) ---------- */
@@ -84,7 +91,6 @@ body {
 .overlay-pop {
   animation: overlay-pop 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
-
 
 /* ¿Cuántos quedan?: gente que entra (desde la izquierda) o sale (hacia la derecha) de la casa. */
 @keyframes walk-in {

@@ -355,6 +355,7 @@ const es: Dict = {
   'profiles.intro':
     'Cada persona de la familia puede tener su propio perfil, con su nivel, su racha y sus récords.',
   'profiles.me': 'Yo',
+  'profiles.playingAs': 'Juega: {name} · cambiar',
   'profiles.active': 'En uso',
   'profiles.tapToUse': 'Toca para usar este perfil',
   'profiles.use': 'Usar el perfil de {name}',
@@ -732,6 +733,7 @@ const en: Dict = {
   'profiles.intro':
     'Each person in the family can have their own profile, with their own level, streak and records.',
   'profiles.me': 'Me',
+  'profiles.playingAs': 'Playing: {name} · switch',
   'profiles.active': 'In use',
   'profiles.tapToUse': 'Tap to use this profile',
   'profiles.use': "Use {name}'s profile",

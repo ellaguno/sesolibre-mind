@@ -88,8 +88,8 @@ function Run({ seed, finish, lv }: RunProps & { lv: Level }) {
         <span>{t('headcount.round', { n: r + 1, total: ROUNDS })}</span>
         <span>{t('headcount.score', { n: score })}</span>
       </div>
-      <div className="relative flex h-56 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-b from-sky-200 to-green-200">
-        <span className="z-10 text-[7rem] leading-none" aria-hidden>
+      <div className="relative flex h-40 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-b from-sky-200 to-green-200">
+        <span className="z-10 text-[6rem] leading-none" aria-hidden>
           🏠
         </span>
         {stage === 'moving' && (
@@ -122,7 +122,7 @@ function Run({ seed, finish, lv }: RunProps & { lv: Level }) {
           </p>
         )}
       </div>
-      <div className="flex min-h-[4.5rem] flex-col items-center justify-center text-center">
+      <div className="flex min-h-[4rem] flex-col items-center justify-center text-center">
         {stage === 'ask' || stage === 'feedback' ? (
           <>
             <p className="text-app-muted">{t('headcount.question')}</p>

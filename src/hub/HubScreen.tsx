@@ -105,37 +105,43 @@ export default function HubScreen() {
   return (
     <main className="mx-auto flex min-h-full max-w-2xl flex-col gap-6 px-4 py-6">
       {askStart && <StartChoiceDialog />}
-      <header className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">🧠 {t('app.title')}</h1>
-          <p className="text-sm text-app-muted">{t('hub.tagline')}</p>
+      <header className="flex items-start justify-between gap-2">
+        <div className="min-w-0 flex-1">
+          <h1 className="truncate text-xl font-bold sm:text-2xl">🧠 {t('app.title')}</h1>
+          {profileCount > 1 ? (
+            // Con varios perfiles, se ve quién juega (y se cambia tocando).
+            <Link
+              to="/profiles"
+              className="flex min-w-0 items-center gap-1 text-sm font-semibold text-brand"
+            >
+              <span aria-hidden>{profile.emoji}</span>
+              <span className="truncate">
+                {t('profiles.playingAs', { name: profile.name || t('profiles.me') })}
+              </span>
+            </Link>
+          ) : (
+            <p className="text-sm text-app-muted">{t('hub.tagline')}</p>
+          )}
         </div>
-        <nav className="flex gap-2">
+        <nav className="flex shrink-0 gap-1.5">
           <Link
             to="/profiles"
             aria-label={t('profiles.title')}
-            className="flex items-center gap-1.5 rounded-lg bg-app-surface px-3 py-2 hover:bg-app-surface2"
+            className="rounded-lg bg-app-surface px-2.5 py-2 text-lg hover:bg-app-surface2"
           >
-            <span className="text-lg" aria-hidden>
-              {profile.emoji}
-            </span>
-            {profileCount > 1 && (
-              <span className="max-w-[6rem] truncate text-sm font-semibold">
-                {profile.name || t('profiles.me')}
-              </span>
-            )}
+            {profile.emoji}
           </Link>
           <Link
             to="/profile"
             aria-label={t('nav.profile')}
-            className="rounded-lg bg-app-surface px-3 py-2 text-lg hover:bg-app-surface2"
+            className="rounded-lg bg-app-surface px-2.5 py-2 text-lg hover:bg-app-surface2"
           >
             📊
           </Link>
           <Link
             to="/settings"
             aria-label={t('nav.settings')}
-            className="rounded-lg bg-app-surface px-3 py-2 text-lg hover:bg-app-surface2"
+            className="rounded-lg bg-app-surface px-2.5 py-2 text-lg hover:bg-app-surface2"
           >
             ⚙️
           </Link>

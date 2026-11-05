@@ -125,7 +125,7 @@ export default function ExerciseShell(p: Props) {
         >
           ←
         </button>
-        <h1 className="flex-1 text-xl font-bold">
+        <h1 className="min-w-0 flex-1 truncate text-lg font-bold sm:text-xl">
           {p.emoji} {title}
           {p.daily && !p.inSession && (
             <span className="ml-2 rounded-full bg-brand px-2 py-0.5 align-middle text-xs text-white">

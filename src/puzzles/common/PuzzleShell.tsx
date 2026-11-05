@@ -130,7 +130,7 @@ export default function PuzzleShell(p: Props) {
         >
           ←
         </button>
-        <h1 className="flex-1 text-xl font-bold">
+        <h1 className="min-w-0 flex-1 truncate text-lg font-bold sm:text-xl">
           {p.emoji} {title}
           {p.daily && (
             <span className="ml-2 rounded-full bg-brand px-2 py-0.5 align-middle text-xs text-white">
@@ -249,13 +249,28 @@ export default function PuzzleShell(p: Props) {
       {p.controls}
 
       <div className="grid grid-cols-3 gap-2">
-        <Button variant="ghost" onClick={p.onUndo} disabled={!p.canUndo || p.solved}>
+        <Button
+          variant="ghost"
+          onClick={p.onUndo}
+          disabled={!p.canUndo || p.solved}
+          className="whitespace-nowrap px-2"
+        >
           {t('puzzle.undo')}
         </Button>
-        <Button variant="ghost" onClick={p.onClear} disabled={!p.ready || p.solved}>
+        <Button
+          variant="ghost"
+          onClick={p.onClear}
+          disabled={!p.ready || p.solved}
+          className="whitespace-nowrap px-2"
+        >
           {t('puzzle.clear')}
         </Button>
-        <Button variant="ghost" onClick={p.onHint} disabled={!p.ready || p.solved}>
+        <Button
+          variant="ghost"
+          onClick={p.onHint}
+          disabled={!p.ready || p.solved}
+          className="whitespace-nowrap px-2"
+        >
           💡 {t('puzzle.hint')}
         </Button>
       </div>

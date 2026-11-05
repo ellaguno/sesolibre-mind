@@ -55,10 +55,10 @@ function applyTheme(theme: Theme) {
     ?.setAttribute('content', theme === 'dark' ? '#0f172a' : '#eef2f7');
 }
 
-/** Modo sereno: toda la interfaz (en rem) un ~20 % más grande. */
+/** Modo sereno: toda la interfaz (en rem) un ~13 % más grande que la base (17 px). */
 function applyScale(serene: boolean) {
   if (typeof document === 'undefined') return;
-  document.documentElement.style.fontSize = serene ? '118.75%' : '';
+  document.documentElement.style.fontSize = serene ? '106.25%' : '';
 }
 
 /** Factor de lentitud de animaciones y tiempos de exposición en modo sereno. */

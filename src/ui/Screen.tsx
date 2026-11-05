@@ -26,7 +26,7 @@ export default function Screen({ title, children, back = true }: Props) {
             ←
           </button>
         )}
-        <h1 className="text-xl font-bold">{title}</h1>
+        <h1 className="min-w-0 truncate text-xl font-bold">{title}</h1>
       </header>
       {children}
     </main>
