@@ -12,10 +12,13 @@ describe('reto entre amigos', () => {
     for (const a of activities) {
       for (const level of a.variants) {
         for (const seed of [0, 1, 123456789, 0xffffffff]) {
-          const c = { activityId: a.id, level, seed, score: 97 };
-          const code = encodeChallenge(c);
-          expect(code).toMatch(/^[0-9A-Z]{4}(-[0-9A-Z]{4}){3}$/);
-          expect(decodeChallenge(code)).toEqual(c);
+          // En los juegos de palabras el idioma del tablero viaja en el código.
+          for (const lang of a.wordGame ? (['es', 'en'] as const) : [undefined]) {
+            const c = { activityId: a.id, level, seed, score: 97, ...(lang && { lang }) };
+            const code = encodeChallenge(c);
+            expect(code).toMatch(/^[0-9A-Z]{4}(-[0-9A-Z]{4}){3}$/);
+            expect(decodeChallenge(code)).toEqual(c);
+          }
         }
       }
     }

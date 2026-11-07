@@ -61,6 +61,11 @@ export default function ThreadGame({
     boardKey: generated ? key : null,
     initial: () => (puzzle ? [puzzle.clues[0]] : []),
     isSolved: (path) => !!puzzle && isSolved(puzzle, path),
+    // El trazo crece: vale si empieza en el 1 y no se sale del tablero.
+    canRestore: (saved, fresh) =>
+      saved.length > 0 &&
+      saved[0] === fresh[0] &&
+      saved.every((c) => c >= 0 && c < size * size),
     paused: tutorialOpen,
     persist: challenge
       ? undefined

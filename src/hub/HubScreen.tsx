@@ -71,14 +71,23 @@ function ActivityTile({ activity }: { activity: ActivityMeta }) {
   );
 }
 
-function Section({ kind, title }: { kind: ActivityKind; title: string }) {
+function Section({
+  kind,
+  words = false,
+  title,
+}: {
+  kind: ActivityKind;
+  /** Juegos de palabras (van en su propia sección). */
+  words?: boolean;
+  title: string;
+}) {
   return (
     <section className="flex flex-col gap-3">
       <h2 className="text-sm font-semibold uppercase tracking-wide text-app-muted">
         {title}
       </h2>
       {activities
-        .filter((a) => a.kind === kind)
+        .filter((a) => a.kind === kind && !!a.wordGame === words)
         .map((a) => (
           <ActivityTile key={a.id} activity={a} />
         ))}
@@ -196,6 +205,7 @@ export default function HubScreen() {
 
       <Section kind="exercise" title={t('hub.exercises')} />
       <Section kind="puzzle" title={t('hub.puzzles')} />
+      <Section kind="puzzle" words title={t('hub.words')} />
 
       <footer className="pb-4 text-center text-xs text-app-muted">
         {t('hub.footer')} · v{__APP_VERSION__}

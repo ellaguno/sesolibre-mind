@@ -29,7 +29,7 @@ export interface GeneratedThread {
   solution: number[];
 }
 
-function gridNeighbors(size: number, i: number): number[] {
+export function gridNeighbors(size: number, i: number): number[] {
   const r = Math.floor(i / size);
   const c = i % size;
   const out: number[] = [];
@@ -40,7 +40,7 @@ function gridNeighbors(size: number, i: number): number[] {
   return out;
 }
 
-function randomHamiltonianPath(rng: Rng, size: number): number[] {
+export function randomHamiltonianPath(rng: Rng, size: number): number[] {
   let path: number[] = [];
   for (let r = 0; r < size; r++) {
     for (let k = 0; k < size; k++) path.push(r * size + (r % 2 ? size - 1 - k : k));

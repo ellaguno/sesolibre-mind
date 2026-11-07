@@ -23,6 +23,12 @@ interface Options<T> {
   /** Detiene el cronómetro (p. ej. mientras se lee el tutorial). */
   paused?: boolean;
   persist?: PersistOptions;
+  /**
+   * Valida una partida guardada antes de retomarla. Por defecto se exige el
+   * mismo largo que un tablero nuevo (una casilla por celda); los puzzles cuyo
+   * estado crece (un trazo, palabras encontradas) dan su propia comprobación.
+   */
+  canRestore?: (cells: readonly T[], fresh: readonly T[]) => boolean;
 }
 
 /**
@@ -39,6 +45,7 @@ export function usePuzzleSession<T>({
   onSolved,
   paused = false,
   persist,
+  canRestore = (cells, fresh) => cells.length === fresh.length,
 }: Options<T>) {
   const [cells, setCellsState] = useState<T[]>([]);
   const [history, setHistory] = useState<T[][]>([]);
@@ -69,7 +76,7 @@ export function usePuzzleSession<T>({
       !!p &&
       r.seed === p.seed &&
       r.level === p.level &&
-      r.cells.length === fresh.length;
+      canRestore(r.cells as T[], fresh);
     const start = restoring ? (r.cells as T[]) : fresh;
     cellsRef.current = start;
     setCellsState(start);

@@ -29,6 +29,8 @@ const TARGET: Record<string, Record<string, number>> = {
   minisudoku: { '4': 30, easy: 90, hard: 180 },
   plots: { '4': 20, '5': 35, '6': 60, '7': 100, '8': 180 },
   thread: { '4': 15, '5': 28, '6': 45, '7': 80, '8': 150 },
+  wordmaze: { '4': 40, '5': 90, '6': 150, '7': 240 },
+  crossword: { '7': 120, '9': 200, '11': 360 },
 };
 /** Puntos que resta cada pista usada en un puzzle. */
 const HINT_COST = 10;

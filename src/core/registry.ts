@@ -54,6 +54,8 @@ export interface ActivityMeta {
   variants: readonly string[];
   /** Nivel de partida para quien elige «Normal» en la pregunta inicial. */
   normal: string;
+  /** Juego de palabras: el tablero depende del idioma (se guarda en los retos). */
+  wordGame?: boolean;
   /** Para scoreKind 'points': clave i18n con {n} para mostrar la unidad (p. ej. "8 cifras"). */
   pointsKey?: string;
 }
@@ -225,6 +227,35 @@ export const activities: ActivityMeta[] = [
     variants: ['4', 'easy', 'hard'],
     normal: 'easy',
     load: () => import('../puzzles/minisudoku/MiniSudokuGame'),
+  },
+  // ---------- Juegos de palabras (al final: los códigos de reto usan el índice) ----------
+  {
+    id: 'wordmaze',
+    kind: 'puzzle',
+    wordGame: true,
+    domain: 'language',
+    emoji: '🔤',
+    scoreKind: 'time',
+    higherIsBetter: false,
+    available: true,
+    accent: '#0ea5e9',
+    variants: ['4', '5', '6', '7'],
+    normal: '5',
+    load: () => import('../puzzles/wordmaze/WordMazeGame'),
+  },
+  {
+    id: 'crossword',
+    kind: 'puzzle',
+    wordGame: true,
+    domain: 'language',
+    emoji: '📝',
+    scoreKind: 'time',
+    higherIsBetter: false,
+    available: true,
+    accent: '#f97316',
+    variants: ['7', '9', '11'],
+    normal: '9',
+    load: () => import('../puzzles/crossword/CrosswordGame'),
   },
 ];
 

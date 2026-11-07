@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { findActivity } from '../src/core/registry';
+import { activities, findActivity } from '../src/core/registry';
 import { dailyPlan, isComplete } from '../src/core/session';
 
 describe('sesión diaria', () => {
@@ -20,7 +20,8 @@ describe('sesión diaria', () => {
     const puzzles = new Set(
       Array.from({ length: 10 }, (_, d) => dailyPlan(`2026-11-${10 + d}`).steps[3]),
     );
-    expect(puzzles.size).toBe(5);
+    const total = activities.filter((a) => a.available && a.kind === 'puzzle').length;
+    expect(puzzles.size).toBe(Math.min(10, total));
   });
 
   it('está completa sólo con todos los resultados', () => {

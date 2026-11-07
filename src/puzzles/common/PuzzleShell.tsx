@@ -8,7 +8,7 @@ import { formatActivityScore } from '../../core/format';
 import { cheer } from '../../core/cheer';
 import Tutorial, { type Slide } from '../../ui/Tutorial';
 import { useTutorialOpen, useTutorials } from '../../core/tutorials';
-import { useT } from '../../core/i18n';
+import { useT, type Lang } from '../../core/i18n';
 import { formatDuration } from '../../core/format';
 import { shareText } from './share';
 import Button from '../../ui/Button';
@@ -50,6 +50,10 @@ interface Props {
   rules: string[];
   /** Tutorial ilustrado: se muestra la primera vez y con el botón «?». */
   slides?: Slide[];
+  /** Idioma del tablero (juegos de palabras): viaja en el código del reto. */
+  boardLang?: Lang;
+  /** Contenido propio sobre el tablero (p. ej. el tema y las palabras por encontrar). */
+  header?: ReactNode;
   /** Controles propios del puzzle entre el tablero y los botones (p. ej. teclado numérico). */
   controls?: ReactNode;
   children: ReactNode;
@@ -120,6 +124,7 @@ export default function PuzzleShell(p: Props) {
       level: p.variant!,
       seed: p.boardSeed!,
       score: p.elapsed,
+      lang: p.boardLang,
     });
     if (ok) setChallengeSent(true);
   };
@@ -219,6 +224,8 @@ export default function PuzzleShell(p: Props) {
           ))}
         </div>
       )}
+
+      {p.header}
 
       <div className="relative aspect-square w-full">
         {p.ready ? (
