@@ -55,8 +55,9 @@ puzzles concretos** sí. Por eso:
   "ejercita", "mide tu desempeño", "mantente ágil". Evitar el concepto "edad
   cerebral"; en su lugar, **Índice Seso** por habilidad, presentado como
   entretenimiento y comparación contigo mismo.
-- Listas de palabras (fase de juegos de palabras): solo de fuentes con licencia
-  compatible y verificada (revisar licencia antes de incluir cualquier diccionario).
+- Listas de palabras: escritas para la app (no copiadas de diccionarios), en
+  `src/words/data/{es,en}.ts`: 18 temas × 24 palabras con su pista, redactadas en
+  cada idioma (no traducidas).
 
 ---
 
@@ -103,6 +104,8 @@ puzzles concretos** sí. Por eso:
 
 | id | Nombre (es / en) | Género genérico | Regla corta | Fase |
 |---|---|---|---|---|
+| `wordmaze` ✅ | Laberinto de palabras / Word Maze | Palabras que serpentean (tipo «word path») | Las palabras de un tema doblan esquinas sin cruzar paredes y usan cada letra una vez; se ve solo el largo de cada una | **Hecho** |
+| `crossword` ✅ | Crucigrama / Crossword | Palabras cruzadas libres | Palabras de un tema que se cruzan, cada una con su pista; teclado propio (Ñ en español) | **Hecho** |
 | `serpentine` | Serpentina / Serpentine | Serpiente de letras por regiones | En cada región, trazar un camino por todas sus letras formando una palabra | v3 |
 | `ladder` | Escalera / Ladder | Escalera de palabras (Lewis Carroll) + pistas | Ordenar palabras que cambian de una en una letra, guiadas por pistas | v3 |
 | `guess` | Atina / Hunch | Adivinar la categoría | Se revelan palabras de una en una; adivinar la categoría con el menor número | v3 (contenido curado) |
@@ -289,7 +292,9 @@ vayan creciendo, sin limitar a quien ya juega bien.
 - [x] **Reto entre amigos** sin servidor (`core/challenge.ts`, `#/challenge`): código de 16 caracteres (base32 Crockford con control) con actividad, nivel, semilla y resultado; «Retar a un amigo» al terminar, «Devolver el reto» y comparación al jugar el mismo tablero/ejercicio.
 - [ ] Ejercicios v2 (N-back, Corsi, Go/No-Go, búsqueda visual, cambio, reloj, cambio de regla).
 - [ ] Puzzles v2/v3 (Futoshiki, Calcudoku, Nonograma, Faroles, Rascacielos, Tachar).
-- [ ] Juegos de palabras (requieren diccionarios con licencia libre por idioma).
+- [x] **Juegos de palabras**: Laberinto de palabras y Crucigrama, en español e inglés con listas propias por idioma; en los retos, el código lleva el idioma del tablero.
+- [ ] Más juegos de palabras (Escalera, Atina, Fluidez…).
+- [ ] **Récords en línea** (respaldo cifrado con código y tabla de marcas por apodo): análisis y plan en [`RECORDS-EN-LINEA.md`](RECORDS-EN-LINEA.md), también para sesolibre-games.
 - [ ] Monetización según `MONETIZACION.md` de sesolibre-games (rewarded para pistas extra; premium sin anuncios). Nunca anuncios durante una actividad.
 
 ---
