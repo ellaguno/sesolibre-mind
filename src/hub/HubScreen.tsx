@@ -1,3 +1,5 @@
+import Avatar from '../ui/Avatar';
+import AppLogo from '../ui/AppLogo';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { activities, type ActivityKind, type ActivityMeta } from '../core/registry';
@@ -107,8 +109,9 @@ export default function HubScreen() {
       {askStart && <StartChoiceDialog />}
       <header className="flex items-start justify-between gap-1.5">
         <div className="min-w-0 flex-1">
-          <h1 className="truncate text-base font-bold min-[400px]:text-xl sm:text-2xl">
-            🧠 {t('app.title')}
+          <h1 className="flex min-w-0 items-center gap-2 text-base font-bold min-[400px]:text-xl sm:text-2xl">
+            <AppLogo />
+            <span className="truncate">{t('app.title')}</span>
           </h1>
           {profileCount > 1 ? (
             // Con varios perfiles, se ve quién juega (y se cambia tocando).
@@ -116,7 +119,9 @@ export default function HubScreen() {
               to="/profiles"
               className="flex min-w-0 items-center gap-1 text-sm font-semibold text-brand"
             >
-              <span aria-hidden>{profile.emoji}</span>
+              <span aria-hidden>
+                <Avatar emoji={profile.emoji} />
+              </span>
               <span className="truncate">
                 {t('profiles.playingAs', { name: profile.name || t('profiles.me') })}
               </span>
@@ -131,7 +136,7 @@ export default function HubScreen() {
             aria-label={t('profiles.title')}
             className="rounded-lg bg-app-surface px-2 py-1.5 text-lg hover:bg-app-surface2"
           >
-            {profile.emoji}
+            <Avatar emoji={profile.emoji} />
           </Link>
           <Link
             to="/profile"

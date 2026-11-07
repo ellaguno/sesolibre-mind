@@ -1,3 +1,4 @@
+import Avatar from '../ui/Avatar';
 import { useState } from 'react';
 import Screen from '../ui/Screen';
 import Button from '../ui/Button';
@@ -28,7 +29,7 @@ function AvatarPicker({
             e === value ? 'bg-brand/30 ring-2 ring-brand' : 'bg-app-surface2'
           }`}
         >
-          {e}
+          <Avatar emoji={e} />
         </button>
       ))}
     </div>
@@ -116,7 +117,7 @@ export default function ProfilesScreen() {
                   aria-label={t('profiles.use', { name: nameOf(p) })}
                 >
                   <span className="text-4xl" aria-hidden>
-                    {p.emoji}
+                    <Avatar emoji={p.emoji} />
                   </span>
                   <span className="flex flex-col">
                     <span className="text-lg font-semibold">{nameOf(p)}</span>

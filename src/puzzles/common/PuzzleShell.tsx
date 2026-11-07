@@ -103,8 +103,13 @@ export default function PuzzleShell(p: Props) {
 
   // Reto entre amigos: retar con este tablero o devolver el reto recibido.
   const [challengeSent, setChallengeSent] = useState(false);
+  // Al resolver se puede ocultar el resumen para ver cómo quedó el tablero.
+  const [peek, setPeek] = useState(false);
   useEffect(() => {
-    if (!p.solved) setChallengeSent(false);
+    if (!p.solved) {
+      setChallengeSent(false);
+      setPeek(false);
+    }
   }, [p.solved]);
   const activity = findActivity(p.activityId);
   const canChallenge = !p.inSession && p.boardSeed !== undefined && !!p.variant;
@@ -224,10 +229,19 @@ export default function PuzzleShell(p: Props) {
           </div>
         )}
 
-        {p.solved && (
-          <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-slate-950/60 p-4">
-            <div className="overlay-pop flex w-full max-w-xs flex-col items-center gap-3 rounded-2xl bg-app-surface p-6 text-center shadow-xl">
-              <span className="text-5xl" aria-hidden>
+        {p.solved && peek && (
+          <button
+            onClick={() => setPeek(false)}
+            className="overlay-pop absolute bottom-2 left-1/2 -translate-x-1/2 rounded-full bg-brand px-4 py-2 text-sm font-bold text-white shadow-lg"
+          >
+            {t('puzzle.showSummary')}
+          </button>
+        )}
+        {p.solved && !peek && (
+          // Fondo y tarjeta translúcidos: se alcanza a ver el tablero resuelto.
+          <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-slate-950/25 p-4">
+            <div className="overlay-pop flex w-full max-w-xs flex-col items-center gap-2 rounded-2xl bg-app-surface/80 p-4 text-center shadow-xl backdrop-blur-[2px]">
+              <span className="text-4xl" aria-hidden>
                 {p.emoji}
               </span>
               <h2 className="text-xl font-bold">
@@ -254,19 +268,6 @@ export default function PuzzleShell(p: Props) {
                   </p>
                 </div>
               )}
-              {canChallenge && (
-                <Button
-                  variant={p.challenge ? 'primary' : 'ghost'}
-                  onClick={() => void sendChallenge()}
-                  className="w-full"
-                >
-                  {challengeSent
-                    ? `✓ ${t('challenge.sent')}`
-                    : p.challenge
-                      ? `🤝 ${t('challenge.reply')}`
-                      : `🤝 ${t('challenge.send')}`}
-                </Button>
-              )}
               {suggest && (
                 <div className="w-full rounded-xl bg-brand/15 p-3">
                   <p className="text-sm font-semibold">⭐ {t('level.unlocked')}</p>
@@ -282,18 +283,44 @@ export default function PuzzleShell(p: Props) {
                   ✓ {t('level.scheduled', { level: labelOf(scheduled) })}
                 </p>
               )}
-              <Button
-                variant={suggest ? 'ghost' : 'primary'}
-                onClick={() => void share()}
-                className="w-full"
-              >
-                {shared ? t('puzzle.shared') : t('puzzle.share')}
-              </Button>
-              {!p.daily && !p.inSession && !p.challenge && (
-                <Button variant="ghost" onClick={startNew} className="w-full">
-                  {t('puzzle.new')}
+              <div className="grid w-full grid-cols-2 gap-2">
+                <Button
+                  variant={suggest ? 'ghost' : 'primary'}
+                  onClick={() => void share()}
+                  className="w-full px-2 text-sm"
+                >
+                  {shared ? t('puzzle.shared') : t('puzzle.shareShort')}
                 </Button>
-              )}
+                {canChallenge && (
+                  <Button
+                    variant={p.challenge ? 'primary' : 'ghost'}
+                    onClick={() => void sendChallenge()}
+                    className="w-full px-2 text-sm"
+                  >
+                    {challengeSent
+                      ? `✓ ${t('challenge.sent')}`
+                      : p.challenge
+                        ? `🤝 ${t('challenge.replyShort')}`
+                        : `🤝 ${t('challenge.sendShort')}`}
+                  </Button>
+                )}
+                {!p.daily && !p.inSession && !p.challenge && (
+                  <Button
+                    variant="ghost"
+                    onClick={startNew}
+                    className="w-full px-2 text-sm"
+                  >
+                    {t('puzzle.newShort')}
+                  </Button>
+                )}
+                <Button
+                  variant="ghost"
+                  onClick={() => setPeek(true)}
+                  className="w-full px-2 text-sm"
+                >
+                  👁 {t('puzzle.viewBoard')}
+                </Button>
+              </div>
               <Button
                 variant={p.inSession ? 'primary' : 'ghost'}
                 onClick={p.onExit}

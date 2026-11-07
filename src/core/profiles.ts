@@ -14,6 +14,7 @@ export interface Profile {
 }
 
 export const AVATARS = [
+  '👤',
   '🦉',
   '🦊',
   '🐢',
@@ -31,7 +32,7 @@ export const MAX_PROFILES = 8;
 
 const LIST = 'profiles:list';
 const ACTIVE = 'profiles:active';
-const MAIN: Profile = { id: 'main', name: '', emoji: '🧠' };
+const MAIN: Profile = { id: 'main', name: '', emoji: '👤' };
 
 interface ProfilesState {
   list: Profile[];
@@ -53,7 +54,10 @@ export const useProfiles = create<ProfilesState>((set, get) => ({
   ready: false,
 
   init: async () => {
-    const list = (await rawStorage.get<Profile[]>(LIST)) ?? [MAIN];
+    // El perfil principal usaba 🧠, que ahora es el ícono de la app: pasa a 👤.
+    const list = ((await rawStorage.get<Profile[]>(LIST)) ?? [MAIN]).map((p) =>
+      p.id === 'main' && p.emoji === '🧠' ? { ...p, emoji: MAIN.emoji } : p,
+    );
     const saved = (await rawStorage.get<string>(ACTIVE)) ?? 'main';
     const activeId = list.some((p) => p.id === saved) ? saved : 'main';
     setStorageNamespace(profilePrefix(activeId));
