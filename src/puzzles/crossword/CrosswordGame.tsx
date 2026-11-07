@@ -224,7 +224,7 @@ export default function CrosswordGame({
                 key={k}
                 onClick={() => type(k)}
                 disabled={solved}
-                className="h-10 min-w-0 flex-1 rounded-md bg-app-surface2 text-base font-semibold hover:bg-app-border disabled:opacity-40"
+                className="h-9 min-w-0 flex-1 rounded-md bg-app-surface2 text-base font-semibold hover:bg-app-border disabled:opacity-40"
               >
                 {k}
               </button>
@@ -234,7 +234,7 @@ export default function CrosswordGame({
                 onClick={erase}
                 disabled={solved}
                 aria-label={t('crossword.erase')}
-                className="h-10 flex-[1.6] rounded-md bg-app-surface2 text-base hover:bg-app-border disabled:opacity-40"
+                className="h-9 flex-[1.6] rounded-md bg-app-surface2 text-base hover:bg-app-border disabled:opacity-40"
               >
                 ⌫
               </button>
@@ -295,6 +295,8 @@ export default function CrosswordGame({
         )
       }
       controls={controls}
+      // Con el teclado en pantalla, un tablero algo menor evita desplazarse.
+      boardWidth="80%"
     >
       {puzzle && (
         <div className="flex h-full w-full items-center justify-center">

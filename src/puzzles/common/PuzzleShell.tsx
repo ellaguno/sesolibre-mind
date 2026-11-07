@@ -52,6 +52,8 @@ interface Props {
   slides?: Slide[];
   /** Idioma del tablero (juegos de palabras): viaja en el código del reto. */
   boardLang?: Lang;
+  /** Ancho del tablero (p. ej. '80%' si el puzzle trae teclado propio y no cabría). */
+  boardWidth?: string;
   /** Contenido propio sobre el tablero (p. ej. el tema y las palabras por encontrar). */
   header?: ReactNode;
   /** Controles propios del puzzle entre el tablero y los botones (p. ej. teclado numérico). */
@@ -227,7 +229,10 @@ export default function PuzzleShell(p: Props) {
 
       {p.header}
 
-      <div className="relative aspect-square w-full">
+      <div
+        className="relative mx-auto aspect-square w-full"
+        style={p.boardWidth ? { width: p.boardWidth } : undefined}
+      >
         {p.ready ? (
           p.children
         ) : (
