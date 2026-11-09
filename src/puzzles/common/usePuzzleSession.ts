@@ -196,7 +196,10 @@ export function usePuzzleSession<T>({
     flashTimer.current = setTimeout(() => setFlash(null), 1200);
   }, []);
 
-  const countHint = useCallback(() => setHints((n) => n + 1), []);
+  const countHint = useCallback(() => {
+    AudioService.play('hint');
+    setHints((n) => n + 1);
+  }, []);
 
   return {
     ready,

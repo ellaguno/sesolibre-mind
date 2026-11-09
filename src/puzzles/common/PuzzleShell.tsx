@@ -12,6 +12,7 @@ import { useT, type Lang } from '../../core/i18n';
 import { formatDuration } from '../../core/format';
 import { shareText } from './share';
 import Button from '../../ui/Button';
+import { AudioService } from '../../core/AudioService';
 import { useFitText } from '../../ui/useFitText';
 import OnlineCompare from '../../ui/OnlineCompare';
 
@@ -96,9 +97,15 @@ export default function PuzzleShell(p: Props) {
       return;
     }
     if (variant) {
-      setSuggest(
-        useLevels.getState().recordResult(activityId, variant, serene || hints <= 1),
-      );
+      const next = useLevels
+        .getState()
+        .recordResult(activityId, variant, serene || hints <= 1);
+      setSuggest(next);
+      // Nivel desbloqueado: un brillo después de la melodía de resuelto.
+      if (next) {
+        const id = setTimeout(() => AudioService.play('reward'), 1100);
+        return () => clearTimeout(id);
+      }
     }
   }, [solved, hints, variant, activityId, serene]);
   const goNext = () => {

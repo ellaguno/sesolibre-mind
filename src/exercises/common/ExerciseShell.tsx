@@ -92,9 +92,12 @@ export default function ExerciseShell(p: Props) {
       setPhase('done');
       AudioService.play('win');
       onScore(r.score, { ...r.meta, difficulty: variant });
-      setSuggest(
-        variant ? useLevels.getState().recordResult(activityId, variant, r.passed) : null,
-      );
+      const next = variant
+        ? useLevels.getState().recordResult(activityId, variant, r.passed)
+        : null;
+      setSuggest(next);
+      // Nivel desbloqueado: un brillo después de la melodía final.
+      if (next) setTimeout(() => AudioService.play('reward'), 1100);
     },
     [onScore, activityId, variant],
   );

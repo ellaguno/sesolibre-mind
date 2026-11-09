@@ -171,7 +171,7 @@ export default function WordMazeGame({
     if (!generated || tr.length < 2) return;
     const r = checkTrace(generated, cellsRef.current, tr);
     if (r.kind === 'found') {
-      AudioService.play('correct');
+      AudioService.play('word');
       commit(cellsRef.current, [...cellsRef.current, r.word]);
     } else {
       AudioService.play('wrong');
