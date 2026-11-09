@@ -1,0 +1,6 @@
+# Configuración de fastlane deliver para SesoLibre Mind.
+# Su sola existencia evita que deliver pregunte si se quiere configurar (en CI
+# no hay quién responda). Las opciones van en la línea de comandos del workflow
+# .github/workflows/ios-upload-screenshots.yml; los textos de la ficha están en
+# docs/APP-STORE-LISTING.md.
+app_identifier("com.sesolibre.mind")
