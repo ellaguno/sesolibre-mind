@@ -48,9 +48,11 @@ jobs:
             const r=JSON.parse(require('fs').readFileSync(0)).runtimes
               .filter(x=>x.platform==='iOS'&&x.isAvailable);
             console.log(r[r.length-1].identifier)")
+          # El Pro Max más reciente (la lista de Apple no viene ordenada por modelo).
           TYPE=$(xcrun simctl list devicetypes -j | node -e "
+            const n=(x)=>Number(x.name.match(/^iPhone (\d+) Pro Max$/)?.[1] ?? 0);
             const t=JSON.parse(require('fs').readFileSync(0)).devicetypes
-              .filter(x=>/^iPhone \d+ Pro Max$/.test(x.name));
+              .filter(x=>n(x)>0).sort((a,b)=>n(a)-n(b));
             console.log(t[t.length-1].identifier)")
           echo "Runtime $RUNTIME · equipo $TYPE"
           UDID=$(xcrun simctl create shots "$TYPE" "$RUNTIME")
@@ -78,7 +80,9 @@ jobs:
               # Al cambiar de idioma la app recarga los datos de ejemplo: más espera.
               if [ "$FIRST" = 1 ]; then sleep 16; FIRST=0; else sleep 9; fi
               xcrun simctl io "$UDID" screenshot "shots/$LANG/$ID.png"
-              echo "$LANG/$ID: $(sips -g pixelWidth -g pixelHeight "shots/$LANG/$ID.png" | awk '/pixel/{printf "%s ", $2}')"
+              SIZE=$(sips -g pixelWidth -g pixelHeight "shots/$LANG/$ID.png" | awk '/pixel/{printf "%s ", $2}')
+              echo "$LANG/$ID: $SIZE"
+              [ "$SIZE" = "1320 2868 " ] || { echo "::error::tamaño $SIZE, se esperaba 1320 2868 (6,9\")"; exit 1; }
             done
           done
 
