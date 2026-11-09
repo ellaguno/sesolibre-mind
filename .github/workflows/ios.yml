@@ -33,9 +33,10 @@ jobs:
     env:
       BUNDLE_ID: com.sesolibre.mind
       PROFILE_NAME: SesoLibre Mind App Store
-      KEYCHAIN: ${{ runner.temp }}/signing.keychain-db
     steps:
       - uses: actions/checkout@v4
+      - name: Rutas temporales
+        run: echo "KEYCHAIN=$RUNNER_TEMP/signing.keychain-db" >> "$GITHUB_ENV"
 
       - uses: actions/setup-node@v4
         with:
