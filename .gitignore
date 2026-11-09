@@ -8,7 +8,6 @@ dist-ssr/
 
 # Capacitor native projects (generados; se versionan aparte si se decide)
 /android
-/ios
 
 # Editor / OS
 .DS_Store
@@ -50,3 +49,16 @@ vite.config.d.ts
 # Bundles firmados (se suben a Play, no al repo)
 *.aab
 *.jks
+
+# Firma de Apple: nunca al repositorio
+*.p12
+*.p8
+*.key
+*.mobileprovision
+*.cer
+*.pem
+*.b64
+AuthKey_*
+
+# Paquetes para subir a mano
+*.zip

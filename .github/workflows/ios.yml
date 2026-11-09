@@ -1,0 +1,130 @@
+name: iOS (TestFlight)
+
+# Compila la app de iOS firmada para el App Store y la sube a TestFlight.
+# Corre al publicar un tag vX.Y.Z o a mano (Actions → iOS → Run workflow).
+#
+# Secrets del repositorio:
+#   APPLE_TEAM_ID            Team ID de Apple
+#   APPLE_CERT_P12_BASE64    certificado «Apple Distribution» (.p12) en base64
+#   APPLE_CERT_PASSWORD      contraseña de ese .p12
+#   KEYCHAIN_PASSWORD        contraseña del llavero temporal (aleatoria)
+#   ASC_KEY_ID, ASC_ISSUER_ID, ASC_PRIVATE_KEY   llave de la API de App Store Connect (.p8)
+#
+# Versión: la de package.json; número de build: github.run_number.
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      upload:
+        description: 'Subir a TestFlight'
+        type: boolean
+        default: true
+
+concurrency:
+  group: ios-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  ios:
+    runs-on: macos-latest
+    timeout-minutes: 45
+    env:
+      BUNDLE_ID: com.sesolibre.mind
+      PROFILE_NAME: SesoLibre Mind App Store
+      KEYCHAIN: ${{ runner.temp }}/signing.keychain-db
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # Nada se publica si fallan el lint o las pruebas.
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build
+      - name: Copiar la web al proyecto de iOS
+        run: npx cap sync ios
+
+      - name: Versión de Xcode
+        run: xcodebuild -version
+
+      - name: Importar el certificado a un llavero temporal
+        env:
+          P12_BASE64: ${{ secrets.APPLE_CERT_P12_BASE64 }}
+          P12_PASSWORD: ${{ secrets.APPLE_CERT_PASSWORD }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+        run: |
+          P12="$RUNNER_TEMP/dist.p12"
+          printf '%s' "$P12_BASE64" | base64 --decode > "$P12"
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN"
+          security import "$P12" -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k "$KEYCHAIN"
+          security set-key-partition-list -S apple-tool:,apple: -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN" > /dev/null
+          security list-keychains -d user -s "$KEYCHAIN" $(security list-keychains -d user | tr -d '"')
+          rm -f "$P12"
+          security find-identity -v -p codesigning "$KEYCHAIN" | grep -c "Apple Distribution"
+
+      - name: Descargar el perfil de aprovisionamiento (API de App Store Connect)
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_PRIVATE_KEY: ${{ secrets.ASC_PRIVATE_KEY }}
+        run: |
+          PROFILE="$RUNNER_TEMP/app.mobileprovision"
+          node scripts/ios/asc.mjs profile "$PROFILE"
+          UUID=$(security cms -D -i "$PROFILE" | plutil -extract UUID raw -)
+          for d in "$HOME/Library/MobileDevice/Provisioning Profiles" \
+                   "$HOME/Library/Developer/Xcode/UserData/Provisioning Profiles"; do
+            mkdir -p "$d"
+            cp "$PROFILE" "$d/$UUID.mobileprovision"
+          done
+
+      - name: Compilar y archivar (Release)
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "Versión $VERSION, build ${{ github.run_number }}"
+          xcodebuild \
+            -project ios/App/App.xcodeproj \
+            -scheme App \
+            -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -archivePath "$RUNNER_TEMP/App.xcarchive" \
+            MARKETING_VERSION="$VERSION" \
+            CURRENT_PROJECT_VERSION="${{ github.run_number }}" \
+            OTHER_CODE_SIGN_FLAGS="--keychain $KEYCHAIN" \
+            archive | tail -n 40
+          test -d "$RUNNER_TEMP/App.xcarchive"
+
+      - name: Exportar el .ipa firmado
+        run: |
+          xcodebuild -exportArchive \
+            -archivePath "$RUNNER_TEMP/App.xcarchive" \
+            -exportOptionsPlist ios/ExportOptions.plist \
+            -exportPath "$RUNNER_TEMP/export" | tail -n 20
+          ls -la "$RUNNER_TEMP/export"
+
+      - name: Subir a TestFlight
+        if: github.event_name == 'push' || inputs.upload
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_PRIVATE_KEY: ${{ secrets.ASC_PRIVATE_KEY }}
+        run: |
+          KEYDIR="$HOME/.appstoreconnect/private_keys"
+          mkdir -p "$KEYDIR"
+          printf '%s' "$ASC_PRIVATE_KEY" > "$KEYDIR/AuthKey_$ASC_KEY_ID.p8"
+          chmod 600 "$KEYDIR/AuthKey_$ASC_KEY_ID.p8"
+          IPA=$(ls "$RUNNER_TEMP"/export/*.ipa | head -n 1)
+          xcrun altool --upload-app --type ios --file "$IPA" \
+            --apiKey "$ASC_KEY_ID" --apiIssuer "$ASC_ISSUER_ID"
+
+      - name: Limpiar llavero y llave
+        if: always()
+        run: |
+          security delete-keychain "$KEYCHAIN" 2>/dev/null || true
+          rm -rf "$HOME/.appstoreconnect/private_keys" "$RUNNER_TEMP/app.mobileprovision"
