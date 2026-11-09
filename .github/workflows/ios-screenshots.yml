@@ -1,0 +1,93 @@
+name: iOS (capturas para el App Store)
+
+# Toma las capturas del App Store en el simulador de iPhone 6,9" (el tamaño
+# que pide Apple), en español e inglés. Se corre a mano; las capturas quedan
+# como artefacto del run.
+#
+# Usa una compilación especial (VITE_SHOTS=1) que trae datos de ejemplo y
+# obedece a scripts/ios/scenes.json: la app carga la web de un servidor local
+# y este workflow le dice qué pantalla mostrar antes de cada captura.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  shots:
+    runs-on: macos-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+
+      - name: Web en modo capturas y servidor local
+        run: |
+          VITE_SHOTS=1 npm run build
+          mkdir -p dist/shots
+          echo '{"id":"init","lang":"es","route":"/"}' > dist/shots/scene.json
+          nohup python3 -m http.server 4173 --bind 127.0.0.1 -d dist > /tmp/http.log 2>&1 &
+          sleep 2
+          curl -sf http://127.0.0.1:4173/shots/scene.json
+
+      - name: Proyecto de iOS apuntando al servidor local
+        run: CAP_SERVER_URL=http://localhost:4173 npx cap sync ios
+
+      - name: Compilar para el simulador
+        run: |
+          xcodebuild -project ios/App/App.xcodeproj -scheme App \
+            -configuration Debug -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath build CODE_SIGNING_ALLOWED=NO build | tail -n 15
+
+      - name: Simulador iPhone 6,9"
+        run: |
+          RUNTIME=$(xcrun simctl list runtimes -j | node -e "
+            const r=JSON.parse(require('fs').readFileSync(0)).runtimes
+              .filter(x=>x.platform==='iOS'&&x.isAvailable);
+            console.log(r[r.length-1].identifier)")
+          TYPE=$(xcrun simctl list devicetypes -j | node -e "
+            const t=JSON.parse(require('fs').readFileSync(0)).devicetypes
+              .filter(x=>/^iPhone \d+ Pro Max$/.test(x.name));
+            console.log(t[t.length-1].identifier)")
+          echo "Runtime $RUNTIME · equipo $TYPE"
+          UDID=$(xcrun simctl create shots "$TYPE" "$RUNTIME")
+          echo "UDID=$UDID" >> "$GITHUB_ENV"
+          xcrun simctl boot "$UDID"
+          xcrun simctl bootstatus "$UDID" -b
+          xcrun simctl ui "$UDID" appearance dark
+          xcrun simctl status_bar "$UDID" override --time "9:41" \
+            --dataNetwork wifi --wifiMode active --wifiBars 3 \
+            --cellularMode active --cellularBars 4 \
+            --batteryState charged --batteryLevel 100
+          xcrun simctl install "$UDID" build/Build/Products/Debug-iphonesimulator/App.app
+          xcrun simctl launch "$UDID" com.sesolibre.mind
+          sleep 15
+
+      - name: Capturas (español e inglés)
+        run: |
+          for LANG in es en; do
+            mkdir -p "shots/$LANG"
+            FIRST=1
+            node -e "for (const s of require('./scripts/ios/scenes.json')) console.log(s.id)" | while read -r ID; do
+              node -e "
+                const s=require('./scripts/ios/scenes.json').find(x=>x.id==='$ID');
+                require('fs').writeFileSync('dist/shots/scene.json', JSON.stringify({...s, lang:'$LANG'}));"
+              # Al cambiar de idioma la app recarga los datos de ejemplo: más espera.
+              if [ "$FIRST" = 1 ]; then sleep 16; FIRST=0; else sleep 9; fi
+              xcrun simctl io "$UDID" screenshot "shots/$LANG/$ID.png"
+              echo "$LANG/$ID: $(sips -g pixelWidth -g pixelHeight "shots/$LANG/$ID.png" | awk '/pixel/{printf "%s ", $2}')"
+            done
+          done
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: capturas-iphone-6.9
+          path: shots/
+          retention-days: 30
+
+      - name: Registro del servidor (si algo falló)
+        if: failure()
+        run: tail -n 50 /tmp/http.log || true

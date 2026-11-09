@@ -17,7 +17,7 @@ import { ScoreService, type ScoreEntry } from './ScoreService';
  */
 
 /** Referencia por actividad y variante: tiempo objetivo (s) o puntos objetivo. */
-const TARGET: Record<string, Record<string, number>> = {
+export const TARGET: Record<string, Record<string, number>> = {
   quickmath: { '1': 15, '2': 25, '3': 30, '4': 30, '5': 45 },
   colorclash: { '1': 10, '2': 14, '3': 22, '4': 32 },
   trails: { '5': 6, '10': 12, A: 16, B: 24, B20: 32 },

@@ -1,0 +1,8 @@
+[
+  { "id": "01-inicio", "route": "/" },
+  { "id": "02-coronas", "route": "/play/crowns", "actions": [{ "click": ["Saltar", "Skip"] }, { "hints": 4 }] },
+  { "id": "03-laberinto", "route": "/play/wordmaze", "actions": [{ "click": ["Saltar", "Skip"] }, { "hints": 9 }] },
+  { "id": "04-crucigrama", "route": "/play/crossword", "actions": [{ "click": ["Saltar", "Skip"] }, { "hints": 7 }] },
+  { "id": "05-hilo", "route": "/play/thread", "actions": [{ "click": ["Saltar", "Skip"] }, { "hints": 3 }] },
+  { "id": "06-perfil", "route": "/profile" }
+]

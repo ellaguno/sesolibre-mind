@@ -29,6 +29,9 @@ if (Capacitor.isNativePlatform()) {
   );
 }
 
+// Modo capturas (workflow de iOS): solo existe si se compila con VITE_SHOTS=1.
+if (import.meta.env.VITE_SHOTS === '1') void import('./dev/shots').then((m) => m.start());
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     {/* HashRouter: compatible con file://capacitor:// en WebView nativo */}

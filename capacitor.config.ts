@@ -12,6 +12,10 @@ const config: CapacitorConfig = {
     },
   },
   // Android/iOS se agregan con `npx cap add android` en la fase de empaquetado.
+  // Solo para el workflow de capturas: la app carga la web de un servidor local.
+  ...(process.env.CAP_SERVER_URL
+    ? { server: { url: process.env.CAP_SERVER_URL, cleartext: true } }
+    : {}),
 };
 
 export default config;
