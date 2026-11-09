@@ -71,6 +71,11 @@ const es: Dict = {
   'puzzle.new': 'Nuevo tablero',
   'puzzle.solved': '¡Resuelto!',
   'online.noHints': 'Sin pistas puedes compararte en línea.',
+  'online.invite': 'Compárate en línea',
+  'online.inviteBody':
+    'Ve cómo te fue frente a otros y, si quieres, publica tu resultado con 3 iniciales. Solo se envía el resultado; sin cuenta.',
+  'online.enable': 'Activar',
+  'history.onlineInvite': 'Ver las tablas en línea',
   'online.first': 'Aún nadie publica en este nivel: ¡estrena la tabla!',
   'online.better': 'Mejor que el {pct} % de lo publicado ({n})',
   'online.published': 'Publicado: puesto {rank} de {total}',
@@ -567,6 +572,11 @@ const en: Dict = {
   'puzzle.new': 'New board',
   'puzzle.solved': 'Solved!',
   'online.noHints': 'Play without hints to compare online.',
+  'online.invite': 'Compare online',
+  'online.inviteBody':
+    'See how you did against others and, if you like, post your result with 3 initials. Only the result is sent; no account.',
+  'online.enable': 'Turn on',
+  'history.onlineInvite': 'See the online leaderboards',
   'online.first': 'Nobody has posted on this level yet: be the first!',
   'online.better': 'Better than {pct}% of posted results ({n})',
   'online.published': 'Posted: #{rank} of {total}',

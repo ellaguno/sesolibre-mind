@@ -9,11 +9,12 @@ import {
   type Standing,
 } from '../core/online';
 import InitialsInput from './InitialsInput';
+import OnlineInvite from './OnlineInvite';
 
 /**
  * Al terminar: cómo queda el resultado frente a lo publicado por otros y botón
  * para publicarlo con 3 iniciales. Solo si se activó «Comparar en línea», sin
- * pistas y fuera del modo sereno (que no lleva reloj). Sin red no muestra nada.
+ * pistas. Si está apagado, invita a activarlo. Sin red no muestra nada.
  */
 export default function OnlineCompare({
   board,
@@ -25,8 +26,9 @@ export default function OnlineCompare({
   hints: number;
 }) {
   const t = useT();
-  const { compare, serene, initials, setInitials } = useSettings();
-  const enabled = compare && !serene;
+  const { compare, initials, setInitials } = useSettings();
+  // Opcional y apagado por defecto; si está apagado se invita a activarlo.
+  const enabled = compare;
   const [standing, setStanding] = useState<Standing | null>(null);
   const [state, setState] = useState<'idle' | 'sending' | 'error'>('idle');
   const [published, setPublished] = useState<{ rank: number; total: number } | null>(
@@ -51,7 +53,7 @@ export default function OnlineCompare({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key, enabled, hints]);
 
-  if (!enabled) return null;
+  if (!enabled) return hints > 0 ? null : <OnlineInvite label={t('online.invite')} />;
   if (hints > 0)
     return <p className="text-xs text-app-muted">🌐 {t('online.noHints')}</p>;
   if (!standing) return null; // cargando o sin red: no se muestra nada

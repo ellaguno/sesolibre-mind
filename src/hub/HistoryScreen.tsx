@@ -4,6 +4,7 @@ import Screen from '../ui/Screen';
 import { useT } from '../core/i18n';
 import { findActivity, scoreKey, type ActivityMeta } from '../core/registry';
 import { fetchTop, type TopRow } from '../core/online';
+import OnlineInvite from '../ui/OnlineInvite';
 import { ScoreService, type ScoreEntry } from '../core/ScoreService';
 import { formatActivityScore } from '../core/format';
 import { resolveLang, type Lang } from '../core/i18n';
@@ -24,12 +25,12 @@ function OnlineTop({
   fmt: (v: number) => string;
 }) {
   const t = useT();
-  const { compare, serene } = useSettings();
+  const { compare } = useSettings();
   // Casi todo se juega en modo libre: se empieza por la tabla de siempre.
   const [daily, setDaily] = useState(false);
   const [rows, setRows] = useState<TopRow[] | null | 'off'>(null);
   useEffect(() => {
-    if (!compare || serene) return;
+    if (!compare) return;
     let alive = true;
     setRows(null);
     void fetchTop(
@@ -44,8 +45,14 @@ function OnlineTop({
     return () => {
       alive = false;
     };
-  }, [compare, serene, activity, level, lang, daily]);
-  if (!compare || serene || rows === 'off') return null;
+  }, [compare, activity, level, lang, daily]);
+  if (!compare)
+    return (
+      <section className="flex flex-col items-center gap-1 rounded-2xl border border-app-border bg-app-surface p-3 text-center">
+        <OnlineInvite label={t('history.onlineInvite')} />
+      </section>
+    );
+  if (rows === 'off') return null;
 
   return (
     <section className="rounded-2xl border border-app-border bg-app-surface p-3">
