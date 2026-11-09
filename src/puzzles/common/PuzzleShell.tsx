@@ -246,14 +246,6 @@ export default function PuzzleShell(p: Props) {
           </div>
         )}
 
-        {p.solved && peek && (
-          <button
-            onClick={() => setPeek(false)}
-            className="overlay-pop absolute bottom-2 left-1/2 -translate-x-1/2 rounded-full bg-brand px-4 py-2 text-sm font-bold text-white shadow-lg"
-          >
-            {t('puzzle.showSummary')}
-          </button>
-        )}
         {p.solved && !peek && (
           // Fondo y tarjeta translúcidos: se alcanza a ver el tablero resuelto.
           <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-slate-950/25 p-4">
@@ -352,32 +344,41 @@ export default function PuzzleShell(p: Props) {
 
       {p.controls}
 
-      <div className="grid grid-cols-3 gap-2">
-        <Button
-          variant="ghost"
-          onClick={p.onUndo}
-          disabled={!p.canUndo || p.solved}
-          className="whitespace-nowrap px-2"
-        >
-          {t('puzzle.undo')}
+      {p.solved && peek ? (
+        // Viendo el tablero resuelto: los botones de juego ya no sirven, así
+        // que en su lugar va «Ver resumen» (fuera del tablero, para poder
+        // mirarlo o hacerle captura sin nada encima).
+        <Button onClick={() => setPeek(false)} className="w-full">
+          {t('puzzle.showSummary')}
         </Button>
-        <Button
-          variant="ghost"
-          onClick={p.onClear}
-          disabled={!p.ready || p.solved}
-          className="whitespace-nowrap px-2"
-        >
-          {t('puzzle.clear')}
-        </Button>
-        <Button
-          variant="ghost"
-          onClick={p.onHint}
-          disabled={!p.ready || p.solved}
-          className="whitespace-nowrap px-2"
-        >
-          💡 {t('puzzle.hint')}
-        </Button>
-      </div>
+      ) : (
+        <div className="grid grid-cols-3 gap-2">
+          <Button
+            variant="ghost"
+            onClick={p.onUndo}
+            disabled={!p.canUndo || p.solved}
+            className="whitespace-nowrap px-2"
+          >
+            {t('puzzle.undo')}
+          </Button>
+          <Button
+            variant="ghost"
+            onClick={p.onClear}
+            disabled={!p.ready || p.solved}
+            className="whitespace-nowrap px-2"
+          >
+            {t('puzzle.clear')}
+          </Button>
+          <Button
+            variant="ghost"
+            onClick={p.onHint}
+            disabled={!p.ready || p.solved}
+            className="whitespace-nowrap px-2"
+          >
+            💡 {t('puzzle.hint')}
+          </Button>
+        </div>
+      )}
 
       <p
         className="min-h-[1.25rem] text-center text-sm text-app-muted"
