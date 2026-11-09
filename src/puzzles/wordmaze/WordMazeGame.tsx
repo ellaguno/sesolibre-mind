@@ -349,8 +349,8 @@ export default function WordMazeGame({
             aria-label={t('act.wordmaze.title')}
             className="relative grid h-full w-full touch-none select-none"
             style={{
-              gridTemplateColumns: `repeat(${size}, 1fr)`,
-              gridTemplateRows: `repeat(${size}, 1fr)`,
+              gridTemplateColumns: `repeat(${size}, minmax(0, 1fr))`,
+              gridTemplateRows: `repeat(${size}, minmax(0, 1fr))`,
             }}
             onPointerDown={onPointerDown}
             onPointerMove={onPointerMove}

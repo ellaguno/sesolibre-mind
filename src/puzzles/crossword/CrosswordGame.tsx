@@ -305,8 +305,8 @@ export default function CrosswordGame({
             aria-label={t('act.crossword.title')}
             className="grid select-none"
             style={{
-              gridTemplateColumns: `repeat(${puzzle.cols}, 1fr)`,
-              gridTemplateRows: `repeat(${puzzle.rows}, 1fr)`,
+              gridTemplateColumns: `repeat(${puzzle.cols}, minmax(0, 1fr))`,
+              gridTemplateRows: `repeat(${puzzle.rows}, minmax(0, 1fr))`,
               aspectRatio: `${puzzle.cols} / ${puzzle.rows}`,
               width: puzzle.cols >= puzzle.rows ? '100%' : 'auto',
               height: puzzle.rows > puzzle.cols ? '100%' : 'auto',
@@ -327,7 +327,7 @@ export default function CrosswordGame({
                     c: (i % puzzle.cols) + 1,
                     state: cells[i] || t('cell.empty'),
                   })}
-                  className={`relative m-[1px] flex items-center justify-center rounded-[3px] font-bold uppercase ${
+                  className={`relative m-[1px] flex min-h-0 min-w-0 items-center justify-center overflow-hidden rounded-[3px] p-0 font-bold uppercase leading-none ${
                     selected
                       ? 'bg-amber-300 text-slate-900'
                       : inEntry.has(i)
