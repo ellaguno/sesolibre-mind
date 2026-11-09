@@ -11,6 +11,7 @@
  *   node scripts/ios/asc.mjs status                 ¿existen el Bundle ID, la app y el perfil?
  *   node scripts/ios/asc.mjs ensure-bundle          registra el Bundle ID si falta
  *   node scripts/ios/asc.mjs profile <salida>       descarga (o crea) el perfil App Store
+ *   node scripts/ios/asc.mjs builds                 últimos builds subidos y su estado
  *
  * Variables opcionales: BUNDLE_ID (com.sesolibre.mind), APP_NAME, CERT_SERIAL
  * (número de serie del certificado Apple Distribution con el que se firma).
@@ -169,12 +170,33 @@ async function status() {
   );
 }
 
+async function builds() {
+  const apps = await api(`/apps?filter[bundleId]=${BUNDLE_ID}`);
+  const app = apps.data[0];
+  if (!app) fail(`no hay app con ${BUNDLE_ID}`);
+  const r = await api(
+    `/builds?filter[app]=${app.id}&sort=-uploadedDate&limit=5&include=preReleaseVersion`,
+  );
+  const versions = Object.fromEntries(
+    (r.included ?? []).map((v) => [v.id, v.attributes.version]),
+  );
+  if (!r.data.length) console.log('Aún no hay builds procesados (Apple tarda unos minutos).');
+  for (const b of r.data) {
+    const a = b.attributes;
+    const ver = versions[b.relationships.preReleaseVersion.data?.id] ?? '?';
+    console.log(
+      `${ver} (${a.version})  ${a.processingState}  subido ${a.uploadedDate}  vence ${a.expirationDate ?? '-'}`,
+    );
+  }
+}
+
 const [cmd, arg] = process.argv.slice(2);
 try {
   if (cmd === 'status') await status();
   else if (cmd === 'ensure-bundle') await ensureBundle();
   else if (cmd === 'profile') await profile(arg);
-  else fail('uso: asc.mjs status | ensure-bundle | profile <salida>');
+  else if (cmd === 'builds') await builds();
+  else fail('uso: asc.mjs status | ensure-bundle | profile <salida> | builds');
 } catch (e) {
   fail(e.message);
 }
