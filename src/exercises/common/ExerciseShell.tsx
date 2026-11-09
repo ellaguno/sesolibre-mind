@@ -12,6 +12,7 @@ import { beatsChallenge } from '../../core/challenge';
 import { shareChallenge } from '../../core/challengeShare';
 import { formatActivityScore } from '../../core/format';
 import { useFitText } from '../../ui/useFitText';
+import OnlineCompare from '../../ui/OnlineCompare';
 
 export interface ExerciseResult {
   /** Valor que se guarda como puntuación (según el scoreKind de la actividad). */
@@ -240,6 +241,15 @@ export default function ExerciseShell(p: Props) {
               <p className="text-5xl font-black tabular-nums">{result.headline}</p>
               {result.detail && <p className="text-app-muted">{result.detail}</p>}
             </>
+          )}
+          {!p.challenge && p.variant && (
+            <div className="w-full max-w-xs">
+              <OnlineCompare
+                board={{ activityId: p.activityId, level: p.variant, daily: p.daily }}
+                score={result.score}
+                hints={0}
+              />
+            </div>
           )}
           {p.challenge && activity && (
             <div

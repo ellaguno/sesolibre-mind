@@ -19,6 +19,10 @@ export interface Settings {
   /** Recordatorio diario (app nativa) y su hora HH:MM. */
   reminder: boolean;
   reminderTime: string;
+  /** Comparar resultados en línea (sesolibre.com/score), apagado por defecto. */
+  compare: boolean;
+  /** Iniciales (3 letras) con las que se publican los resultados. */
+  initials: string;
 }
 
 const KEY = 'settings';
@@ -31,6 +35,8 @@ const DEFAULTS: Settings = {
   serene: false,
   reminder: false,
   reminderTime: '19:00',
+  compare: false,
+  initials: '',
 };
 
 interface SettingsState extends Settings {
@@ -44,6 +50,8 @@ interface SettingsState extends Settings {
   setColorblind: (on: boolean) => void;
   setSerene: (on: boolean) => void;
   setReminder: (on: boolean, time?: string) => void;
+  setCompare: (on: boolean) => void;
+  setInitials: (initials: string) => void;
 }
 
 function applyTheme(theme: Theme) {
@@ -114,6 +122,21 @@ export const useSettings = create<SettingsState>((set, get) => ({
     void persist(get);
   },
 
+  setCompare: (compare) => {
+    set({ compare });
+    void persist(get);
+  },
+
+  setInitials: (initials) => {
+    set({
+      initials: initials
+        .toUpperCase()
+        .replace(/[^A-Z]/g, '')
+        .slice(0, 3),
+    });
+    void persist(get);
+  },
+
   setSerene: (serene) => {
     applyScale(serene);
     set({ serene });
@@ -122,8 +145,18 @@ export const useSettings = create<SettingsState>((set, get) => ({
 }));
 
 async function persist(get: () => SettingsState) {
-  const { theme, sound, motion, lang, colorblind, serene, reminder, reminderTime } =
-    get();
+  const {
+    theme,
+    sound,
+    motion,
+    lang,
+    colorblind,
+    serene,
+    reminder,
+    reminderTime,
+    compare,
+    initials,
+  } = get();
   await storage.set<Settings>(KEY, {
     theme,
     sound,
@@ -133,6 +166,8 @@ async function persist(get: () => SettingsState) {
     serene,
     reminder,
     reminderTime,
+    compare,
+    initials,
   });
 }
 

@@ -13,6 +13,7 @@ import { formatDuration } from '../../core/format';
 import { shareText } from './share';
 import Button from '../../ui/Button';
 import { useFitText } from '../../ui/useFitText';
+import OnlineCompare from '../../ui/OnlineCompare';
 
 export interface VariantOption {
   id: string;
@@ -262,6 +263,18 @@ export default function PuzzleShell(p: Props) {
                   : `${p.label} · ${formatDuration(p.elapsed)}`}
                 {!serene && p.hints > 0 && ` · ${t('puzzle.hintsUsed', { n: p.hints })}`}
               </p>
+              {!p.challenge && p.variant && (
+                <OnlineCompare
+                  board={{
+                    activityId: p.activityId,
+                    level: p.variant,
+                    lang: p.boardLang,
+                    daily: p.daily,
+                  }}
+                  score={p.elapsed}
+                  hints={p.hints}
+                />
+              )}
               {p.challenge && activity && (
                 <div
                   className={`w-full rounded-xl p-3 ${won ? 'bg-green-600/20' : 'bg-amber-500/20'}`}

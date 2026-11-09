@@ -1,0 +1,5 @@
+# Solo api.php es público: la configuración y la base de datos no se sirven.
+Options -Indexes
+<FilesMatch "^(config.*\.php|README\.md)$">
+  Require all denied
+</FilesMatch>

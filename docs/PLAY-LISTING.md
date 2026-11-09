@@ -179,6 +179,24 @@ Los datos que se guardan **solo en el dispositivo** NO cuentan como recopilados.
 
 **Resultado esperado en la ficha:** "No se recopilan datos" / "No data collected".
 
+### Desde la versión con «Comparar en línea» (opcional, apagado por defecto)
+
+Cuando se publique la versión que incluye la comparación en línea **y** el servicio
+`sesolibre.com/score` esté activo, hay que actualizar el formulario:
+
+| Pregunta | Respuesta |
+|---|---|
+| ¿La app recopila datos? | **Sí** |
+| Tipo de datos | **Actividad en la app → Otro contenido generado por el usuario** (resultado de la partida y las 3 iniciales que elige el jugador) |
+| ¿Recopilación opcional? | **Sí** (el usuario la activa en Ajustes; apagada por defecto) |
+| ¿Se comparte con terceros? | **No** (las tablas se muestran dentro de la app; el servidor es nuestro) |
+| Finalidad | **Funcionalidad de la app** |
+| ¿Se procesa de forma efímera? | La consulta de percentil sí (no se guarda); la publicación no |
+| ¿Cifrado en tránsito? | **Sí** (HTTPS) |
+| ¿Se puede pedir la eliminación? | **Sí**, escribiendo al correo de contacto |
+
+Y publicar en sesolibre.com la política actualizada (`docs/PRIVACY.md`, 9 nov 2026).
+
 ---
 
 ## 6. Clasificación de contenido (cuestionario IARC)

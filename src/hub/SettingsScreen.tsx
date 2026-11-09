@@ -1,3 +1,4 @@
+import InitialsInput from '../ui/InitialsInput';
 import type { ReactNode } from 'react';
 import Screen from '../ui/Screen';
 import { useSettings, type LangSetting } from '../core/settings';
@@ -78,6 +79,10 @@ export default function SettingsScreen() {
     setLang,
     setColorblind,
     setSerene,
+    compare,
+    initials,
+    setCompare,
+    setInitials,
     reminder,
     reminderTime,
     setReminder,
@@ -166,6 +171,21 @@ export default function SettingsScreen() {
           checked={colorblind}
           onChange={() => setColorblind(!colorblind)}
         />
+        <ToggleRow
+          label={t('settings.compare')}
+          hint={t('settings.compareHint')}
+          checked={compare}
+          onChange={() => setCompare(!compare)}
+        />
+        {compare && (
+          <Row label={t('settings.initials')} hint={t('settings.initialsHint')}>
+            <InitialsInput
+              value={initials}
+              onChange={setInitials}
+              label={t('settings.initials')}
+            />
+          </Row>
+        )}
         <Row label={t('settings.startLevel')} hint={t('settings.startLevelHint')}>
           <select
             value={start ?? 'normal'}

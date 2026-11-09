@@ -2,13 +2,92 @@ import { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Screen from '../ui/Screen';
 import { useT } from '../core/i18n';
-import { findActivity, scoreKey } from '../core/registry';
+import { findActivity, scoreKey, type ActivityMeta } from '../core/registry';
+import { fetchTop, type TopRow } from '../core/online';
 import { ScoreService, type ScoreEntry } from '../core/ScoreService';
 import { formatActivityScore } from '../core/format';
-import { resolveLang } from '../core/i18n';
+import { resolveLang, type Lang } from '../core/i18n';
 import { useSettings } from '../core/settings';
 import { levelOf, useLevels } from '../core/levels';
 import TrendChart from './TrendChart';
+
+/** Mejores resultados publicados en línea (si se activó «Comparar en línea»). */
+function OnlineTop({
+  activity,
+  level,
+  lang,
+  fmt,
+}: {
+  activity: ActivityMeta;
+  level: string;
+  lang: Lang;
+  fmt: (v: number) => string;
+}) {
+  const t = useT();
+  const { compare, serene } = useSettings();
+  // Casi todo se juega en modo libre: se empieza por la tabla de siempre.
+  const [daily, setDaily] = useState(false);
+  const [rows, setRows] = useState<TopRow[] | null | 'off'>(null);
+  useEffect(() => {
+    if (!compare || serene) return;
+    let alive = true;
+    setRows(null);
+    void fetchTop(
+      {
+        activityId: activity.id,
+        level,
+        lang: activity.wordGame ? lang : undefined,
+        daily,
+      },
+      10,
+    ).then((r) => alive && setRows(r ?? 'off'));
+    return () => {
+      alive = false;
+    };
+  }, [compare, serene, activity, level, lang, daily]);
+  if (!compare || serene || rows === 'off') return null;
+
+  return (
+    <section className="rounded-2xl border border-app-border bg-app-surface p-3">
+      <div className="mb-2 flex items-center justify-between gap-2">
+        <h2 className="text-sm font-semibold uppercase tracking-wide text-app-muted">
+          🌐 {t('history.online')}
+        </h2>
+        <div className="flex gap-1" role="group">
+          {[false, true].map((d) => (
+            <button
+              key={String(d)}
+              onClick={() => setDaily(d)}
+              aria-pressed={daily === d}
+              className={`rounded-lg px-2 py-0.5 text-xs font-semibold ${
+                daily === d ? 'bg-brand text-white' : 'bg-app-surface2'
+              }`}
+            >
+              {t(d ? 'history.onlineDay' : 'history.onlineAll')}
+            </button>
+          ))}
+        </div>
+      </div>
+      {rows === null ? (
+        <p className="text-sm text-app-muted">…</p>
+      ) : rows.length === 0 ? (
+        <p className="text-sm text-app-muted">{t('history.onlineEmpty')}</p>
+      ) : (
+        <ol className="flex flex-col divide-y divide-app-border text-sm">
+          {rows.map((r, k) => (
+            <li key={k} className="flex justify-between py-1">
+              <span>
+                <span className="inline-block w-6 text-app-muted">{k + 1}</span>
+                <span className="font-mono font-bold tracking-widest">{r.ini}</span>
+              </span>
+              <span className="tabular-nums">{fmt(r.score)}</span>
+            </li>
+          ))}
+        </ol>
+      )}
+    </section>
+  );
+}
 
 /** Historial de una actividad: gráfica por nivel, mejor/promedio/último y lista. */
 export default function HistoryScreen() {
@@ -121,6 +200,10 @@ export default function HistoryScreen() {
                 </div>
               ))}
             </section>
+
+            {level && (
+              <OnlineTop activity={activity} level={level} lang={lang} fmt={fmt} />
+            )}
 
             <section className="rounded-2xl border border-app-border bg-app-surface p-3">
               <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-app-muted">
