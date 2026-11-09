@@ -14,6 +14,7 @@
  *   node scripts/ios/asc.mjs builds                 últimos builds subidos y su estado
  *   node scripts/ios/asc.mjs screenshots            capturas de la versión en edición, por idioma y tamaño
  *   node scripts/ios/asc.mjs set-version <X.Y.Z>    cambia el número de la versión en edición
+ *   node scripts/ios/asc.mjs listing [--dry]        sube la ficha de docs/APP-STORE-LISTING.md
  *
  * Variables opcionales: BUNDLE_ID (com.sesolibre.mind), APP_NAME, CERT_SERIAL
  * (número de serie del certificado Apple Distribution con el que se firma).
@@ -241,6 +242,162 @@ async function setVersion(version) {
   console.log(`✓ Versión ${v.attributes.versionString} → ${version}`);
 }
 
+/** Lee docs/APP-STORE-LISTING.md: textos por idioma, notas de revisión y datos generales. */
+function readListing() {
+  const md = readFileSync(new URL('../../docs/APP-STORE-LISTING.md', import.meta.url), 'utf8');
+  const block = (text, label) => {
+    const at = text.search(label);
+    if (at < 0) return null;
+    return text.slice(at).match(/```\n([\s\S]*?)\n```/)?.[1] ?? null;
+  };
+  const section = (title) => md.split(/\n## /).find((x) => x.startsWith(title)) ?? '';
+  const locale = (title) => {
+    const sec = section(title);
+    return {
+      subtitle: block(sec, /\*\*(Subtítulo|Subtitle) \(30\)/),
+      promotionalText: block(sec, /\*\*(Texto promocional|Promotional text) \(170\)/),
+      keywords: block(sec, /\*\*(Palabras clave|Keywords) \(100/),
+      description: block(sec, /\*\*(Descripción|Description) \(4000\)/),
+    };
+  };
+  const row = (name) =>
+    section('1.').match(new RegExp(`\\| ${name}[^|]*\\| ([^|]+) \\|`))?.[1].trim() ?? '';
+  const url = (name) => row(name).match(/https?:\/\/[^\s)]+/)?.[0] ?? null;
+  return {
+    name: row('Nombre').replace(/\*/g, ''),
+    copyright: row('Derechos de autor').replace(/\*/g, ''),
+    supportUrl: url('URL de soporte'),
+    marketingUrl: url('URL de marketing'),
+    privacyPolicyUrl: url('URL de la política de privacidad'),
+    reviewNotes: block(section('6.'), /```/),
+    locales: { 'es-MX': locale('2.'), 'en-US': locale('3.') },
+  };
+}
+
+async function listing(dry) {
+  const L = readListing();
+  for (const [loc, f] of Object.entries(L.locales))
+    for (const [k, v] of Object.entries(f)) if (!v) fail(`falta ${k} en ${loc}`);
+  if (dry) {
+    console.log(JSON.stringify({ ...L, locales: Object.fromEntries(Object.entries(L.locales).map(([k, f]) => [k, Object.fromEntries(Object.entries(f).map(([a, b]) => [a, `${[...b].length} car.`]))])) }, null, 2));
+    return;
+  }
+  const apps = await api(`/apps?filter[bundleId]=${BUNDLE_ID}`);
+  const app = apps.data[0];
+  if (!app) fail(`no hay app con ${BUNDLE_ID}`);
+
+  // 1. Información de la app: categorías y, por idioma, nombre, subtítulo y privacidad.
+  const infos = await api(`/apps/${app.id}/appInfos`);
+  const info =
+    infos.data.find((i) => (i.attributes.appStoreState ?? i.attributes.state) !== 'READY_FOR_SALE') ??
+    infos.data[0];
+  const cat = (id) => ({ data: { type: 'appCategories', id } });
+  await api(`/appInfos/${info.id}`, {
+    method: 'PATCH',
+    body: JSON.stringify({
+      data: {
+        type: 'appInfos',
+        id: info.id,
+        relationships: {
+          primaryCategory: cat('GAMES'),
+          primarySubcategoryOne: cat('GAMES_PUZZLE'),
+          primarySubcategoryTwo: cat('GAMES_WORD'),
+          secondaryCategory: cat('EDUCATION'),
+        },
+      },
+    }),
+  });
+  console.log('✓ Categorías: Juegos (Puzles, Palabras) · Educación');
+  const infoLocs = (await api(`/appInfos/${info.id}/appInfoLocalizations`)).data;
+  for (const [locale, f] of Object.entries(L.locales)) {
+    const attrs = { name: L.name, subtitle: f.subtitle, privacyPolicyUrl: L.privacyPolicyUrl };
+    const cur = infoLocs.find((x) => x.attributes.locale === locale);
+    if (cur)
+      await api(`/appInfoLocalizations/${cur.id}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ data: { type: 'appInfoLocalizations', id: cur.id, attributes: attrs } }),
+      });
+    else
+      await api('/appInfoLocalizations', {
+        method: 'POST',
+        body: JSON.stringify({
+          data: {
+            type: 'appInfoLocalizations',
+            attributes: { locale, ...attrs },
+            relationships: { appInfo: { data: { type: 'appInfos', id: info.id } } },
+          },
+        }),
+      });
+    console.log(`✓ ${locale}: nombre, subtítulo y política de privacidad`);
+  }
+
+  // 2. Versión en edición: derechos de autor y, por idioma, descripción y demás.
+  const versions = await api(`/apps/${app.id}/appStoreVersions?limit=10`);
+  const v = versions.data.find((x) => x.attributes.appStoreState === 'PREPARE_FOR_SUBMISSION');
+  if (!v) fail('no hay una versión en «Preparar para el envío»');
+  await api(`/appStoreVersions/${v.id}`, {
+    method: 'PATCH',
+    body: JSON.stringify({
+      data: { type: 'appStoreVersions', id: v.id, attributes: { copyright: L.copyright } },
+    }),
+  });
+  console.log(`✓ Versión ${v.attributes.versionString}: derechos de autor`);
+  const vLocs = (await api(`/appStoreVersions/${v.id}/appStoreVersionLocalizations`)).data;
+  for (const [locale, f] of Object.entries(L.locales)) {
+    const attrs = {
+      description: f.description,
+      keywords: f.keywords,
+      promotionalText: f.promotionalText,
+      supportUrl: L.supportUrl,
+      marketingUrl: L.marketingUrl,
+    };
+    const cur = vLocs.find((x) => x.attributes.locale === locale);
+    if (cur)
+      await api(`/appStoreVersionLocalizations/${cur.id}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ data: { type: 'appStoreVersionLocalizations', id: cur.id, attributes: attrs } }),
+      });
+    else
+      await api('/appStoreVersionLocalizations', {
+        method: 'POST',
+        body: JSON.stringify({
+          data: {
+            type: 'appStoreVersionLocalizations',
+            attributes: { locale, ...attrs },
+            relationships: { appStoreVersion: { data: { type: 'appStoreVersions', id: v.id } } },
+          },
+        }),
+      });
+    console.log(`✓ ${locale}: descripción, palabras clave, texto promocional y URLs`);
+  }
+
+  // 3. Notas para la revisión (los datos de contacto se llenan en el portal).
+  let detail = null;
+  try {
+    detail = (await api(`/appStoreVersions/${v.id}/appStoreReviewDetail`)).data;
+  } catch (e) {
+    if (e.status !== 404) throw e;
+  }
+  const notes = { notes: L.reviewNotes, demoAccountRequired: false };
+  if (detail)
+    await api(`/appStoreReviewDetails/${detail.id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ data: { type: 'appStoreReviewDetails', id: detail.id, attributes: notes } }),
+    });
+  else
+    await api('/appStoreReviewDetails', {
+      method: 'POST',
+      body: JSON.stringify({
+        data: {
+          type: 'appStoreReviewDetails',
+          attributes: notes,
+          relationships: { appStoreVersion: { data: { type: 'appStoreVersions', id: v.id } } },
+        },
+      }),
+    });
+  console.log('✓ Notas para la revisión (sin cuenta de demostración)');
+}
+
 const [cmd, arg] = process.argv.slice(2);
 try {
   if (cmd === 'status') await status();
@@ -249,7 +406,8 @@ try {
   else if (cmd === 'builds') await builds();
   else if (cmd === 'screenshots') await screenshots();
   else if (cmd === 'set-version') await setVersion(arg);
-  else fail('uso: asc.mjs status | ensure-bundle | profile <salida> | builds | screenshots | set-version <X.Y.Z>');
+  else if (cmd === 'listing') await listing(arg === '--dry');
+  else fail('uso: asc.mjs status | ensure-bundle | profile <salida> | builds | screenshots | set-version <X.Y.Z> | listing [--dry]');
 } catch (e) {
   fail(e.message);
 }

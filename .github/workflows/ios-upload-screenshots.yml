@@ -51,7 +51,8 @@ jobs:
           trap 'rm -f "$KEYJSON"' EXIT
           fastlane deliver --skip_binary_upload --skip_metadata --overwrite_screenshots \
             --app_identifier com.sesolibre.mind --api_key_path "$KEYJSON" \
-            --screenshots_path fastlane/screenshots --platform ios --force
+            --screenshots_path fastlane/screenshots --platform ios --force \
+            --run_precheck_before_submit false --submit_for_review false
 
       - name: Capturas en App Store Connect (por idioma y tamaño)
         env:
