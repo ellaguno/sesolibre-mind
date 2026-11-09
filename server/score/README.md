@@ -1,4 +1,4 @@
-# Servicio de resultados · `sesolibre.com/score/`
+# Servicio de resultados · `games.sesolibre.com/score/`
 
 Comparación anónima de resultados para las apps de SesoLibre: «mejor que el
 X % de lo publicado» y tablas con **3 iniciales**, al estilo de las maquinitas.
@@ -12,12 +12,12 @@ ni nada más.
 - PHP 7.4 o superior (probado con 8.2) con **PDO SQLite**, que casi todos los
   hostings traen. Si no lo trae, se puede usar MySQL (ver «MySQL» abajo).
 - Apache con `.htaccess` (o el equivalente en nginx, ver abajo).
-- HTTPS en sesolibre.com: la app solo se conecta por HTTPS.
+- HTTPS en games.sesolibre.com: la app solo se conecta por HTTPS.
 
 ## Instalación (5 minutos)
 
-1. Sube **la carpeta `score/` completa** a la raíz de sesolibre.com, de modo que
-   quede `https://sesolibre.com/score/api.php`. Si el sitio es WordPress no
+1. Sube **la carpeta `score/` completa** a la raíz de games.sesolibre.com, de modo que
+   quede `https://games.sesolibre.com/score/api.php`. Si el sitio es WordPress no
    pasa nada: WordPress no toca las carpetas que existen de verdad.
 2. Copia `config.local.example.php` como **`config.local.php`** y pon una sal
    aleatoria (`php -r "echo bin2hex(random_bytes(32));"`, o cualquier texto
@@ -25,11 +25,11 @@ ni nada más.
 3. Permisos: la carpeta `data/` debe poder escribirla PHP (normalmente `755`; si
    da error, `775`). Ahí se crea `scores.sqlite` sola, en el primer uso.
 4. Comprueba que responde, abriendo en el navegador:
-   `https://sesolibre.com/score/api.php?a=top&app=mind&act=crowns&lvl=6&lang=&scope=all`
+   `https://games.sesolibre.com/score/api.php?a=top&app=mind&act=crowns&lvl=6&lang=&scope=all`
    → debe mostrar `{"rows":[]}`.
 5. Comprueba que lo privado **no** se puede abrir (debe dar 403 Prohibido):
-   - `https://sesolibre.com/score/config.local.php`
-   - `https://sesolibre.com/score/data/scores.sqlite`
+   - `https://games.sesolibre.com/score/config.local.php`
+   - `https://games.sesolibre.com/score/data/scores.sqlite`
 
 Listo: la app ya usa esta dirección (`src/core/online.ts`).
 

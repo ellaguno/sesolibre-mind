@@ -19,7 +19,7 @@ export interface Settings {
   /** Recordatorio diario (app nativa) y su hora HH:MM. */
   reminder: boolean;
   reminderTime: string;
-  /** Comparar resultados en línea (sesolibre.com/score), apagado por defecto. */
+  /** Comparar resultados en línea (games.sesolibre.com/score), apagado por defecto. */
   compare: boolean;
   /** Iniciales (3 letras) con las que se publican los resultados. */
   initials: string;

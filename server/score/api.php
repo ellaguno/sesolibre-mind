@@ -1,6 +1,6 @@
 <?php
 /**
- * SesoLibre · comparación anónima de resultados (sesolibre.com/score/api.php)
+ * SesoLibre · comparación anónima de resultados (games.sesolibre.com/score/api.php)
  *
  * Al estilo de las maquinitas: un resultado se publica con 3 iniciales, sin
  * cuenta, correo ni identificador del teléfono. Solo se guarda el día (no la

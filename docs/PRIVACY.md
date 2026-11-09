@@ -57,7 +57,7 @@ La app **no** recopila ni solicita:
 Si activas **Comparar en línea** en Ajustes (está apagado por defecto):
 
 - Al terminar una partida **sin pistas**, la app consulta a nuestro servidor
-  (`sesolibre.com/score`) qué porcentaje de los resultados publicados supera el
+  (`games.sesolibre.com/score`) qué porcentaje de los resultados publicados supera el
   tuyo. Para eso envía solo: la actividad, el nivel, el idioma del tablero (en
   juegos de palabras), si es el reto del día y la fecha, y tu resultado (tiempo o
   puntos). **Esta consulta no se guarda.**
@@ -186,7 +186,7 @@ The app does **not** collect or request:
 If you turn on **Compare online** in Settings (it is off by default):
 
 - When you finish a game **without hints**, the app asks our server
-  (`sesolibre.com/score`) what percentage of posted results yours beats. It sends
+  (`games.sesolibre.com/score`) what percentage of posted results yours beats. It sends
   only: the activity, the level, the board language (word games), whether it is
   the daily challenge and the date, and your result (time or points). **This
   query is not stored.**

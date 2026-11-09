@@ -182,7 +182,7 @@ Los datos que se guardan **solo en el dispositivo** NO cuentan como recopilados.
 ### Desde la versión con «Comparar en línea» (opcional, apagado por defecto)
 
 Cuando se publique la versión que incluye la comparación en línea **y** el servicio
-`sesolibre.com/score` esté activo, hay que actualizar el formulario:
+`games.sesolibre.com/score` esté activo, hay que actualizar el formulario:
 
 | Pregunta | Respuesta |
 |---|---|

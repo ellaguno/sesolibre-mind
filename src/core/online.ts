@@ -2,14 +2,14 @@ import { dateKey } from './rng';
 
 /**
  * Comparación anónima en línea (servicio en server/score, publicado en
- * sesolibre.com/score). Es opcional y está apagada por defecto: sin red o si
+ * games.sesolibre.com/score). Es opcional y está apagada por defecto: sin red o si
  * el servicio no responde, la app sigue igual y no se muestra nada.
  *
  * Solo se envía la actividad, el nivel, el idioma del tablero (en juegos de
  * palabras), el día y el resultado; al publicar, además, 3 iniciales.
  */
 export const SCORE_API: string =
-  import.meta.env.VITE_SCORE_API ?? 'https://sesolibre.com/score/api.php';
+  import.meta.env.VITE_SCORE_API ?? 'https://games.sesolibre.com/score/api.php';
 
 const APP = 'mind';
 const TIMEOUT_MS = 6000;
