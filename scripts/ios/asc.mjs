@@ -13,6 +13,7 @@
  *   node scripts/ios/asc.mjs profile <salida>       descarga (o crea) el perfil App Store
  *   node scripts/ios/asc.mjs builds                 últimos builds subidos y su estado
  *   node scripts/ios/asc.mjs screenshots            capturas de la versión en edición, por idioma y tamaño
+ *   node scripts/ios/asc.mjs set-version <X.Y.Z>    cambia el número de la versión en edición
  *
  * Variables opcionales: BUNDLE_ID (com.sesolibre.mind), APP_NAME, CERT_SERIAL
  * (número de serie del certificado Apple Distribution con el que se firma).
@@ -217,6 +218,29 @@ async function screenshots() {
   }
 }
 
+async function setVersion(version) {
+  if (!/^\d+\.\d+(\.\d+)?$/.test(version ?? '')) fail('indica la versión, p. ej. 1.1.0');
+  const apps = await api(`/apps?filter[bundleId]=${BUNDLE_ID}`);
+  const app = apps.data[0];
+  if (!app) fail(`no hay app con ${BUNDLE_ID}`);
+  const versions = await api(`/apps/${app.id}/appStoreVersions?limit=10`);
+  const v = versions.data.find(
+    (x) => x.attributes.appStoreState === 'PREPARE_FOR_SUBMISSION',
+  );
+  if (!v) fail('no hay una versión en «Preparar para el envío»');
+  if (v.attributes.versionString === version) {
+    console.log(`✓ La versión ya es ${version}`);
+    return;
+  }
+  await api(`/appStoreVersions/${v.id}`, {
+    method: 'PATCH',
+    body: JSON.stringify({
+      data: { type: 'appStoreVersions', id: v.id, attributes: { versionString: version } },
+    }),
+  });
+  console.log(`✓ Versión ${v.attributes.versionString} → ${version}`);
+}
+
 const [cmd, arg] = process.argv.slice(2);
 try {
   if (cmd === 'status') await status();
@@ -224,7 +248,8 @@ try {
   else if (cmd === 'profile') await profile(arg);
   else if (cmd === 'builds') await builds();
   else if (cmd === 'screenshots') await screenshots();
-  else fail('uso: asc.mjs status | ensure-bundle | profile <salida> | builds | screenshots');
+  else if (cmd === 'set-version') await setVersion(arg);
+  else fail('uso: asc.mjs status | ensure-bundle | profile <salida> | builds | screenshots | set-version <X.Y.Z>');
 } catch (e) {
   fail(e.message);
 }
