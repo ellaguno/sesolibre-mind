@@ -12,6 +12,7 @@
  *   node scripts/ios/asc.mjs ensure-bundle          registra el Bundle ID si falta
  *   node scripts/ios/asc.mjs profile <salida>       descarga (o crea) el perfil App Store
  *   node scripts/ios/asc.mjs builds                 últimos builds subidos y su estado
+ *   node scripts/ios/asc.mjs screenshots            capturas de la versión en edición, por idioma y tamaño
  *
  * Variables opcionales: BUNDLE_ID (com.sesolibre.mind), APP_NAME, CERT_SERIAL
  * (número de serie del certificado Apple Distribution con el que se firma).
@@ -190,13 +191,40 @@ async function builds() {
   }
 }
 
+async function screenshots() {
+  const apps = await api(`/apps?filter[bundleId]=${BUNDLE_ID}`);
+  const app = apps.data[0];
+  if (!app) fail(`no hay app con ${BUNDLE_ID}`);
+  const versions = await api(`/apps/${app.id}/appStoreVersions?limit=10`);
+  const editable = versions.data.filter((v) =>
+    ['PREPARE_FOR_SUBMISSION', 'DEVELOPER_REJECTED', 'REJECTED', 'METADATA_REJECTED'].includes(
+      v.attributes.appStoreState ?? v.attributes.appVersionState,
+    ),
+  );
+  for (const v of editable.length ? editable : versions.data.slice(0, 1)) {
+    console.log(`Versión ${v.attributes.versionString} (${v.attributes.appStoreState})`);
+    const locs = await api(`/appStoreVersions/${v.id}/appStoreVersionLocalizations`);
+    for (const loc of locs.data) {
+      const sets = await api(
+        `/appStoreVersionLocalizations/${loc.id}/appScreenshotSets?include=appScreenshots&limit=50`,
+      );
+      if (!sets.data.length) console.log(`  ${loc.attributes.locale}: sin capturas`);
+      for (const set of sets.data) {
+        const n = set.relationships.appScreenshots.data?.length ?? 0;
+        console.log(`  ${loc.attributes.locale}: ${n} × ${set.attributes.screenshotDisplayType}`);
+      }
+    }
+  }
+}
+
 const [cmd, arg] = process.argv.slice(2);
 try {
   if (cmd === 'status') await status();
   else if (cmd === 'ensure-bundle') await ensureBundle();
   else if (cmd === 'profile') await profile(arg);
   else if (cmd === 'builds') await builds();
-  else fail('uso: asc.mjs status | ensure-bundle | profile <salida> | builds');
+  else if (cmd === 'screenshots') await screenshots();
+  else fail('uso: asc.mjs status | ensure-bundle | profile <salida> | builds | screenshots');
 } catch (e) {
   fail(e.message);
 }

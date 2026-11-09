@@ -1,0 +1,61 @@
+name: iOS (subir capturas al App Store)
+
+# Sube fastlane/screenshots/<idioma>/ a la versión en edición de App Store
+# Connect con fastlane deliver (sin binario ni metadatos). Se corre a mano.
+# La llave de la API se escribe en un JSON temporal del runner y se borra al final.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  upload:
+    runs-on: macos-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Verificar capturas (tamaño, sin transparencia, 1 a 10 por idioma)
+        run: |
+          fail=0
+          for dir in fastlane/screenshots/*/; do
+            n=$(ls "$dir"*.png 2>/dev/null | wc -l | tr -d ' ')
+            echo "$(basename "$dir"): $n capturas"
+            if [ "$n" -lt 1 ] || [ "$n" -gt 10 ]; then echo "::error::$dir debe tener de 1 a 10"; fail=1; fi
+            for f in "$dir"*.png; do
+              w=$(sips -g pixelWidth "$f" | awk '/pixelWidth/{print $2}')
+              h=$(sips -g pixelHeight "$f" | awk '/pixelHeight/{print $2}')
+              a=$(sips -g hasAlpha "$f" | awk '/hasAlpha/{print $2}')
+              case "${w}x${h}" in 1320x2868|1290x2796) ;; *) echo "::error::$f mide ${w}x${h}"; fail=1;; esac
+              [ "$a" = "no" ] || { echo "::error::$f tiene transparencia"; fail=1; }
+            done
+          done
+          exit $fail
+
+      - name: fastlane
+        run: command -v fastlane >/dev/null || brew install fastlane; fastlane --version | tail -n 1
+
+      - name: Subir con fastlane deliver
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_PRIVATE_KEY: ${{ secrets.ASC_PRIVATE_KEY }}
+          FASTLANE_SKIP_UPDATE_CHECK: '1'
+          FASTLANE_HIDE_CHANGELOG: '1'
+        run: |
+          KEYJSON="$RUNNER_TEMP/asc_api_key.json"
+          node -e "require('fs').writeFileSync(process.argv[1], JSON.stringify({
+            key_id: process.env.ASC_KEY_ID,
+            issuer_id: process.env.ASC_ISSUER_ID,
+            key: process.env.ASC_PRIVATE_KEY,
+            in_house: false }), { mode: 0o600 })" "$KEYJSON"
+          trap 'rm -f "$KEYJSON"' EXIT
+          fastlane deliver --skip_binary_upload --skip_metadata --overwrite_screenshots \
+            --app_identifier com.sesolibre.mind --api_key_path "$KEYJSON" \
+            --screenshots_path fastlane/screenshots --platform ios --force
+
+      - name: Capturas en App Store Connect (por idioma y tamaño)
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_PRIVATE_KEY: ${{ secrets.ASC_PRIVATE_KEY }}
+        run: node scripts/ios/asc.mjs screenshots
