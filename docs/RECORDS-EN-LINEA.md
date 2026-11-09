@@ -156,3 +156,44 @@ respaldo.
   mucho más simple de explicar en la política.
 - **Si en Games se mantiene Play Juegos**, junto con el servicio propio o en
   vez de él.
+
+## 8. Comparar resultados con iniciales (al estilo maquinita)
+
+La forma más anónima de compararse: al terminar, la persona **puede** publicar
+su marca con **3 iniciales** que elige (`EDL`, `ABU`, `TIO`), como en las
+maquinitas, sin cuenta, correo ni identificador del teléfono.
+
+**Qué se envía:** `{app, actividad, nivel, idioma*, iniciales, marca, pistas, día}`
+(*solo en juegos de palabras). Nada más: ni nombre del perfil, ni hora exacta
+(solo el día), ni modelo de teléfono.
+
+**Qué se puede mostrar sin exponer a nadie:**
+
+| Vista | Ejemplo | Exposición |
+| --- | --- | --- |
+| **Percentil** (recomendada para empezar) | «Resolviste Coronas 7×7 más rápido que el 72 % de quienes jugaron hoy» | Ninguna: no aparece ningún nombre |
+| **Tabla del día** del puzzle del día (todos juegan el mismo tablero, semilla del día) | Top 20 con iniciales | Baja: 3 letras, se borra cada día |
+| **Tabla de siempre** por actividad y nivel | Top 50 con iniciales | Baja-media: las iniciales quedan visibles |
+| **Entre amigos** (ya existe sin servidor: los retos con código) | «🏆 Ganaste a ABU» | Ninguna fuera del grupo |
+
+**Riesgos y cómo cubrirlos:**
+- *Re-identificación:* en un grupo pequeño (familia, amigos) unas iniciales sí
+  identifican a alguien; por eso publicar es siempre **opcional** y por partida,
+  y el percentil no muestra nombres.
+- *Iniciales ofensivas:* con 3 letras el riesgo es mínimo; una lista corta de
+  combinaciones bloqueadas basta.
+- *Trampas:* sin dinero ni premios, alcanza con lo del punto 5 (marcas
+  imposibles, límite de envíos, tablero del día con semilla conocida).
+- *Pistas:* las marcas con pistas se muestran aparte o con 💡, para no mezclarlas.
+- *Modo sereno:* sin reloj; sus partidas no entran en tablas de tiempo, o van en
+  una tabla «sin prisa» por partidas completadas.
+
+**Ventaja extra:** con suficientes marcas anónimas se pueden **calibrar las
+metas** de cada nivel (hoy son estimaciones nuestras) con datos reales: qué es un
+tiempo típico, bueno o excelente. Esto también sería la base honesta de
+cualquier comparación «por edades», si algún día se pide la edad (opcional, por
+rangos como 20–29, 30–39…), cosa que hoy no recomendamos.
+
+**Esfuerzo:** el percentil y la tabla del día son la fase 4 del plan (3–5 días)
+y necesitan el servicio de la fase 2 sin el respaldo cifrado: se pueden hacer
+antes que el respaldo si se prefiere.
