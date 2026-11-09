@@ -11,6 +11,7 @@ import { findActivity } from '../../core/registry';
 import { beatsChallenge } from '../../core/challenge';
 import { shareChallenge } from '../../core/challengeShare';
 import { formatActivityScore } from '../../core/format';
+import { useFitText } from '../../ui/useFitText';
 
 export interface ExerciseResult {
   /** Valor que se guarda como puntuación (según el scoreKind de la actividad). */
@@ -59,6 +60,7 @@ export default function ExerciseShell(p: Props) {
   const serene = useSettings((s) => s.serene);
   const finished = useRef(false);
   const title = t(`act.${p.activityId}.title`);
+  const titleRef = useFitText<HTMLHeadingElement>(title);
 
   useEffect(() => {
     if (phase !== 'countdown') return;
@@ -144,7 +146,10 @@ export default function ExerciseShell(p: Props) {
         >
           ←
         </button>
-        <h1 className="min-w-0 flex-1 truncate text-lg font-bold sm:text-xl">
+        <h1
+          ref={titleRef}
+          className="min-w-0 flex-1 truncate text-lg font-bold sm:text-xl"
+        >
           {p.emoji} {title}
           {p.challenge && (
             <span className="ml-2 rounded-full bg-amber-500 px-2 py-0.5 align-middle text-xs text-white">

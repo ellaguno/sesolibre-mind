@@ -12,6 +12,7 @@ import { useT, type Lang } from '../../core/i18n';
 import { formatDuration } from '../../core/format';
 import { shareText } from './share';
 import Button from '../../ui/Button';
+import { useFitText } from '../../ui/useFitText';
 
 export interface VariantOption {
   id: string;
@@ -69,6 +70,7 @@ export default function PuzzleShell(p: Props) {
   const t = useT();
   const [shared, setShared] = useState(false);
   const title = t(`act.${p.activityId}.title`);
+  const titleRef = useFitText<HTMLHeadingElement>(title);
   const tutorialOpen = useTutorialOpen(p.activityId);
   const markSeen = useTutorials((s) => s.markSeen);
   const openHelp = useTutorials((s) => s.openHelp);
@@ -169,7 +171,10 @@ export default function PuzzleShell(p: Props) {
         >
           ←
         </button>
-        <h1 className="min-w-0 flex-1 truncate text-lg font-bold sm:text-xl">
+        <h1
+          ref={titleRef}
+          className="min-w-0 flex-1 truncate text-lg font-bold sm:text-xl"
+        >
           {p.emoji} {title}
           {p.challenge && (
             <span className="ml-2 rounded-full bg-amber-500 px-2 py-0.5 align-middle text-xs text-white">
