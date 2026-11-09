@@ -27,121 +27,125 @@ datos). Actualizar si se integra monetización o Google Play Juegos.
 
 ## 2. Descripción corta (máx. 80 caracteres)
 
-**Español** (75):
+**Español** (73):
 
-> Ejercicios mentales y puzzles de lógica cada día. Sin conexión ni anuncios.
+```
+Puzzles de lógica, palabras y ejercicios mentales cada día. Sin anuncios.
+```
 
-**Inglés** (69):
+**Inglés** (75):
 
-> Daily brain exercises and logic puzzles. Offline, no ads, no sign-up.
+```
+Daily logic & word puzzles and quick mind exercises. No ads, works offline.
+```
 
 ---
 
 ## 3. Descripción larga (máx. 4000 caracteres)
 
-**Español:**
+Google Play acepta negritas con `<b>…</b>`. Actualizada el 9 nov 2026: juegos
+de palabras, comparación en línea opcional y la habilidad de lenguaje; mismo
+contenido que la ficha del App Store (`docs/APP-STORE-LISTING.md`).
 
-> **SesoLibre Mind** es tu rato diario para ejercitar la mente: unos minutos de
-> ejercicios rápidos y un puzzle de lógica, en una app ligera, bonita y **sin
-> conexión**.
->
-> 📅 **Sesión del día (~5 min)**
-> Cada día, 3 ejercicios de habilidades distintas + el puzzle del día. Se adapta a tu
-> nivel y es la misma para quienes juegan en tu nivel, así que puedes comparar
-> tu resultado con amigos y familia (sin spoilers). Mantén tu racha y mira tu constancia en el calendario.
->
-> 🌱 **Para todos los niveles**
-> Empieza desde lo más básico (tableros de 4×4, pocas preguntas, sin prisa) o
-> directo en el reto. Cuando superas un nivel, te proponemos el siguiente. El
-> **modo sereno** quita el reloj, agranda todo y añade ayudas.
->
-> 🧩 **5 puzzles de lógica, siempre con solución única**
-> 👑 **Coronas** — Una corona por fila, columna y zona de color, sin que se toquen.
-> 🌓 **Sol y Luna** — Equilibra soles y lunas siguiendo las pistas = y ×.
-> 🧵 **Hilo** — Un solo trazo que pasa por todas las casillas, con los números en orden.
-> 🟩 **Parcelas** — Divide la cuadrícula en rectángulos del tamaño indicado.
-> 🧮 **Sudoku mini** — Sudoku de 6×6 para resolver en un par de minutos.
-> Se generan al instante y se resuelven por deducción: nunca hay que adivinar.
-> Varios tamaños y dificultades, y una pista que te explica el siguiente paso.
->
-> ⚡ **6 ejercicios rápidos**
-> ➗ **Cálculo relámpago** — 20 operaciones contra reloj.
-> 🎨 **Choque de colores** — Elige el color de la tinta, no lo que dice la palabra.
-> ➖ **Cuenta atrás** — Resta de 7 en 7 sin ver tus respuestas anteriores.
-> 🔢 **Retén la cifra** — Memoriza series de dígitos cada vez más largas.
-> 🔗 **Sendero** — Une 1→A→2→B→3… lo más rápido que puedas.
-> 🏠 **¿Cuántos quedan?** — Sigue a la gente que entra y sale de la casa.
->
-> 📊 **Tu Índice Seso**
-> Un resumen de 0 a 100 por habilidad (velocidad, memoria, atención, flexibilidad
-> y lógica) para que te compares contigo mismo con el tiempo.
->
-> ✨ **Pensada para todos**
-> • **Sin conexión** — funciona en el avión, el metro o sin señal.
-> • **Sin anuncios**, **sin compras** y **sin registro**.
-> • **Privacidad total** — no recopilamos ningún dato; todo se guarda en tu teléfono.
-> • **Retos entre amigos** con un código: jueguen el mismo tablero y comparen.
-> • **Perfiles para toda la familia**, cada uno con su nivel y su racha.
-> • **Recordatorio diario** opcional, y tus puzzles se guardan para seguir después.
-> • **Tutorial ilustrado** la primera vez que juegas cada puzzle.
-> • **Modo daltónico** con texturas y colores fáciles de distinguir.
-> • Tema claro y oscuro, sonido y animaciones configurables.
-> • **Español e inglés**.
->
-> SesoLibre Mind es un juego: el Índice Seso es para entretenerte y medir tu
-> propio avance, no una evaluación médica.
+**Español** (3144):
 
-**Inglés:**
+```
+<b>SesoLibre Mind</b> es tu rato diario para ejercitar la mente: unos minutos de ejercicios rápidos, un puzzle de lógica y juegos de palabras, en una app ligera, bonita y que funciona <b>sin conexión</b>.
 
-> **SesoLibre Mind** is your daily moment to exercise your mind: a few minutes of
-> quick exercises and a logic puzzle, in a light, beautiful app that works **fully
-> offline**.
->
-> 📅 **Today's session (~5 min)**
-> Every day, 3 exercises for different skills + the puzzle of the day. It adapts to
-> your level and is the same for everyone at your level, so you can compare
-> results with friends and family (no spoilers). Keep your streak and track your consistency on the calendar.
->
-> 🌱 **For every level**
-> Start from the very basics (4×4 boards, few questions, no rush) or jump
-> straight into the challenge. Pass a level and we suggest the next one.
-> **Calm mode** removes the clock, enlarges everything and adds helpers.
->
-> 🧩 **5 logic puzzles, always with a unique solution**
-> 👑 **Crowns** — One crown per row, column and color region, never touching.
-> 🌓 **Sun & Moon** — Balance suns and moons following the = and × clues.
-> 🧵 **Thread** — One path through every cell, visiting the numbers in order.
-> 🟩 **Plots** — Split the grid into rectangles of the given sizes.
-> 🧮 **Mini Sudoku** — A 6×6 sudoku you can finish in a couple of minutes.
-> Generated instantly and solvable by deduction: you never have to guess.
-> Several sizes and difficulties, plus a hint that explains the next step.
->
-> ⚡ **6 quick exercises**
-> ➗ **Lightning Math** — 20 problems against the clock.
-> 🎨 **Color Clash** — Pick the ink color, not what the word says.
-> ➖ **Countdown** — Subtract 7 at a time without seeing your previous answers.
-> 🔢 **Number Span** — Memorize ever longer strings of digits.
-> 🔗 **Trails** — Connect 1→A→2→B→3… as fast as you can.
-> 🏠 **Headcount** — Keep track of people going in and out of the house.
->
-> 📊 **Your Seso Index**
-> A 0–100 summary per skill (speed, memory, attention, flexibility and logic) so
-> you can compare yourself with yourself over time.
->
-> ✨ **Made for everyone**
-> • **Offline** — works on a plane, on the subway or with no signal.
-> • **No ads**, **no purchases** and **no sign-up**.
-> • **Full privacy** — we collect no data; everything stays on your phone.
-> • **Challenge friends** with a code: play the same board and compare.
-> • **Profiles for the whole family**, each with its own level and streak.
-> • Optional **daily reminder**, and your puzzles are saved to continue later.
-> • **Illustrated tutorial** the first time you play each puzzle.
-> • **Color-blind mode** with textures and easy-to-tell colors.
-> • Light and dark theme, configurable sound and animations.
-> • **Spanish and English**.
->
-> SesoLibre Mind is a game: the Seso Index is for fun and for tracking your own
-> progress, not a medical assessment.
+📅 <b>Sesión del día (~5 min)</b>
+Cada día, 3 ejercicios de habilidades distintas y el puzzle del día. Se adapta a tu nivel y es la misma para quienes juegan en tu nivel, así que puedes comparar tu resultado con amigos y familia. Mantén tu racha y mira tu constancia en el calendario.
+
+🌱 <b>Para todos los niveles</b>
+Empieza desde lo más básico (tableros de 4×4, pocas preguntas, sin prisa) o directo en el reto. Cuando superas un nivel, te proponemos el siguiente. El <b>modo sereno</b> quita el reloj, agranda las letras y da pistas gratis: ideal para papás y abuelos.
+
+🧩 <b>5 puzzles de lógica, siempre con solución única</b>
+👑 <b>Coronas</b> — Una corona por fila, columna y zona de color, sin que se toquen.
+🌓 <b>Sol y Luna</b> — Equilibra soles y lunas siguiendo las pistas = y ×.
+🧵 <b>Hilo</b> — Un solo trazo que pasa por todas las casillas, con los números en orden.
+🟩 <b>Parcelas</b> — Divide la cuadrícula en rectángulos del tamaño indicado.
+🧮 <b>Sudoku mini</b> — Un sudoku que se resuelve en un par de minutos.
+Se generan al instante y se resuelven por deducción: nunca hay que adivinar. Si te atoras, la pista te explica el siguiente paso.
+
+🔤 <b>Juegos de palabras</b>
+<b>Laberinto de palabras</b> — Las palabras de un tema serpentean por la cuadrícula; solo sabes cuántas letras tiene cada una.
+<b>Crucigrama</b> — Palabras cruzadas de un tema, cada una con su pista, con un teclado grande que incluye la Ñ.
+Las palabras están escritas para cada idioma, no traducidas.
+
+⚡ <b>6 ejercicios rápidos</b>
+➗ <b>Cálculo relámpago</b> — 20 operaciones contra reloj.
+🎨 <b>Choque de colores</b> — Elige el color de la tinta, no lo que dice la palabra.
+➖ <b>Cuenta atrás</b> — Resta de 7 en 7 sin ver tus respuestas anteriores.
+🔢 <b>Retén la cifra</b> — Memoriza series de dígitos cada vez más largas.
+🔗 <b>Sendero</b> — Une 1→A→2→B→3… lo más rápido que puedas.
+🏠 <b>¿Cuántos quedan?</b> — Sigue a la gente que entra y sale de la casa.
+
+📊 <b>Tu Índice Seso</b>
+Un resumen de 0 a 100 por habilidad (velocidad, memoria, atención, flexibilidad, lógica y lenguaje) y tu tendencia semanal, para compararte contigo mismo.
+
+✨ <b>Pensada para todos</b>
+• <b>Sin conexión</b> — funciona en el avión, el metro o sin señal.
+• <b>Sin anuncios</b>, <b>sin compras</b> y <b>sin registro</b>.
+• <b>Privacidad</b> — tus resultados se quedan en tu teléfono.
+• <b>Retos entre amigos</b> con un código: jueguen el mismo tablero y comparen.
+• <b>Opcional:</b> compara tu resultado en línea con tus iniciales, al estilo de las maquinitas.
+• <b>Perfiles para toda la familia</b>, cada uno con su nivel y su racha.
+• <b>Recordatorio diario</b> opcional, y tus partidas se guardan para seguir después.
+• <b>Tutorial ilustrado</b> la primera vez que juegas cada puzzle.
+• <b>Modo daltónico</b>, tema claro y oscuro.
+• <b>Español e inglés</b>.
+
+SesoLibre Mind es un juego: el Índice Seso es para entretenerte y medir tu propio avance, no una evaluación médica.
+```
+
+**Inglés** (2965):
+
+```
+<b>SesoLibre Mind</b> is your daily moment to exercise your mind: a few minutes of quick exercises, a logic puzzle and word games, in a light, beautiful app that works <b>fully offline</b>.
+
+📅 <b>Today's session (~5 min)</b>
+Every day, 3 exercises for different skills plus the puzzle of the day. It adapts to your level and is the same for everyone at your level, so you can compare results with friends and family. Keep your streak and track your consistency on the calendar.
+
+🌱 <b>For every level</b>
+Start from the very basics (4×4 boards, few questions, no rush) or jump straight into the challenge. Pass a level and we suggest the next one. <b>Calm mode</b> removes the clock, enlarges the text and gives free hints: great for parents and grandparents.
+
+🧩 <b>5 logic puzzles, always with a unique solution</b>
+👑 <b>Crowns</b> — One crown per row, column and color region, never touching.
+🌓 <b>Sun & Moon</b> — Balance suns and moons following the = and × clues.
+🧵 <b>Thread</b> — One path through every cell, visiting the numbers in order.
+🟩 <b>Plots</b> — Split the grid into rectangles of the given sizes.
+🧮 <b>Mini Sudoku</b> — A sudoku you can finish in a couple of minutes.
+Generated instantly and solvable by deduction: you never have to guess. If you get stuck, a hint explains the next step.
+
+🔤 <b>Word games</b>
+<b>Word Maze</b> — A theme's words wind through the grid; you only know how many letters each one has.
+<b>Crossword</b> — Crossing words on a theme, each with its own clue, with a big on-screen keyboard.
+Words are written for each language, not translated.
+
+⚡ <b>6 quick exercises</b>
+➗ <b>Lightning Math</b> — 20 problems against the clock.
+🎨 <b>Color Clash</b> — Pick the ink color, not what the word says.
+➖ <b>Countdown</b> — Subtract 7 at a time without seeing your previous answers.
+🔢 <b>Number Span</b> — Memorize ever longer strings of digits.
+🔗 <b>Trails</b> — Connect 1→A→2→B→3… as fast as you can.
+🏠 <b>Headcount</b> — Keep track of people going in and out of the house.
+
+📊 <b>Your Seso Index</b>
+A 0–100 summary per skill (speed, memory, attention, flexibility, logic and language) plus your weekly trend, so you can compare yourself with yourself.
+
+✨ <b>Made for everyone</b>
+• <b>Offline</b> — works on a plane, on the subway or with no signal.
+• <b>No ads</b>, <b>no purchases</b> and <b>no sign-up</b>.
+• <b>Privacy</b> — your results stay on your phone.
+• <b>Challenge friends</b> with a code: play the same board and compare.
+• <b>Optional:</b> compare your result online with your initials, arcade style.
+• <b>Profiles for the whole family</b>, each with its own level and streak.
+• Optional <b>daily reminder</b>, and your games are saved to continue later.
+• <b>Illustrated tutorial</b> the first time you play each puzzle.
+• <b>Color-blind mode</b>, light and dark theme.
+• <b>Spanish and English</b>.
+
+SesoLibre Mind is a game: the Seso Index is for fun and for tracking your own progress, not a medical assessment.
+```
 
 ---
 
