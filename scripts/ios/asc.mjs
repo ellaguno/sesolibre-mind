@@ -24,8 +24,19 @@ import { readFileSync, writeFileSync } from 'node:fs';
 
 const BUNDLE_ID = process.env.BUNDLE_ID ?? 'com.sesolibre.mind';
 const APP_NAME = process.env.APP_NAME ?? 'SesoLibre Mind';
-const CERT_SERIAL = (process.env.CERT_SERIAL ?? '46C1A8F6085E4C8045E83BF78B08B779').toUpperCase();
+const CERT_SERIAL = (
+  process.env.CERT_SERIAL ?? '46C1A8F6085E4C8045E83BF78B08B779'
+).toUpperCase();
 const PROFILE_NAME = `${APP_NAME} App Store`;
+/** Estados en los que la versión de la tienda todavía se puede editar. */
+const EDITABLE = [
+  'PREPARE_FOR_SUBMISSION',
+  'REJECTED',
+  'METADATA_REJECTED',
+  'DEVELOPER_REJECTED',
+  'INVALID_BINARY',
+];
+const editable = (v) => EDITABLE.includes(v.attributes.appStoreState);
 const API = 'https://api.appstoreconnect.apple.com/v1';
 
 function fail(msg) {
@@ -151,7 +162,9 @@ async function profile(out) {
     prof = r.data;
     console.log(`✓ Perfil «${PROFILE_NAME}» creado`);
   } else {
-    console.log(`✓ Perfil «${PROFILE_NAME}» vigente hasta ${prof.attributes.expirationDate}`);
+    console.log(
+      `✓ Perfil «${PROFILE_NAME}» vigente hasta ${prof.attributes.expirationDate}`,
+    );
   }
   writeFileSync(out, Buffer.from(prof.attributes.profileContent, 'base64'));
   console.log(`  UUID ${prof.attributes.uuid} → ${out}`);
@@ -159,7 +172,11 @@ async function profile(out) {
 
 async function status() {
   const bundle = await findBundle();
-  console.log(bundle ? `✓ Bundle ID ${BUNDLE_ID} registrado` : `✗ Bundle ID ${BUNDLE_ID} sin registrar`);
+  console.log(
+    bundle
+      ? `✓ Bundle ID ${BUNDLE_ID} registrado`
+      : `✗ Bundle ID ${BUNDLE_ID} sin registrar`,
+  );
   const apps = await api(`/apps?filter[bundleId]=${BUNDLE_ID}`);
   const app = apps.data[0];
   console.log(
@@ -183,7 +200,8 @@ async function builds() {
   const versions = Object.fromEntries(
     (r.included ?? []).map((v) => [v.id, v.attributes.version]),
   );
-  if (!r.data.length) console.log('Aún no hay builds procesados (Apple tarda unos minutos).');
+  if (!r.data.length)
+    console.log('Aún no hay builds procesados (Apple tarda unos minutos).');
   for (const b of r.data) {
     const a = b.attributes;
     const ver = versions[b.relationships.preReleaseVersion.data?.id] ?? '?';
@@ -198,12 +216,8 @@ async function screenshots() {
   const app = apps.data[0];
   if (!app) fail(`no hay app con ${BUNDLE_ID}`);
   const versions = await api(`/apps/${app.id}/appStoreVersions?limit=10`);
-  const editable = versions.data.filter((v) =>
-    ['PREPARE_FOR_SUBMISSION', 'DEVELOPER_REJECTED', 'REJECTED', 'METADATA_REJECTED'].includes(
-      v.attributes.appStoreState ?? v.attributes.appVersionState,
-    ),
-  );
-  for (const v of editable.length ? editable : versions.data.slice(0, 1)) {
+  const open = versions.data.filter(editable);
+  for (const v of open.length ? open : versions.data.slice(0, 1)) {
     console.log(`Versión ${v.attributes.versionString} (${v.attributes.appStoreState})`);
     const locs = await api(`/appStoreVersions/${v.id}/appStoreVersionLocalizations`);
     for (const loc of locs.data) {
@@ -213,7 +227,9 @@ async function screenshots() {
       if (!sets.data.length) console.log(`  ${loc.attributes.locale}: sin capturas`);
       for (const set of sets.data) {
         const n = set.relationships.appScreenshots.data?.length ?? 0;
-        console.log(`  ${loc.attributes.locale}: ${n} × ${set.attributes.screenshotDisplayType}`);
+        console.log(
+          `  ${loc.attributes.locale}: ${n} × ${set.attributes.screenshotDisplayType}`,
+        );
       }
     }
   }
@@ -225,10 +241,8 @@ async function setVersion(version) {
   const app = apps.data[0];
   if (!app) fail(`no hay app con ${BUNDLE_ID}`);
   const versions = await api(`/apps/${app.id}/appStoreVersions?limit=10`);
-  const v = versions.data.find(
-    (x) => x.attributes.appStoreState === 'PREPARE_FOR_SUBMISSION',
-  );
-  if (!v) fail('no hay una versión en «Preparar para el envío»');
+  const v = versions.data.find(editable);
+  if (!v) fail('no hay una versión editable (preparación o rechazada)');
   if (v.attributes.versionString === version) {
     console.log(`✓ La versión ya es ${version}`);
     return;
@@ -236,7 +250,11 @@ async function setVersion(version) {
   await api(`/appStoreVersions/${v.id}`, {
     method: 'PATCH',
     body: JSON.stringify({
-      data: { type: 'appStoreVersions', id: v.id, attributes: { versionString: version } },
+      data: {
+        type: 'appStoreVersions',
+        id: v.id,
+        attributes: { versionString: version },
+      },
     }),
   });
   console.log(`✓ Versión ${v.attributes.versionString} → ${version}`);
@@ -244,7 +262,10 @@ async function setVersion(version) {
 
 /** Lee docs/APP-STORE-LISTING.md: textos por idioma, notas de revisión y datos generales. */
 function readListing() {
-  const md = readFileSync(new URL('../../docs/APP-STORE-LISTING.md', import.meta.url), 'utf8');
+  const md = readFileSync(
+    new URL('../../docs/APP-STORE-LISTING.md', import.meta.url),
+    'utf8',
+  );
   const block = (text, label) => {
     const at = text.search(label);
     if (at < 0) return null;
@@ -261,7 +282,9 @@ function readListing() {
     };
   };
   const row = (name) =>
-    section('1.').match(new RegExp(`\\| ${name}[^|]*\\| ([^|]+) \\|`))?.[1].trim() ?? '';
+    section('1.')
+      .match(new RegExp(`\\| ${name}[^|]*\\| ([^|]+) \\|`))?.[1]
+      .trim() ?? '';
   const url = (name) => row(name).match(/https?:\/\/[^\s)]+/)?.[0] ?? null;
   return {
     name: row('Nombre').replace(/\*/g, ''),
@@ -279,7 +302,23 @@ async function listing(dry) {
   for (const [loc, f] of Object.entries(L.locales))
     for (const [k, v] of Object.entries(f)) if (!v) fail(`falta ${k} en ${loc}`);
   if (dry) {
-    console.log(JSON.stringify({ ...L, locales: Object.fromEntries(Object.entries(L.locales).map(([k, f]) => [k, Object.fromEntries(Object.entries(f).map(([a, b]) => [a, `${[...b].length} car.`]))])) }, null, 2));
+    console.log(
+      JSON.stringify(
+        {
+          ...L,
+          locales: Object.fromEntries(
+            Object.entries(L.locales).map(([k, f]) => [
+              k,
+              Object.fromEntries(
+                Object.entries(f).map(([a, b]) => [a, `${[...b].length} car.`]),
+              ),
+            ]),
+          ),
+        },
+        null,
+        2,
+      ),
+    );
     return;
   }
   const apps = await api(`/apps?filter[bundleId]=${BUNDLE_ID}`);
@@ -289,8 +328,9 @@ async function listing(dry) {
   // 1. Información de la app: categorías y, por idioma, nombre, subtítulo y privacidad.
   const infos = await api(`/apps/${app.id}/appInfos`);
   const info =
-    infos.data.find((i) => (i.attributes.appStoreState ?? i.attributes.state) !== 'READY_FOR_SALE') ??
-    infos.data[0];
+    infos.data.find(
+      (i) => (i.attributes.appStoreState ?? i.attributes.state) !== 'READY_FOR_SALE',
+    ) ?? infos.data[0];
   const cat = (id) => ({ data: { type: 'appCategories', id } });
   await api(`/appInfos/${info.id}`, {
     method: 'PATCH',
@@ -310,12 +350,18 @@ async function listing(dry) {
   console.log('✓ Categorías: Juegos (Puzles, Palabras) · Educación');
   const infoLocs = (await api(`/appInfos/${info.id}/appInfoLocalizations`)).data;
   for (const [locale, f] of Object.entries(L.locales)) {
-    const attrs = { name: L.name, subtitle: f.subtitle, privacyPolicyUrl: L.privacyPolicyUrl };
+    const attrs = {
+      name: L.name,
+      subtitle: f.subtitle,
+      privacyPolicyUrl: L.privacyPolicyUrl,
+    };
     const cur = infoLocs.find((x) => x.attributes.locale === locale);
     if (cur)
       await api(`/appInfoLocalizations/${cur.id}`, {
         method: 'PATCH',
-        body: JSON.stringify({ data: { type: 'appInfoLocalizations', id: cur.id, attributes: attrs } }),
+        body: JSON.stringify({
+          data: { type: 'appInfoLocalizations', id: cur.id, attributes: attrs },
+        }),
       });
     else
       await api('/appInfoLocalizations', {
@@ -333,16 +379,21 @@ async function listing(dry) {
 
   // 2. Versión en edición: derechos de autor y, por idioma, descripción y demás.
   const versions = await api(`/apps/${app.id}/appStoreVersions?limit=10`);
-  const v = versions.data.find((x) => x.attributes.appStoreState === 'PREPARE_FOR_SUBMISSION');
-  if (!v) fail('no hay una versión en «Preparar para el envío»');
+  const v = versions.data.find(editable);
+  if (!v) fail('no hay una versión editable (preparación o rechazada)');
   await api(`/appStoreVersions/${v.id}`, {
     method: 'PATCH',
     body: JSON.stringify({
-      data: { type: 'appStoreVersions', id: v.id, attributes: { copyright: L.copyright } },
+      data: {
+        type: 'appStoreVersions',
+        id: v.id,
+        attributes: { copyright: L.copyright },
+      },
     }),
   });
   console.log(`✓ Versión ${v.attributes.versionString}: derechos de autor`);
-  const vLocs = (await api(`/appStoreVersions/${v.id}/appStoreVersionLocalizations`)).data;
+  const vLocs = (await api(`/appStoreVersions/${v.id}/appStoreVersionLocalizations`))
+    .data;
   for (const [locale, f] of Object.entries(L.locales)) {
     const attrs = {
       description: f.description,
@@ -355,7 +406,9 @@ async function listing(dry) {
     if (cur)
       await api(`/appStoreVersionLocalizations/${cur.id}`, {
         method: 'PATCH',
-        body: JSON.stringify({ data: { type: 'appStoreVersionLocalizations', id: cur.id, attributes: attrs } }),
+        body: JSON.stringify({
+          data: { type: 'appStoreVersionLocalizations', id: cur.id, attributes: attrs },
+        }),
       });
     else
       await api('/appStoreVersionLocalizations', {
@@ -364,7 +417,9 @@ async function listing(dry) {
           data: {
             type: 'appStoreVersionLocalizations',
             attributes: { locale, ...attrs },
-            relationships: { appStoreVersion: { data: { type: 'appStoreVersions', id: v.id } } },
+            relationships: {
+              appStoreVersion: { data: { type: 'appStoreVersions', id: v.id } },
+            },
           },
         }),
       });
@@ -382,7 +437,9 @@ async function listing(dry) {
   if (detail)
     await api(`/appStoreReviewDetails/${detail.id}`, {
       method: 'PATCH',
-      body: JSON.stringify({ data: { type: 'appStoreReviewDetails', id: detail.id, attributes: notes } }),
+      body: JSON.stringify({
+        data: { type: 'appStoreReviewDetails', id: detail.id, attributes: notes },
+      }),
     });
   else
     await api('/appStoreReviewDetails', {
@@ -391,7 +448,9 @@ async function listing(dry) {
         data: {
           type: 'appStoreReviewDetails',
           attributes: notes,
-          relationships: { appStoreVersion: { data: { type: 'appStoreVersions', id: v.id } } },
+          relationships: {
+            appStoreVersion: { data: { type: 'appStoreVersions', id: v.id } },
+          },
         },
       }),
     });
@@ -407,7 +466,10 @@ try {
   else if (cmd === 'screenshots') await screenshots();
   else if (cmd === 'set-version') await setVersion(arg);
   else if (cmd === 'listing') await listing(arg === '--dry');
-  else fail('uso: asc.mjs status | ensure-bundle | profile <salida> | builds | screenshots | set-version <X.Y.Z> | listing [--dry]');
+  else
+    fail(
+      'uso: asc.mjs status | ensure-bundle | profile <salida> | builds | screenshots | set-version <X.Y.Z> | listing [--dry]',
+    );
 } catch (e) {
   fail(e.message);
 }
