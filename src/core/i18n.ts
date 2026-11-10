@@ -75,6 +75,14 @@ const es: Dict = {
   'online.inviteBody':
     'Ve cómo te fue frente a otros y, si quieres, publica tu resultado con 3 iniciales. Solo se envía el resultado; sin cuenta.',
   'online.enable': 'Activar',
+  'online.report': 'Reportar',
+  'online.hideForMe': 'Ocultar solo para mí',
+  'online.reportAsk': '¿Iniciales ofensivas («{ini}»)?',
+  'online.reportAria': 'Reportar u ocultar «{ini}»',
+  'online.reportNote':
+    'Toca ⚑ para reportar o ocultar unas iniciales ofensivas. Revisamos los reportes en menos de 24 horas; contacto: eduardo.llaguno@gmail.com',
+  'online.reportThanks':
+    'Gracias: lo ocultamos para ti y lo revisaremos en menos de 24 horas.',
   'history.onlineInvite': 'Ver las tablas en línea',
   'online.first': 'Aún nadie publica en este nivel: ¡estrena la tabla!',
   'online.better': 'Mejor que el {pct} % de lo publicado ({n})',
@@ -576,6 +584,13 @@ const en: Dict = {
   'online.inviteBody':
     'See how you did against others and, if you like, post your result with 3 initials. Only the result is sent; no account.',
   'online.enable': 'Turn on',
+  'online.report': 'Report',
+  'online.hideForMe': 'Hide just for me',
+  'online.reportAsk': 'Offensive initials ("{ini}")?',
+  'online.reportAria': 'Report or hide "{ini}"',
+  'online.reportNote':
+    'Tap ⚑ to report or hide offensive initials. We review reports within 24 hours; contact: eduardo.llaguno@gmail.com',
+  'online.reportThanks': 'Thanks: we hid it for you and will review it within 24 hours.',
   'history.onlineInvite': 'See the online leaderboards',
   'online.first': 'Nobody has posted on this level yet: be the first!',
   'online.better': 'Better than {pct}% of posted results ({n})',

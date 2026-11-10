@@ -48,5 +48,10 @@ const SCORE_ACTIVITIES = [
     ],
 ];
 
-// Iniciales que no se aceptan (lista corta: con 3 letras el riesgo es mínimo).
-const SCORE_BLOCKED_INITIALS = ['ASS', 'FUK', 'FUC', 'KKK', 'NZI', 'SEX', 'XXX', 'CUL', 'PTO', 'PTA', 'VRG', 'KUL'];
+// Reportes de personas distintas para ocultar una entrada hasta revisarla.
+defined('SCORE_HIDE_AFTER') || define('SCORE_HIDE_AFTER', 2);
+
+// Iniciales que no se aceptan (groserías, insultos y odio en español e inglés):
+// una sola lista en blocked-initials.json, que también usa la app
+// (src/core/online.ts). Lo que se escape se reporta desde la tabla.
+define('SCORE_BLOCKED_INITIALS', json_decode((string) file_get_contents(__DIR__ . '/blocked-initials.json'), true) ?: []);

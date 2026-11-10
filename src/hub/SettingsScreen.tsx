@@ -1,3 +1,4 @@
+import { blockedInitials } from '../core/online';
 import InitialsInput from '../ui/InitialsInput';
 import type { ReactNode } from 'react';
 import Screen from '../ui/Screen';
@@ -185,6 +186,11 @@ export default function SettingsScreen() {
               label={t('settings.initials')}
             />
           </Row>
+        )}
+        {compare && blockedInitials(initials) && (
+          <p className="px-1 text-sm text-red-400" aria-live="polite">
+            {t('online.badInitials')}
+          </p>
         )}
         <Row label={t('settings.startLevel')} hint={t('settings.startLevelHint')}>
           <select

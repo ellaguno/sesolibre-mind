@@ -65,10 +65,28 @@ Y en la app, un archivo `.env.local` (no se sube a git) con
 `VITE_SCORE_API=http://localhost:8099/api.php`. **Bórralo antes de compilar
 el APK o el AAB**, o la app apuntaría a tu computadora.
 
+## Moderación
+
+Apple exige, para contenido de usuarios (guideline 1.2): filtro, forma de
+reportar, de ocultar y un contacto. Así está cubierto:
+
+- **Filtro:** `blocked-initials.json` (la misma lista la usa la app). Para
+  añadir una combinación, agrégala ahí y sube el archivo.
+- **Reportar / ocultar:** en la app, ⚑ en cada fila de la tabla. Ocultar es solo
+  para quien lo pide; reportar suma un reporte (uno por persona) y con
+  `SCORE_HIDE_AFTER` (2) la entrada se oculta para todos hasta revisarla.
+- **Panel:** define en `config.local.php` una clave larga
+  (`define('SCORE_ADMIN_TOKEN', '…');`, p. ej. `openssl rand -hex 24`) y abre:
+  - lista de reportadas/ocultas: `api.php?a=admin&token=CLAVE&do=list`
+  - restaurar (no era ofensiva): `…&do=unhide&id=N`
+  - ocultar a mano: `…&do=hide&id=N` · borrar: `…&do=delete&id=N`
+
+  Revisa la lista al menos una vez al día (lo prometido a Apple: menos de 24 h).
+
 ## Mantenimiento
 
 - **Añadir una actividad o un juego:** agrégala en `SCORE_ACTIVITIES`
   (`config.php`) con quién gana (`lower` o `higher`) y el rango plausible.
-- **Retirar unas iniciales** que alguien pida quitar: en la base, `DELETE FROM
-  scores WHERE ini = 'XXX' AND act = '...' AND day = '...'`.
+- **Retirar unas iniciales** que alguien pida quitar: búscalas en la tabla de la
+  app o en la base y usa `do=delete` del panel.
 - **Respaldo:** basta con copiar `data/scores.sqlite`.

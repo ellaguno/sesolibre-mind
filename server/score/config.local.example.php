@@ -9,3 +9,7 @@ define('SCORE_SALT', 'pega-aqui-una-sal-aleatoria');
 // define('SCORE_DSN', 'mysql:host=localhost;dbname=sesolibre_score;charset=utf8mb4');
 // define('SCORE_DB_USER', 'usuario');
 // define('SCORE_DB_PASS', 'contraseña');
+
+// Moderación: clave larga y aleatoria para ?a=admin (ver README). Sin ella, el
+// panel queda desactivado. Genera una con: openssl rand -hex 24
+// define('SCORE_ADMIN_TOKEN', 'pega-aqui-otra-clave-aleatoria');

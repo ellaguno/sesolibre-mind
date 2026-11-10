@@ -1,4 +1,7 @@
 import { dateKey } from './rng';
+import { rawStorage } from './storage';
+// La misma lista que usa el servidor (una sola fuente).
+import BLOCKED from '../../server/score/blocked-initials.json';
 
 /**
  * Comparación anónima en línea (servicio en server/score, publicado en
@@ -81,6 +84,7 @@ export function publishScore(b: Board, initials: string, score: number) {
 }
 
 export interface TopRow {
+  id: number;
   ini: string;
   score: number;
 }
@@ -97,3 +101,28 @@ export async function fetchTop(b: Board, limit = 10): Promise<TopRow[] | null> {
 
 /** Iniciales válidas: 3 letras A–Z. */
 export const validInitials = (s: string) => /^[A-Z]{3}$/.test(s);
+
+/** Iniciales no admitidas (groserías, insultos, odio): las rechaza también el servidor. */
+export const blockedInitials = (s: string) =>
+  (BLOCKED as string[]).includes(s.toUpperCase());
+
+/** Iniciales que se pueden publicar. */
+export const allowedInitials = (s: string) => validInitials(s) && !blockedInitials(s);
+
+/** Reporta una entrada ofensiva; con varios reportes el servidor la oculta hasta revisarla. */
+export async function reportEntry(id: number): Promise<boolean> {
+  const r = await call<{ ok: true } | { error: string }>({ a: 'report' }, { id });
+  return !!r && 'ok' in r;
+}
+
+// Entradas que esta persona ocultó para sí (en todos los perfiles del teléfono).
+const HIDDEN_KEY = 'online:hidden';
+
+export async function hiddenEntries(): Promise<number[]> {
+  return (await rawStorage.get<number[]>(HIDDEN_KEY)) ?? [];
+}
+
+export async function hideEntry(id: number): Promise<void> {
+  const list = await hiddenEntries();
+  if (!list.includes(id)) await rawStorage.set(HIDDEN_KEY, [...list, id].slice(-500));
+}

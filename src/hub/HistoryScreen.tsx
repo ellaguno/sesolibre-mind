@@ -3,7 +3,13 @@ import { useParams } from 'react-router-dom';
 import Screen from '../ui/Screen';
 import { useT } from '../core/i18n';
 import { findActivity, scoreKey, type ActivityMeta } from '../core/registry';
-import { fetchTop, type TopRow } from '../core/online';
+import {
+  fetchTop,
+  hideEntry,
+  hiddenEntries,
+  reportEntry,
+  type TopRow,
+} from '../core/online';
 import OnlineInvite from '../ui/OnlineInvite';
 import { ScoreService, type ScoreEntry } from '../core/ScoreService';
 import { formatActivityScore } from '../core/format';
@@ -29,6 +35,22 @@ function OnlineTop({
   // Casi todo se juega en modo libre: se empieza por la tabla de siempre.
   const [daily, setDaily] = useState(false);
   const [rows, setRows] = useState<TopRow[] | null | 'off'>(null);
+  // Moderación: entradas ocultadas por esta persona y la que está reportando.
+  const [hidden, setHidden] = useState<number[]>([]);
+  const [asking, setAsking] = useState<number | null>(null);
+  const [thanks, setThanks] = useState(false);
+  useEffect(() => {
+    void hiddenEntries().then(setHidden);
+  }, []);
+  const hide = async (id: number, report: boolean) => {
+    if (report) {
+      await reportEntry(id);
+      setThanks(true);
+    }
+    await hideEntry(id);
+    setHidden((h) => [...h, id]);
+    setAsking(null);
+  };
   useEffect(() => {
     if (!compare) return;
     let alive = true;
@@ -81,17 +103,52 @@ function OnlineTop({
         <p className="text-sm text-app-muted">{t('history.onlineEmpty')}</p>
       ) : (
         <ol className="flex flex-col divide-y divide-app-border text-sm">
-          {rows.map((r, k) => (
-            <li key={k} className="flex justify-between py-1">
-              <span>
-                <span className="inline-block w-6 text-app-muted">{k + 1}</span>
-                <span className="font-mono font-bold tracking-widest">{r.ini}</span>
-              </span>
-              <span className="tabular-nums">{fmt(r.score)}</span>
-            </li>
-          ))}
+          {rows
+            .filter((r) => !hidden.includes(r.id))
+            .map((r, k) => (
+              <li key={r.id} className="py-1">
+                <div className="flex items-center justify-between gap-2">
+                  <span>
+                    <span className="inline-block w-6 text-app-muted">{k + 1}</span>
+                    <span className="font-mono font-bold tracking-widest">{r.ini}</span>
+                  </span>
+                  <span className="flex items-center gap-2">
+                    <span className="tabular-nums">{fmt(r.score)}</span>
+                    <button
+                      onClick={() => setAsking(asking === r.id ? null : r.id)}
+                      aria-label={t('online.reportAria', { ini: r.ini })}
+                      className="rounded px-1.5 text-app-muted hover:bg-app-surface2 hover:text-app-text"
+                    >
+                      ⚑
+                    </button>
+                  </span>
+                </div>
+                {asking === r.id && (
+                  <div className="mt-1 flex flex-wrap items-center justify-end gap-1.5 text-xs">
+                    <span className="text-app-muted">
+                      {t('online.reportAsk', { ini: r.ini })}
+                    </span>
+                    <button
+                      onClick={() => void hide(r.id, true)}
+                      className="rounded-md bg-red-600 px-2 py-1 font-semibold text-white"
+                    >
+                      {t('online.report')}
+                    </button>
+                    <button
+                      onClick={() => void hide(r.id, false)}
+                      className="rounded-md bg-app-surface2 px-2 py-1 font-semibold"
+                    >
+                      {t('online.hideForMe')}
+                    </button>
+                  </div>
+                )}
+              </li>
+            ))}
         </ol>
       )}
+      <p className="mt-2 text-xs text-app-muted" aria-live="polite">
+        {thanks ? t('online.reportThanks') : t('online.reportNote')}
+      </p>
     </section>
   );
 }

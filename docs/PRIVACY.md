@@ -1,6 +1,6 @@
 # Política de Privacidad — SesoLibre Mind
 
-**Última actualización:** 9 de noviembre de 2026
+**Última actualización:** 10 de noviembre de 2026
 
 Esta Política de Privacidad describe cómo la aplicación **SesoLibre Mind** (en
 adelante, "la app"), desarrollada por **SesoLibre Apps** (Eduardo Llaguno
@@ -72,6 +72,12 @@ Si activas **Comparar en línea** en Ajustes (está apagado por defecto):
 - Los resultados publicados se conservan para las tablas. Como no están ligados a
   ti, no podemos saber cuáles son tuyos; si quieres que retiremos unas iniciales
   de una tabla, escríbenos indicando la actividad, el nivel y el día.
+- **Moderación:** no se aceptan iniciales ofensivas, y cualquier persona puede
+  **reportar** (⚑) unas iniciales de la tabla u **ocultarlas solo para sí**. Al
+  reportar se envía solo el número de esa entrada; para evitar reportes repetidos
+  se guarda un código irreversible (hash) de tu IP, que se borra a los 30 días.
+  Con dos reportes la entrada se oculta hasta que la revisamos, en menos de 24
+  horas.
 
 Puedes desactivar la función en cualquier momento; a partir de entonces la app
 no vuelve a conectarse.
@@ -128,7 +134,7 @@ Para cualquier consulta sobre esta política puedes escribir a:
 
 # Privacy Policy — SesoLibre Mind
 
-**Last updated:** November 9, 2026
+**Last updated:** November 10, 2026
 
 This Privacy Policy explains how the **SesoLibre Mind** application (the "app"),
 developed by **SesoLibre Apps** (Eduardo Llaguno Velasco), handles information
@@ -201,6 +207,11 @@ If you turn on **Compare online** in Settings (it is off by default):
 - Posted results are kept for the leaderboards. Since they are not linked to you,
   we cannot tell which ones are yours; if you want us to remove some initials
   from a leaderboard, write to us with the activity, level and date.
+- **Moderation:** offensive initials are not accepted, and anyone can **report**
+  (⚑) initials on a leaderboard or **hide them just for themselves**. A report
+  sends only that entry's number; to prevent repeated reports we keep an
+  irreversible code (hash) of your IP, deleted after 30 days. With two reports
+  the entry is hidden until we review it, within 24 hours.
 
 You can turn the feature off at any time; from then on the app does not connect
 again.

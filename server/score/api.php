@@ -13,7 +13,12 @@
  *   POST ?a=submit  {app, act, lvl, lang, ini, score, day, daily}
  *        → {ok, rank, total, pct}
  *   GET  ?a=top&app=&act=&lvl=&lang=&scope=day|all&day=&limit=20
- *        → {rows: [{ini, score}]}
+ *        → {rows: [{id, ini, score}]}
+ *   POST ?a=report  {id}  → {ok}  reporta unas iniciales ofensivas; con
+ *        SCORE_HIDE_AFTER reportes de personas distintas la entrada se oculta
+ *        hasta que se revise.
+ *   GET  ?a=admin&token=…&do=list|hide|unhide|delete[&id=]  moderación
+ *        (solo si SCORE_ADMIN_TOKEN está definido en config.local.php).
  *
  * «day» = tablas del puzzle del día (mismo tablero para todos ese día);
  * «all» = todas las partidas publicadas de ese nivel.
@@ -78,6 +83,15 @@ function db(): PDO
         score INT NOT NULL
     )");
     $pdo->exec("CREATE TABLE IF NOT EXISTS hits (k CHAR(64) NOT NULL, t INT NOT NULL)");
+    $pdo->exec("CREATE TABLE IF NOT EXISTS reports (k CHAR(64) NOT NULL, sid INT NOT NULL, t INT NOT NULL)");
+    // Moderación (columnas añadidas después: se crean si faltan).
+    foreach (['reports INT NOT NULL DEFAULT 0', 'hidden INT NOT NULL DEFAULT 0'] as $col) {
+        try {
+            $pdo->exec("ALTER TABLE scores ADD COLUMN $col");
+        } catch (PDOException $e) {
+            // ya existe
+        }
+    }
     if (!$mysql) {
         $pdo->exec('CREATE INDEX IF NOT EXISTS ix_board ON scores (app, act, lvl, lang, scope, day, score)');
     } else {
@@ -129,7 +143,7 @@ function worse(array $b): string
 
 function where(): string
 {
-    return 'app = :app AND act = :act AND lvl = :lvl AND lang = :lang AND scope = :scope AND day = :day';
+    return 'app = :app AND act = :act AND lvl = :lvl AND lang = :lang AND scope = :scope AND day = :day AND hidden = 0';
 }
 
 function keys(array $b): array
@@ -177,9 +191,56 @@ try {
         $b = board($_GET);
         $limit = max(1, min(50, (int) ($_GET['limit'] ?? 20)));
         $order = $b['rule'][0] === 'lower' ? 'ASC' : 'DESC';
-        $q = db()->prepare('SELECT ini, score FROM scores WHERE ' . where() . " ORDER BY score $order, id ASC LIMIT $limit");
+        $q = db()->prepare('SELECT id, ini, score FROM scores WHERE ' . where() . " ORDER BY score $order, id ASC LIMIT $limit");
         $q->execute(keys($b));
-        out(['rows' => array_map(fn ($r) => ['ini' => $r['ini'], 'score' => (int) $r['score']], $q->fetchAll())]);
+        out(['rows' => array_map(fn ($r) => ['id' => (int) $r['id'], 'ini' => $r['ini'], 'score' => (int) $r['score']], $q->fetchAll())]);
+    }
+
+    if ($a === 'report') {
+        if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') fail('usa POST', 405);
+        $in = json_decode(file_get_contents('php://input', false, null, 0, 512) ?: '', true);
+        $id = is_array($in) ? (int) ($in['id'] ?? 0) : 0;
+        if ($id < 1) fail('parámetro inválido: id');
+        rateLimit();
+        $db = db();
+        // Los códigos que evitan reportes repetidos se borran a los 30 días.
+        $db->prepare('DELETE FROM reports WHERE t < ?')->execute([time() - 30 * 86400]);
+        $exists = $db->prepare('SELECT COUNT(*) FROM scores WHERE id = ?');
+        $exists->execute([$id]);
+        if (!(int) $exists->fetchColumn()) fail('entrada desconocida', 404);
+        // Un reporte por persona (hash de IP con sal) y entrada.
+        $k = hash('sha256', SCORE_SALT . '|report|' . ($_SERVER['REMOTE_ADDR'] ?? '') . '|' . $id);
+        $dup = $db->prepare('SELECT COUNT(*) FROM reports WHERE k = ?');
+        $dup->execute([$k]);
+        if (!(int) $dup->fetchColumn()) {
+            $db->prepare('INSERT INTO reports (k, sid, t) VALUES (?, ?, ?)')->execute([$k, $id, time()]);
+            // El umbral va como entero literal: con un parámetro enlazado, SQLite
+            // lo compara como texto y la condición nunca se cumple.
+            $limit = (int) SCORE_HIDE_AFTER;
+            $db->prepare("UPDATE scores SET reports = reports + 1, hidden = CASE WHEN reports + 1 >= $limit THEN 1 ELSE hidden END WHERE id = ?")
+                ->execute([$id]);
+        }
+        out(['ok' => true]);
+    }
+
+    if ($a === 'admin') {
+        $token = (string) ($_GET['token'] ?? '');
+        if (!defined('SCORE_ADMIN_TOKEN') || strlen(SCORE_ADMIN_TOKEN) < 20 || !hash_equals(SCORE_ADMIN_TOKEN, $token)) {
+            fail('no autorizado', 403);
+        }
+        $do = (string) ($_GET['do'] ?? 'list');
+        $id = (int) ($_GET['id'] ?? 0);
+        $db = db();
+        if ($do === 'list') {
+            $q = $db->query('SELECT id, app, act, lvl, lang, scope, day, ini, score, reports, hidden FROM scores WHERE reports > 0 OR hidden = 1 ORDER BY hidden DESC, reports DESC, id DESC LIMIT 200');
+            out(['rows' => $q->fetchAll()]);
+        }
+        if ($id < 1) fail('parámetro inválido: id');
+        if ($do === 'hide') $db->prepare('UPDATE scores SET hidden = 1 WHERE id = ?')->execute([$id]);
+        elseif ($do === 'unhide') $db->prepare('UPDATE scores SET hidden = 0, reports = 0 WHERE id = ?')->execute([$id]);
+        elseif ($do === 'delete') $db->prepare('DELETE FROM scores WHERE id = ?')->execute([$id]);
+        else fail('acción de moderación desconocida');
+        out(['ok' => true]);
     }
 
     if ($a === 'submit') {

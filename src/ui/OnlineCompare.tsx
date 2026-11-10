@@ -4,7 +4,8 @@ import { useSettings } from '../core/settings';
 import {
   fetchStanding,
   publishScore,
-  validInitials,
+  allowedInitials,
+  blockedInitials,
   type Board,
   type Standing,
 } from '../core/online';
@@ -59,7 +60,7 @@ export default function OnlineCompare({
   if (!standing) return null; // cargando o sin red: no se muestra nada
 
   const publish = async () => {
-    if (!validInitials(initials)) return;
+    if (!allowedInitials(initials)) return;
     setState('sending');
     const r = await publishScore(board, initials, score);
     if (r && 'ok' in r) {
@@ -101,12 +102,15 @@ export default function OnlineCompare({
           />
           <button
             onClick={() => void publish()}
-            disabled={!validInitials(initials) || state === 'sending'}
+            disabled={!allowedInitials(initials) || state === 'sending'}
             className="rounded-lg bg-sky-600 px-3 py-1.5 font-bold text-white disabled:opacity-40"
           >
             {state === 'sending' ? '…' : t('online.publish')}
           </button>
         </div>
+      )}
+      {!published && blockedInitials(initials) && (
+        <p className="text-xs text-red-400">{t('online.badInitials')}</p>
       )}
       {error && <p className="text-xs text-red-400">{error}</p>}
     </div>
