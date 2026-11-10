@@ -8,6 +8,9 @@
  * ese registro se borra a los pocos minutos.
  *
  * Acciones (respuesta JSON):
+ * Apps: «mind» (SesoLibre Mind) y «games» (SesoLibre Games); sus actividades
+ * y rangos están en config.php.
+ *
  *   GET  ?a=pct&app=&act=&lvl=&lang=&scope=day|all&day=AAAA-MM-DD&score=N
  *        → {total, pct}  ¿mejor que qué % de lo publicado? (no guarda nada)
  *   POST ?a=submit  {app, act, lvl, lang, ini, score, day, daily}
@@ -183,7 +186,7 @@ try {
 
     if ($a === 'pct') {
         $b = board($_GET);
-        $score = (int) param($_GET, 'score', '/^\d{1,6}$/');
+        $score = (int) param($_GET, 'score', '/^\d{1,7}$/');
         out(stats($b, $score));
     }
 
@@ -256,7 +259,7 @@ try {
         }
         $ini = strtoupper(param($in, 'ini', '/^[A-Za-z]{3}$/'));
         if (in_array($ini, SCORE_BLOCKED_INITIALS, true)) fail('elige otras iniciales');
-        $score = (int) param($in, 'score', '/^\d{1,6}$/');
+        $score = (int) param($in, 'score', '/^\d{1,7}$/');
         [, $min, $max] = $b['rule'];
         if ($score < $min || $score > $max) fail('resultado fuera de rango');
         rateLimit();

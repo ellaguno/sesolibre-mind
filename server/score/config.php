@@ -46,6 +46,19 @@ const SCORE_ACTIVITIES = [
         'wordmaze' => ['lower', 3, 36000],
         'crossword' => ['lower', 5, 36000],
     ],
+    // SesoLibre Games (repo sesolibre-games, src/core/online.ts). «lvl» separa
+    // modalidades que no se comparan entre sí:
+    //   minesweeper / sudoku / ajedrez: easy | medium | hard (ajedrez = vs IA)
+    //   solitaire: d1 | d3 (robar 1 o 3) · figures: limited | free · resto: all
+    'games' => [
+        'figures' => ['higher', 1, 9999999],
+        'glotono' => ['higher', 1, 9999999],
+        'bloques' => ['higher', 1, 9999999],
+        'minesweeper' => ['lower', 1, 36000], // segundos
+        'sudoku' => ['lower', 10, 36000], // segundos
+        'solitaire' => ['lower', 20, 5000], // jugadas
+        'ajedrez' => ['lower', 3, 2000], // medias jugadas hasta dar mate
+    ],
 ];
 
 // Reportes de personas distintas para ocultar una entrada hasta revisarla.
