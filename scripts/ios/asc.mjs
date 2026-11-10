@@ -15,6 +15,7 @@
  *   node scripts/ios/asc.mjs screenshots            capturas de la versión en edición, por idioma y tamaño
  *   node scripts/ios/asc.mjs set-version <X.Y.Z>    cambia el número de la versión en edición
  *   node scripts/ios/asc.mjs listing [--dry]        sube la ficha de docs/APP-STORE-LISTING.md
+ *   node scripts/ios/asc.mjs set-build <número>     asigna ese build (ya procesado) a la versión editable
  *
  * Variables opcionales: BUNDLE_ID (com.sesolibre.mind), APP_NAME, CERT_SERIAL
  * (número de serie del certificado Apple Distribution con el que se firma).
@@ -457,6 +458,39 @@ async function listing(dry) {
   console.log('✓ Notas para la revisión (sin cuenta de demostración)');
 }
 
+async function setBuild(number) {
+  if (!/^\d+$/.test(number ?? '')) fail('indica el número de build, p. ej. 4');
+  const apps = await api(`/apps?filter[bundleId]=${BUNDLE_ID}`);
+  const app = apps.data[0];
+  if (!app) fail(`no hay app con ${BUNDLE_ID}`);
+  const versions = await api(`/apps/${app.id}/appStoreVersions?limit=10`);
+  const v = versions.data.find(editable);
+  if (!v) fail('no hay una versión editable (preparación o rechazada)');
+  const want = v.attributes.versionString;
+  const r = await api(
+    `/builds?filter[app]=${app.id}&filter[version]=${number}&include=preReleaseVersion&limit=10`,
+  );
+  const versionOf = Object.fromEntries(
+    (r.included ?? []).map((x) => [x.id, x.attributes.version]),
+  );
+  const build = r.data.find(
+    (b) => versionOf[b.relationships.preReleaseVersion.data?.id] === want,
+  );
+  if (!build) fail(`no hay build ${number} de la versión ${want}`);
+  if (build.attributes.processingState !== 'VALID')
+    fail(
+      `el build ${want} (${number}) aún no está listo: ${build.attributes.processingState}`,
+    );
+  await api(`/appStoreVersions/${v.id}/relationships/build`, {
+    method: 'PATCH',
+    body: JSON.stringify({ data: { type: 'builds', id: build.id } }),
+  });
+  const now = await api(`/appStoreVersions/${v.id}/build`);
+  console.log(
+    `✓ Versión ${want}: build ${now.data?.attributes.version} asignado (${build.attributes.processingState})`,
+  );
+}
+
 const [cmd, arg] = process.argv.slice(2);
 try {
   if (cmd === 'status') await status();
@@ -466,6 +500,7 @@ try {
   else if (cmd === 'screenshots') await screenshots();
   else if (cmd === 'set-version') await setVersion(arg);
   else if (cmd === 'listing') await listing(arg === '--dry');
+  else if (cmd === 'set-build') await setBuild(arg);
   else
     fail(
       'uso: asc.mjs status | ensure-bundle | profile <salida> | builds | screenshots | set-version <X.Y.Z> | listing [--dry]',
