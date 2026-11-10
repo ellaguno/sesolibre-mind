@@ -70,6 +70,11 @@ jobs:
           ls -la sesolibre-mind-*.aab
           jarsigner -verify sesolibre-mind-*.aab | tail -n 1
 
+      - name: Pistas de Google Play (comprueba el acceso de la cuenta de servicio)
+        env:
+          PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+        run: node scripts/android/play.mjs tracks
+
       - name: Subir a Google Play (prueba cerrada)
         if: github.event_name == 'push' || inputs.upload
         env:
