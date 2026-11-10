@@ -52,7 +52,10 @@ jobs:
         with:
           distribution: temurin
           java-version: '21'
-      - uses: android-actions/setup-android@v3
+      # El runner de Ubuntu ya trae el SDK de Android (ANDROID_HOME); setup-android
+      # fallaba al aceptar licencias de una versión preliminar.
+      - name: SDK de Android del runner
+        run: echo "ANDROID_HOME=$ANDROID_HOME" && ls "$ANDROID_HOME/platforms" | tail -n 3
 
       - name: Keystore temporal
         env:
