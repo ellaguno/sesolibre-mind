@@ -1,0 +1,91 @@
+name: Android (Google Play)
+
+# Compila el AAB de release optimizado (R8), lo firma con la upload key y lo
+# sube a la prueba cerrada de Google Play. Corre al publicar un tag vX.Y.Z (el
+# mismo que dispara iOS) o a mano (Actions → Android → Run workflow).
+#
+# Secrets del repositorio:
+#   ANDROID_KEYSTORE_BASE64     upload keystore (.jks) en base64
+#   ANDROID_KEYSTORE_PASSWORD   contraseña del almacén
+#   ANDROID_KEY_PASSWORD        contraseña de la llave (si es la misma, puede omitirse)
+#   PLAY_SERVICE_ACCOUNT_JSON   JSON de la cuenta de servicio con permiso de publicar
+# Variable opcional del repositorio: PLAY_TRACK (pista de destino).
+#
+# versionCode = nº de commits (igual que en local: siempre crece);
+# versionName = "version" de package.json. Notas: docs/release-notes.txt.
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      upload:
+        description: 'Subir a Google Play'
+        type: boolean
+        default: true
+
+concurrency:
+  group: android-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  aab:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      PLAY_TRACK: ${{ vars.PLAY_TRACK || 'SesoLibre 1' }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0 # el versionCode es el nº de commits
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # Nada se publica si fallan el lint o las pruebas.
+      - run: npm run lint
+      - run: npm test
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: android-actions/setup-android@v3
+
+      - name: Keystore temporal
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: |
+          printf '%s' "$KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/upload.jks"
+          chmod 600 "$RUNNER_TEMP/upload.jks"
+
+      - name: Compilar y firmar el AAB
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          ./scripts/android-aab.sh "$RUNNER_TEMP/upload.jks" upload
+          ls -la sesolibre-mind-*.aab
+          jarsigner -verify sesolibre-mind-*.aab | tail -n 1
+
+      - name: Subir a Google Play (prueba cerrada)
+        if: github.event_name == 'push' || inputs.upload
+        env:
+          PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+        run: |
+          node scripts/android/play.mjs upload sesolibre-mind-*.aab "$PLAY_TRACK" \
+            android/app/build/outputs/mapping/release/mapping.txt docs/release-notes.txt
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: aab
+          path: |
+            sesolibre-mind-*.aab
+            android/app/build/outputs/mapping/release/mapping.txt
+          retention-days: 14
+
+      - name: Borrar el keystore
+        if: always()
+        run: rm -f "$RUNNER_TEMP/upload.jks"

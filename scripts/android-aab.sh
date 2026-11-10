@@ -10,6 +10,8 @@
 #   ./scripts/android-aab.sh ruta/upload.jks [alias] # compila y firma
 #
 # jarsigner pide las contraseñas por teclado: nunca se pasan por argumentos.
+# En CI (sin teclado) las toma de las variables KEYSTORE_PASSWORD y KEY_PASSWORD
+# (esta última es opcional: si falta, se usa la del almacén).
 # versionCode: variable VERSION_CODE o, por defecto, nº de commits del repo
 # (siempre crece, como exige Play). versionName = "version" de package.json.
 
@@ -71,8 +73,16 @@ TMP="$(mktemp --suffix=.aab)"
 trap 'rm -f "$TMP"' EXIT
 cp "$AAB" "$TMP"
 echo
-echo "Firmando con $KEYSTORE (alias $ALIAS). Escribe la contraseña y pulsa Enter:"
-if ! jarsigner -sigalg SHA256withRSA -digestalg SHA-256 -keystore "$KEYSTORE" "$TMP" "$ALIAS"; then
+SIGN=(jarsigner -sigalg SHA256withRSA -digestalg SHA-256 -keystore "$KEYSTORE")
+if [ -n "${KEYSTORE_PASSWORD:-}" ]; then
+  # Sin teclado (CI): contraseñas desde variables de entorno, nunca en la línea de comandos.
+  export KEY_PASSWORD="${KEY_PASSWORD:-$KEYSTORE_PASSWORD}"
+  SIGN+=(-storepass:env KEYSTORE_PASSWORD -keypass:env KEY_PASSWORD)
+  echo "Firmando con $KEYSTORE (alias $ALIAS)…"
+else
+  echo "Firmando con $KEYSTORE (alias $ALIAS). Escribe la contraseña y pulsa Enter:"
+fi
+if ! "${SIGN[@]}" "$TMP" "$ALIAS"; then
   echo "✗ No se pudo firmar (¿contraseña o alias incorrectos?). No se generó $OUT." >&2
   exit 1
 fi
