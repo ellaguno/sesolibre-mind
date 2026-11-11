@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tablas de resultados · SesoLibre</title>
+<meta name="description" content="Mejores resultados publicados con 3 iniciales en SesoLibre Games y SesoLibre Mind.">
+<meta name="theme-color" content="#1a0b2e">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<!--
+  Tablero público de resultados (games.sesolibre.com/score/). Solo lectura:
+  lee api.php (a=boards y a=top). Para publicar, las apps. Sin dependencias.
+-->
+<style>
+  :root {
+    --bg: #12041f; --bg2: #24093a; --card: rgba(255,255,255,.06); --line: rgba(255,255,255,.12);
+    --text: #f6eefc; --muted: #b9a8c9; --orange: #f49200; --magenta: #e5007e; --gold: #ffcf4a;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    min-height: 100vh; font: 16px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    color: var(--text);
+    background: radial-gradient(120% 80% at 50% 0%, #3b1450 0%, var(--bg2) 45%, var(--bg) 100%) fixed;
+  }
+  main { max-width: 720px; margin: 0 auto; padding: 24px 16px 48px; }
+  header { text-align: center; margin-bottom: 20px; }
+  h1 {
+    margin: 0; font-size: clamp(1.6rem, 5vw, 2.2rem); font-weight: 800;
+    background: linear-gradient(90deg, #ffb21e, var(--orange) 40%, #ef3f5a 70%, var(--magenta));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  header p { margin: 6px 0 0; color: var(--muted); font-size: .95rem; }
+  .tabs, .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .tabs { justify-content: center; margin-bottom: 18px; }
+  button {
+    font: inherit; color: var(--text); background: var(--card); border: 1px solid var(--line);
+    border-radius: 999px; padding: 6px 14px; cursor: pointer;
+  }
+  button:hover { border-color: rgba(255,255,255,.3); }
+  button[aria-pressed="true"] {
+    background: linear-gradient(90deg, var(--orange), var(--magenta)); border-color: transparent; font-weight: 700;
+  }
+  .tabs button { padding: 8px 18px; font-weight: 600; }
+  .section { margin-top: 16px; }
+  .label { font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0 0 8px; }
+  .chips button { font-size: .9rem; }
+  .chips small { color: var(--muted); margin-left: 4px; }
+  .chips button[aria-pressed="true"] small { color: rgba(255,255,255,.85); }
+  .board {
+    margin-top: 18px; background: var(--card); border: 1px solid var(--line); border-radius: 18px; overflow: hidden;
+  }
+  .board h2 { margin: 0; padding: 14px 16px; font-size: 1.05rem; border-bottom: 1px solid var(--line); }
+  .board h2 span { color: var(--muted); font-weight: 400; font-size: .9rem; }
+  ol { list-style: none; margin: 0; padding: 0; }
+  li {
+    display: grid; grid-template-columns: 2.5rem 1fr auto; align-items: center; gap: 8px;
+    padding: 10px 16px; border-bottom: 1px solid var(--line);
+  }
+  li:last-child { border-bottom: 0; }
+  .pos { color: var(--muted); font-variant-numeric: tabular-nums; }
+  li:nth-child(1) .pos { color: var(--gold); font-weight: 800; }
+  li:nth-child(2) .pos { color: #e3e3ea; font-weight: 700; }
+  li:nth-child(3) .pos { color: #e0a36b; font-weight: 700; }
+  .ini { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-weight: 800; letter-spacing: .25em; font-size: 1.1rem; }
+  .score { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-variant-numeric: tabular-nums; font-weight: 600; }
+  .empty, .note { color: var(--muted); padding: 16px; margin: 0; }
+  footer { margin-top: 28px; text-align: center; color: var(--muted); font-size: .85rem; }
+  footer a { color: #ffb21e; }
+  @media (max-width: 420px) { li { padding: 9px 12px; } .ini { font-size: 1rem; } }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Tablas de resultados</h1>
+    <p>Los mejores resultados publicados con 3 iniciales, al estilo de las maquinitas.</p>
+  </header>
+
+  <nav class="tabs" id="apps" aria-label="App"></nav>
+  <div class="section" id="actsWrap" hidden>
+    <p class="label">Juego</p>
+    <div class="chips" id="acts"></div>
+  </div>
+  <div class="section" id="lvlsWrap" hidden>
+    <p class="label">Modalidad</p>
+    <div class="chips" id="lvls"></div>
+  </div>
+  <section class="board" id="board" aria-live="polite"><p class="note">Cargando…</p></section>
+
+  <footer>
+    <p>Para publicar tu resultado, activa «Comparar en línea» en
+      <a href="https://games.sesolibre.com/">SesoLibre Games</a> o en SesoLibre Mind.</p>
+    <p>¿Unas iniciales ofensivas? Repórtalas con ⚑ desde la app o escribe a eduardo.llaguno@gmail.com</p>
+    <p><a href="https://sesolibre.com/">sesolibre.com</a></p>
+  </footer>
+</main>
+
+<script>
+(() => {
+  const API = 'api.php';
+  const APPS = { games: 'SesoLibre Games', mind: 'SesoLibre Mind' };
+
+  // Nombre y unidad de cada actividad: time = segundos (m:ss), moves = jugadas, points = puntos.
+  const ACTS = {
+    games: {
+      figures: ['Figures', 'points'], glotono: ['Glótono', 'points'], bloques: ['Bloques', 'points'],
+      minesweeper: ['Buscaminas', 'time'], sudoku: ['Sudoku', 'time'],
+      solitaire: ['Solitario', 'moves'], ajedrez: ['Ajedrez', 'moves'],
+    },
+    mind: {
+      quickmath: ['Cálculo relámpago', 'time'], colorclash: ['Choque de colores', 'time'],
+      countdown: ['Cuenta atrás', 'points'], numberspan: ['Retén la cifra', 'points'],
+      trails: ['Sendero', 'time'], headcount: ['¿Cuántos quedan?', 'points'],
+      crowns: ['Coronas', 'time'], sunmoon: ['Sol y Luna', 'time'], thread: ['Hilo', 'time'],
+      plots: ['Parcelas', 'time'], minisudoku: ['Sudoku mini', 'time'],
+      wordmaze: ['Laberinto de palabras', 'time'], crossword: ['Crucigrama', 'time'],
+    },
+  };
+  const LVL = {
+    all: 'Única', easy: 'Fácil', medium: 'Medio', hard: 'Difícil',
+    d1: 'Robar 1', d3: 'Robar 3', free: 'Ilimitado', limited: '20 movimientos',
+    forward: 'Directo', backward: 'Inverso',
+  };
+  const lvlName = (b) => {
+    let name = LVL[b.lvl] ?? (/^\d+$/.test(b.lvl) ? `Nivel ${b.lvl}` : b.lvl);
+    if (b.lang) name += b.lang === 'es' ? ' · español' : ' · inglés';
+    if (b.scope === 'day') name += ` · reto del ${b.day.slice(8)}/${b.day.slice(5, 7)}`;
+    return name;
+  };
+  const actName = (app, act) => ACTS[app]?.[act]?.[0] ?? act;
+  const fmt = (app, act, v) => {
+    const unit = ACTS[app]?.[act]?.[1] ?? 'points';
+    if (unit === 'time') {
+      const h = Math.floor(v / 3600), m = Math.floor((v % 3600) / 60), s = String(v % 60).padStart(2, '0');
+      return h ? `${h}:${String(m).padStart(2, '0')}:${s}` : `${m}:${s}`;
+    }
+    if (unit === 'moves') return `${v} mov`;
+    return v.toLocaleString('es-MX');
+  };
+  const el = (tag, props = {}, ...kids) => {
+    const n = Object.assign(document.createElement(tag), props);
+    kids.forEach((k) => n.append(k));
+    return n;
+  };
+  const key = (b) => [b.lvl, b.lang, b.scope, b.day].join('|');
+
+  let boards = [];
+  const state = { app: null, act: null, board: null };
+  const params = new URLSearchParams(location.hash.slice(1));
+
+  async function get(q) {
+    const r = await fetch(`${API}?${new URLSearchParams(q)}`, { cache: 'no-store' });
+    const j = await r.json();
+    if (!r.ok || j.error) throw new Error(j.error || r.status);
+    return j;
+  }
+
+  function chips(container, items, selected, onPick) {
+    container.replaceChildren(
+      ...items.map((it) => {
+        const b = el('button', { type: 'button', onclick: () => onPick(it.value) }, it.label);
+        if (it.count != null) b.append(el('small', { textContent: it.count }));
+        b.setAttribute('aria-pressed', String(it.value === selected));
+        return b;
+      }),
+    );
+  }
+
+  function render() {
+    const apps = Object.keys(APPS).filter((a) => boards.some((b) => b.app === a));
+    if (!apps.includes(state.app)) state.app = apps[0] ?? null;
+    chips(document.getElementById('apps'), apps.map((a) => ({ value: a, label: APPS[a] })), state.app, (v) => {
+      state.app = v; state.act = null; state.board = null; render();
+    });
+
+    const mine = boards.filter((b) => b.app === state.app);
+    const acts = [...new Set(mine.map((b) => b.act))].sort((x, y) =>
+      actName(state.app, x).localeCompare(actName(state.app, y), 'es'),
+    );
+    if (!acts.includes(state.act)) state.act = acts[0] ?? null;
+    document.getElementById('actsWrap').hidden = acts.length === 0;
+    chips(
+      document.getElementById('acts'),
+      acts.map((a) => ({
+        value: a, label: actName(state.app, a),
+        count: mine.filter((b) => b.act === a).reduce((s, b) => s + b.n, 0),
+      })),
+      state.act,
+      (v) => { state.act = v; state.board = null; render(); },
+    );
+
+    const lvls = mine.filter((b) => b.act === state.act);
+    if (!lvls.some((b) => key(b) === state.board)) {
+      // Por defecto, la modalidad con más resultados.
+      state.board = lvls.length ? key([...lvls].sort((x, y) => y.n - x.n)[0]) : null;
+    }
+    document.getElementById('lvlsWrap').hidden = lvls.length <= 1 && lvls[0]?.lvl === 'all';
+    chips(
+      document.getElementById('lvls'),
+      lvls.map((b) => ({ value: key(b), label: lvlName(b), count: b.n })),
+      state.board,
+      (v) => { state.board = v; render(); },
+    );
+
+    location.replace(`#${new URLSearchParams({ app: state.app ?? '', act: state.act ?? '', b: state.board ?? '' })}`);
+    void showBoard(lvls.find((b) => key(b) === state.board));
+  }
+
+  let seq = 0;
+  async function showBoard(b) {
+    const box = document.getElementById('board');
+    if (!b) {
+      box.replaceChildren(el('p', { className: 'empty', textContent: 'Aún no hay resultados publicados.' }));
+      return;
+    }
+    const my = ++seq;
+    const title = el('h2', {}, `${actName(b.app, b.act)} `, el('span', { textContent: `· ${lvlName(b)}` }));
+    box.replaceChildren(title, el('p', { className: 'note', textContent: 'Cargando…' }));
+    try {
+      const { rows } = await get({ a: 'top', app: b.app, act: b.act, lvl: b.lvl, lang: b.lang, scope: b.scope, day: b.day, limit: 20 });
+      if (my !== seq) return;
+      const hint = b.rule === 'lower' ? 'Gana el menor' : 'Gana el mayor';
+      title.querySelector('span').textContent = `· ${lvlName(b)} · ${hint}`;
+      box.replaceChildren(
+        title,
+        rows.length
+          ? el('ol', {}, ...rows.map((r, i) => el('li', {},
+              el('span', { className: 'pos', textContent: i + 1 }),
+              el('span', { className: 'ini', textContent: r.ini }),
+              el('span', { className: 'score', textContent: fmt(b.app, b.act, r.score) }))))
+          : el('p', { className: 'empty', textContent: 'Aún no hay resultados publicados.' }),
+      );
+    } catch {
+      if (my === seq) box.replaceChildren(title, el('p', { className: 'empty', textContent: 'No se pudo cargar la tabla. Inténtalo más tarde.' }));
+    }
+  }
+
+  get({ a: 'boards' })
+    .then((j) => {
+      boards = j.boards;
+      state.app = params.get('app') || 'games';
+      state.act = params.get('act');
+      state.board = params.get('b');
+      if (!boards.length) {
+        document.getElementById('board').replaceChildren(
+          el('p', { className: 'empty', textContent: 'Aún no hay resultados publicados. ¡Sé el primero!' }));
+        return;
+      }
+      render();
+    })
+    .catch(() => {
+      document.getElementById('board').replaceChildren(
+        el('p', { className: 'empty', textContent: 'No se pudo conectar con el servicio de resultados.' }));
+    });
+})();
+</script>
+</body>
+</html>

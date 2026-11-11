@@ -17,6 +17,9 @@
  *        → {ok, rank, total, pct}
  *   GET  ?a=top&app=&act=&lvl=&lang=&scope=day|all&day=&limit=20
  *        → {rows: [{id, ini, score}]}
+ *   GET  ?a=boards[&app=]  → {boards: [{app, act, lvl, lang, scope, day, n, rule}]}
+ *        tablas con resultados visibles: las de siempre y las del reto de hoy
+ *        y ayer (husos horarios). La usa la página pública index.html.
  *   POST ?a=report  {id}  → {ok}  reporta unas iniciales ofensivas; con
  *        SCORE_HIDE_AFTER reportes de personas distintas la entrada se oculta
  *        hasta que se revise.
@@ -197,6 +200,26 @@ try {
         $q = db()->prepare('SELECT id, ini, score FROM scores WHERE ' . where() . " ORDER BY score $order, id ASC LIMIT $limit");
         $q->execute(keys($b));
         out(['rows' => array_map(fn ($r) => ['id' => (int) $r['id'], 'ini' => $r['ini'], 'score' => (int) $r['score']], $q->fetchAll())]);
+    }
+
+    if ($a === 'boards') {
+        $app = (string) ($_GET['app'] ?? '');
+        $byApp = $app !== '' ? ' AND app = :app' : '';
+        $q = db()->prepare("SELECT app, act, lvl, lang, scope, day, COUNT(*) AS n FROM scores
+            WHERE hidden = 0 AND (scope = 'all' OR (scope = 'day' AND day >= :since))$byApp
+            GROUP BY app, act, lvl, lang, scope, day ORDER BY app, act, lvl, lang, scope, day");
+        $params = [':since' => gmdate('Y-m-d', time() - 86400)];
+        if ($byApp) $params[':app'] = $app;
+        $q->execute($params);
+        $boards = [];
+        foreach ($q->fetchAll() as $r) {
+            $rule = SCORE_ACTIVITIES[$r['app']][$r['act']] ?? null;
+            if (!$rule) continue; // actividad retirada
+            $r['n'] = (int) $r['n'];
+            $r['rule'] = $rule[0];
+            $boards[] = $r;
+        }
+        out(['boards' => $boards]);
     }
 
     if ($a === 'report') {

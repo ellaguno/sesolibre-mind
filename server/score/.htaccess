@@ -1,5 +1,7 @@
-# Solo api.php es público: la configuración y la base de datos no se sirven.
+# Solo api.php e index.html son públicos: la configuración y la base de datos no se sirven.
 Options -Indexes
+# index.html: tablero público de resultados (lee api.php).
+DirectoryIndex index.html
 <FilesMatch "^(config.*\.php|README\.md)$">
   Require all denied
 </FilesMatch>

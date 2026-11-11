@@ -4,8 +4,9 @@ Comparación anónima de resultados para las apps de SesoLibre: «mejor que el
 X % de lo publicado» y tablas con **3 iniciales**, al estilo de las maquinitas.
 Sin cuentas ni datos personales (ver `docs/PRIVACY.md`, «Comparar en línea»).
 
-Un solo archivo PHP (`api.php`) con SQLite. No necesita Composer, ni WordPress,
-ni nada más.
+Un solo archivo PHP (`api.php`) con SQLite, más una página pública de solo
+lectura (`index.html`) con las tablas de Games y Mind en
+`https://games.sesolibre.com/score/`. No necesita Composer, ni WordPress, ni nada más.
 
 ## Requisitos
 
