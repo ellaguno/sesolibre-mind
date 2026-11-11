@@ -18,6 +18,8 @@ defined('SCORE_MAX_PER_MINUTE') || define('SCORE_MAX_PER_MINUTE', 10);
 
 // Orígenes de las apps: WebView de Android (Capacitor) y desarrollo local.
 const SCORE_ORIGINS = [
+    // Versión web (PWA) en GitHub Pages.
+    'https://mind.sesolibre.com',
     'https://localhost',
     'http://localhost',
     'capacitor://localhost',
