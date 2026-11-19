@@ -47,6 +47,7 @@ const SCORE_ACTIVITIES = [
         'minisudoku' => ['lower', 2, 36000],
         'wordmaze' => ['lower', 3, 36000],
         'crossword' => ['lower', 5, 36000],
+        'fusion' => ['lower', 2, 36000],
     ],
     // SesoLibre Games (repo sesolibre-games, src/core/online.ts). «lvl» separa
     // modalidades que no se comparan entre sí:

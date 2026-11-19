@@ -472,6 +472,26 @@ const es: Dict = {
   'act.crowns.desc': 'Una corona por fila, columna y zona; nunca tocándose.',
   'act.sunmoon.title': 'Sol y Luna',
   'act.sunmoon.desc': 'Equilibra soles y lunas siguiendo las pistas = y ×.',
+  'act.fusion.title': 'Fusión',
+  'act.fusion.desc': 'Junta burbujas iguales hasta que quede una sola.',
+  'fusion.rule1':
+    'Arrastra una burbuja sobre una vecina con el mismo número (o tócalas una tras otra).',
+  'fusion.rule2':
+    'Se funden en una sola que vale la suma. Solo en horizontal o vertical.',
+  'fusion.rule3':
+    'Gana quien deja una sola burbuja: el orden importa, una burbuja sin pareja cerca ya no se puede juntar.',
+  'fusion.stuck': 'Ya no quedan fusiones posibles: deshaz o pide una pista.',
+  'fusion.hintMove': 'Fusioné un par por ti.',
+  'fusion.hintBack': 'Por ese camino ya no se gana: deshice la última fusión.',
+  'tut.fusion.1.title': 'Iguales se juntan',
+  'tut.fusion.1.body':
+    'Arrastra una burbuja sobre su vecina con el mismo número: se funden en una que vale la suma.',
+  'tut.fusion.2.title': 'Solo vecinas',
+  'tut.fusion.2.body':
+    'Se juntan en horizontal o vertical. En diagonal o con números distintos, no.',
+  'tut.fusion.3.title': 'Que quede una',
+  'tut.fusion.3.body':
+    'Piensa el orden: si una burbuja se queda sin pareja al lado, ya no hay forma de ganar.',
   'act.crossword.title': 'Crucigrama',
   'act.crossword.desc': 'Palabras cruzadas de un tema, con su pista cada una.',
   'crossword.rule1':
@@ -975,6 +995,25 @@ const en: Dict = {
   'act.crowns.desc': 'One crown per row, column and region; never touching.',
   'act.sunmoon.title': 'Sun & Moon',
   'act.sunmoon.desc': 'Balance suns and moons following the = and × clues.',
+  'act.fusion.title': 'Fusion',
+  'act.fusion.desc': 'Merge matching bubbles until only one is left.',
+  'fusion.rule1':
+    'Drag a bubble onto a neighbor with the same number (or tap one, then the other).',
+  'fusion.rule2': 'They merge into one worth the sum. Only horizontally or vertically.',
+  'fusion.rule3':
+    'Leave a single bubble to win: order matters, and a bubble with no partner nearby is stuck for good.',
+  'fusion.stuck': 'No merges left: undo or ask for a hint.',
+  'fusion.hintMove': 'I merged a pair for you.',
+  'fusion.hintBack': "That path can't win, so I undid the last merge.",
+  'tut.fusion.1.title': 'Matches merge',
+  'tut.fusion.1.body':
+    'Drag a bubble onto its neighbor with the same number: they merge into one worth the sum.',
+  'tut.fusion.2.title': 'Neighbors only',
+  'tut.fusion.2.body':
+    'They merge horizontally or vertically. Not diagonally, and not with different numbers.',
+  'tut.fusion.3.title': 'Leave just one',
+  'tut.fusion.3.body':
+    'Plan the order: once a bubble has no partner next to it, there is no way to win.',
   'act.crossword.title': 'Crossword',
   'act.crossword.desc': 'Crossing words on a theme, each with its own clue.',
   'crossword.rule1': 'Tap a square and type with the keyboard; it moves on by itself.',

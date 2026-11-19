@@ -328,3 +328,53 @@ body {
     animation: none !important;
   }
 }
+
+/* ---------- Fusión (src/puzzles/fusion) ---------- */
+@keyframes blob-idle {
+  0%,
+  100% {
+    transform: scale(1, 1);
+  }
+  50% {
+    transform: scale(1.04, 0.96);
+  }
+}
+.blob-idle {
+  animation: blob-idle 2.4s ease-in-out infinite;
+}
+@keyframes blob-pop {
+  0% {
+    transform: scale(0.75);
+  }
+  45% {
+    transform: scale(1.22, 1.1);
+  }
+  70% {
+    transform: scale(0.94, 1.04);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.blob-pop {
+  animation: blob-pop 420ms cubic-bezier(0.3, 1.4, 0.5, 1) 120ms both;
+}
+@keyframes blob-ghost {
+  from {
+    transform: translate(0, 0) scale(1);
+  }
+  to {
+    transform: translate(var(--dx), var(--dy)) scale(0.8);
+  }
+}
+.blob-ghost {
+  position: absolute;
+  animation: blob-ghost 180ms ease-in forwards;
+}
+@media (prefers-reduced-motion: reduce) {
+  .blob-idle,
+  .blob-pop,
+  .blob-ghost {
+    animation: none;
+  }
+}

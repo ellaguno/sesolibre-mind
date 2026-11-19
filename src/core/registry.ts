@@ -257,6 +257,20 @@ export const activities: ActivityMeta[] = [
     normal: '9',
     load: () => import('../puzzles/crossword/CrosswordGame'),
   },
+  // Nuevas actividades: siempre al final (los códigos de reto usan el índice).
+  {
+    id: 'fusion',
+    kind: 'puzzle',
+    domain: 'logic',
+    emoji: '🫧',
+    scoreKind: 'time',
+    higherIsBetter: false,
+    available: true,
+    accent: '#d946ef',
+    variants: ['3', '4', '5'],
+    normal: '4',
+    load: () => import('../puzzles/fusion/FusionGame'),
+  },
 ];
 
 export function findActivity(id: string | undefined): ActivityMeta | undefined {
