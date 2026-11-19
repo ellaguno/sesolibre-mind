@@ -125,3 +125,41 @@ body {
 .walk-out {
   animation: walk-out var(--walk-ms, 900ms) linear forwards;
 }
+
+/* Inicio: tarjetas que entran escalonadas, sugerido que flota y saltito ocasional. */
+@keyframes tile-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+}
+.hub-tile {
+  animation: tile-in 320ms ease-out both;
+}
+@keyframes tile-float {
+  50% {
+    transform: translateY(-4px) rotate(-4deg);
+  }
+}
+.tile-float {
+  display: inline-block;
+  animation: tile-float 2.6s ease-in-out infinite;
+}
+@keyframes tile-fx {
+  30% {
+    transform: translateY(-8px) scale(1.12) rotate(-8deg);
+  }
+  60% {
+    transform: translateY(0) scale(0.96);
+  }
+}
+.tile-fx {
+  animation: tile-fx 700ms ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hub-tile,
+  .tile-float,
+  .tile-fx {
+    animation: none;
+  }
+}

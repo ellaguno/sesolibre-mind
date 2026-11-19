@@ -20,7 +20,8 @@ type Dict = Record<string, string>;
 
 const es: Dict = {
   'app.title': 'SesoLibre Mind',
-  'hub.tagline': 'Ejercita tu mente unos minutos al día',
+  'hub.tagline': 'Ejercita tu mente',
+  'hub.suggested': 'Sugerido hoy',
   'hub.dailyTitle': 'Sesión del día',
   'hub.dailyDesc': '3 ejercicios rápidos + el puzzle del día · ~5 min',
   'hub.start': 'Empezar',
@@ -530,7 +531,8 @@ const es: Dict = {
 
 const en: Dict = {
   'app.title': 'SesoLibre Mind',
-  'hub.tagline': 'Exercise your mind a few minutes a day',
+  'hub.tagline': 'Exercise your mind',
+  'hub.suggested': 'Suggested today',
   'hub.dailyTitle': "Today's session",
   'hub.dailyDesc': "3 quick exercises + today's puzzle · ~5 min",
   'hub.start': 'Start',

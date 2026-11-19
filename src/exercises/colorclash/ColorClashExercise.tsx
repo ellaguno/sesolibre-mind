@@ -8,10 +8,12 @@ import { errorsText } from '../common/text';
 import ExerciseShell, { type RunProps } from '../common/ExerciseShell';
 import Feedback from '../common/Feedback';
 import { useStopwatch } from '../common/useStopwatch';
+import { useFitText } from '../../ui/useFitText';
 import {
   COLORS,
   COLORS_CB,
   INK,
+  INK_STROKE,
   LEVELS,
   passed,
   score,
@@ -61,6 +63,9 @@ function Run({ seed, finish, lv }: RunProps & { lv: Level }) {
     } else setK(k + 1);
   };
 
+  // Palabras largas («AMARILLO») se achican para no salirse de la pantalla.
+  const wordRef = useFitText<HTMLParagraphElement>(`${k}:${trial.word}`, 0.45);
+
   return (
     <div className="flex flex-1 flex-col gap-4">
       <div className="flex justify-between text-sm text-app-muted">
@@ -75,8 +80,14 @@ function Run({ seed, finish, lv }: RunProps & { lv: Level }) {
         <Feedback kind={fb} />
         <p
           key={k}
-          className="overlay-pop text-6xl font-black uppercase tracking-wide"
-          style={{ color: INK[trial.ink] }}
+          ref={wordRef}
+          className="overlay-pop w-full overflow-hidden whitespace-nowrap px-3 text-center text-6xl font-black uppercase tracking-wide"
+          style={{
+            color: INK[trial.ink],
+            WebkitTextStroke: INK_STROKE[trial.ink]
+              ? `1.5px ${INK_STROKE[trial.ink]}`
+              : undefined,
+          }}
           aria-label={t('colorclash.aria', {
             word: t(`color.${trial.word}`),
             ink: t(`color.${trial.ink}`),
