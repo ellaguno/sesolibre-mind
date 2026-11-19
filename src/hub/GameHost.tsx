@@ -5,6 +5,7 @@ import { recordResult } from '../core/play';
 import { decodeChallenge } from '../core/challenge';
 import { dailySeed, dateKey, randomSeed } from '../core/rng';
 import GamePlaceholder from './GamePlaceholder';
+import MascotIntro from '../ui/MascotIntro';
 
 /** Monta una actividad: `#/play/<id>` (libre) o `#/play/<id>?daily=1` (reto del día). */
 export default function GameHost() {
@@ -49,6 +50,7 @@ export default function GameHost() {
 
   return (
     <div className="relative min-h-full">
+      <MascotIntro key={activity.id} pose="puzzle" />
       <Suspense
         fallback={
           <div className="flex min-h-full items-center justify-center text-app-muted">

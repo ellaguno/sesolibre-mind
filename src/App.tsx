@@ -17,6 +17,7 @@ import { useLevels } from './core/levels';
 import ParticleOverlay from './anim/ParticleOverlay';
 import RouteTransition from './anim/RouteTransition';
 import { resolveLang } from './core/i18n';
+import MascotIntro from './ui/MascotIntro';
 
 export default function App() {
   const hydrateSettings = useSettings((s) => s.hydrate);
@@ -56,6 +57,7 @@ export default function App() {
   return (
     <>
       <ParticleOverlay />
+      <MascotIntro pose="lift" />
       <RouteTransition>
         <Routes>
           <Route path="/" element={<HubScreen />} />
