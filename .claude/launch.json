@@ -1,6 +1,47 @@
 {
   "version": "0.0.1",
   "configurations": [
-    { "name": "dev", "runtimeExecutable": "npm", "runtimeArgs": ["run", "dev", "--", "--port", "5174", "--strictPort"], "port": 5174 }
+    {
+      "name": "dev",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "5174",
+        "--strictPort"
+      ],
+      "port": 5174
+    },
+    {
+      "name": "games",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "../sesolibre-games",
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "5175",
+        "--strictPort"
+      ],
+      "port": 5175
+    },
+    {
+      "name": "shots",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "4174",
+        "--bind",
+        "127.0.0.1",
+        "-d",
+        "/tmp/claude-1000/-home-ellaguno-MEGA-Proyectos-SesoLibre-Proyectos-sesolibre-mind/9050e00f-3a1d-4ca5-9ef4-01b138f8e401/scratchpad/shots-dist"
+      ],
+      "port": 4174
+    }
   ]
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * Configuración del servicio de resultados. Lo privado (sal, base MySQL) va en
- * config.local.php, que NO se sube al repositorio (ver config.local.example.php).
+ * config.local.php, que NO se sube al repositorio (ver config.locala.example.php).
  */
 
 if (is_file(__DIR__ . '/config.local.php')) {
