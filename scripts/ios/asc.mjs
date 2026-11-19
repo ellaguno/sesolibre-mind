@@ -514,6 +514,20 @@ async function submit() {
   );
   if (rejected.data[0]) {
     const id = rejected.data[0].id;
+    // Marcar como corregido lo rechazado y luego reenviar el envío.
+    for (const item of (await api(`/reviewSubmissions/${id}/items`)).data) {
+      if (item.attributes.state === 'READY_FOR_REVIEW') continue;
+      await api(`/reviewSubmissionItems/${item.id}`, {
+        method: 'PATCH',
+        body: JSON.stringify({
+          data: {
+            type: 'reviewSubmissionItems',
+            id: item.id,
+            attributes: { resolved: true },
+          },
+        }),
+      });
+    }
     await api(`/reviewSubmissions/${id}`, {
       method: 'PATCH',
       body: JSON.stringify({
