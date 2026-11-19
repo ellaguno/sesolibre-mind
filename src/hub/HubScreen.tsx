@@ -241,11 +241,12 @@ export default function HubScreen() {
   return (
     <main className="mx-auto flex min-h-full max-w-2xl flex-col gap-6 px-4 py-6">
       {askStart && <StartChoiceDialog />}
-      <header className="flex items-start justify-between gap-1.5">
+      <header className="flex items-center gap-2">
+        {/* Ícono grande a la izquierda; título y lema a su derecha. */}
+        <AppLogo className="h-14 w-14 shrink-0 sm:h-16 sm:w-16" />
         <div className="min-w-0 flex-1">
-          <h1 className="flex min-w-0 items-center gap-2 text-base font-bold min-[400px]:text-xl sm:text-2xl">
-            <AppLogo className="h-9 w-9" />
-            <span className="truncate">{t('app.title')}</span>
+          <h1 className="truncate text-base font-bold leading-tight min-[400px]:text-xl sm:text-2xl">
+            {t('app.title')}
           </h1>
           {profileCount > 1 ? (
             // Con varios perfiles, se ve quién juega (y se cambia tocando).
@@ -261,10 +262,10 @@ export default function HubScreen() {
               </span>
             </Link>
           ) : (
-            <p className="text-sm text-app-muted">{t('hub.tagline')}</p>
+            <p className="truncate text-sm text-app-muted">{t('hub.tagline')}</p>
           )}
         </div>
-        <nav className="flex shrink-0 gap-1">
+        <nav className="flex shrink-0 gap-1 self-start">
           <Link
             to="/profiles"
             aria-label={t('profiles.title')}

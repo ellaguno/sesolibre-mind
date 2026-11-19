@@ -149,6 +149,14 @@ export default function ProfileScreen() {
           )}
         </section>
 
+        <Link
+          to="/online"
+          className="flex items-center justify-center gap-2 rounded-2xl bg-brand px-4 py-3 font-semibold text-white hover:opacity-90"
+        >
+          <span aria-hidden>🌐</span>
+          {t('online.records')}
+        </Link>
+
         <section className="rounded-2xl border border-app-border bg-app-surface p-4">
           <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-app-muted">
             {t('history.title')}

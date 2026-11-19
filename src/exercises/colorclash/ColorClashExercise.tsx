@@ -13,7 +13,7 @@ import {
   COLORS,
   COLORS_CB,
   INK,
-  INK_STROKE,
+  INK_SHADOW,
   LEVELS,
   passed,
   score,
@@ -84,9 +84,7 @@ function Run({ seed, finish, lv }: RunProps & { lv: Level }) {
           className="overlay-pop w-full overflow-hidden whitespace-nowrap px-3 text-center text-6xl font-black uppercase tracking-wide"
           style={{
             color: INK[trial.ink],
-            WebkitTextStroke: INK_STROKE[trial.ink]
-              ? `1.5px ${INK_STROKE[trial.ink]}`
-              : undefined,
+            textShadow: INK_SHADOW[trial.ink],
           }}
           aria-label={t('colorclash.aria', {
             word: t(`color.${trial.word}`),

@@ -18,15 +18,17 @@ export const INK: Record<Color, string> = {
   blue: '#2563eb',
   green: '#16a34a',
   // Amarillo de verdad (el mostaza #ca8a04 parecía otro color); se lee sobre el
-  // fondo claro gracias a un contorno fino (INK_STROKE).
+  // fondo claro gracias a una sombra suave (INK_SHADOW), sin contorno de otro tono.
   yellow: '#facc15',
   orange: '#ea580c',
   pink: '#db2777',
   black: '#111827',
 };
 
-/** Contorno para las tintas que sobre fondo claro tienen poco contraste. */
-export const INK_STROKE: Partial<Record<Color, string>> = { yellow: '#a16207' };
+/** Sombra para las tintas que sobre fondo claro tienen poco contraste. */
+export const INK_SHADOW: Partial<Record<Color, string>> = {
+  yellow: '0 1px 0 rgba(0,0,0,0.12), 0 2px 6px rgba(0,0,0,0.22)',
+};
 
 export interface Trial {
   word: Color;
