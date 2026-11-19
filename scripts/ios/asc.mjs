@@ -508,6 +508,21 @@ async function submit() {
   const versions = await api(`/apps/${app.id}/appStoreVersions?limit=10`);
   const v = versions.data.find(editable);
   if (!v) fail('no hay una versión editable (preparación o rechazada)');
+  // Tras un rechazo la versión sigue en su envío anterior: se reenvía ese.
+  const rejected = await api(
+    `/reviewSubmissions?filter[app]=${app.id}&filter[state]=UNRESOLVED_ISSUES&limit=5`,
+  );
+  if (rejected.data[0]) {
+    const id = rejected.data[0].id;
+    await api(`/reviewSubmissions/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({
+        data: { type: 'reviewSubmissions', id, attributes: { submitted: true } },
+      }),
+    });
+    console.log(`✓ Versión ${v.attributes.versionString} reenviada a revisión`);
+    return;
+  }
   // Reutilizar un envío abierto (de un intento anterior) o crear uno.
   const open = await api(
     `/reviewSubmissions?filter[app]=${app.id}&filter[state]=READY_FOR_REVIEW&limit=5`,
