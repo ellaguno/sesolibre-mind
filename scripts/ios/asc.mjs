@@ -16,6 +16,9 @@
  *   node scripts/ios/asc.mjs set-version <X.Y.Z>    cambia el número de la versión en edición
  *   node scripts/ios/asc.mjs listing [--dry]        sube la ficha de docs/APP-STORE-LISTING.md
  *   node scripts/ios/asc.mjs set-build <número>     asigna ese build (ya procesado) a la versión editable
+ *   node scripts/ios/asc.mjs get </ruta>            GET crudo de la API (diagnóstico)
+ *   node scripts/ios/asc.mjs patch </ruta> '<json>'  PATCH crudo de la API
+ *   node scripts/ios/asc.mjs submit                 envía la versión editable a revisión de Apple
  *
  * Variables opcionales: BUNDLE_ID (com.sesolibre.mind), APP_NAME, CERT_SERIAL
  * (número de serie del certificado Apple Distribution con el que se firma).
@@ -81,7 +84,13 @@ async function api(path, init = {}) {
   const text = await res.text();
   const data = text ? JSON.parse(text) : {};
   if (!res.ok) {
-    const detail = (data.errors ?? []).map((e) => `${e.title}: ${e.detail}`).join(' | ');
+    // Apple explica qué falta (p. ej. al enviar a revisión) en meta.associatedErrors.
+    const assoc = (data.errors ?? []).flatMap((e) =>
+      Object.values(e.meta?.associatedErrors ?? {}).flat(),
+    );
+    const detail = [...(data.errors ?? []), ...assoc]
+      .map((e) => `${e.title ?? e.code}: ${e.detail ?? ''}`)
+      .join('\n  · ');
     const err = new Error(`${res.status} ${init.method ?? 'GET'} ${path} → ${detail}`);
     err.status = res.status;
     throw err;
@@ -491,6 +500,56 @@ async function setBuild(number) {
   );
 }
 
+/** Envía la versión en edición a revisión (reviewSubmissions). */
+async function submit() {
+  const apps = await api(`/apps?filter[bundleId]=${BUNDLE_ID}`);
+  const app = apps.data[0];
+  if (!app) fail(`no hay app con ${BUNDLE_ID}`);
+  const versions = await api(`/apps/${app.id}/appStoreVersions?limit=10`);
+  const v = versions.data.find(editable);
+  if (!v) fail('no hay una versión editable (preparación o rechazada)');
+  // Reutilizar un envío abierto (de un intento anterior) o crear uno.
+  const open = await api(
+    `/reviewSubmissions?filter[app]=${app.id}&filter[state]=READY_FOR_REVIEW&limit=5`,
+  );
+  const sub =
+    open.data[0] ??
+    (
+      await api('/reviewSubmissions', {
+        method: 'POST',
+        body: JSON.stringify({
+          data: {
+            type: 'reviewSubmissions',
+            attributes: { platform: 'IOS' },
+            relationships: { app: { data: { type: 'apps', id: app.id } } },
+          },
+        }),
+      })
+    ).data;
+  const items = await api(`/reviewSubmissions/${sub.id}/items`);
+  if (!items.data.length) {
+    await api('/reviewSubmissionItems', {
+      method: 'POST',
+      body: JSON.stringify({
+        data: {
+          type: 'reviewSubmissionItems',
+          relationships: {
+            reviewSubmission: { data: { type: 'reviewSubmissions', id: sub.id } },
+            appStoreVersion: { data: { type: 'appStoreVersions', id: v.id } },
+          },
+        },
+      }),
+    });
+  }
+  await api(`/reviewSubmissions/${sub.id}`, {
+    method: 'PATCH',
+    body: JSON.stringify({
+      data: { type: 'reviewSubmissions', id: sub.id, attributes: { submitted: true } },
+    }),
+  });
+  console.log(`✓ Versión ${v.attributes.versionString} enviada a revisión`);
+}
+
 const [cmd, arg] = process.argv.slice(2);
 try {
   if (cmd === 'status') await status();
@@ -501,6 +560,16 @@ try {
   else if (cmd === 'set-version') await setVersion(arg);
   else if (cmd === 'listing') await listing(arg === '--dry');
   else if (cmd === 'set-build') await setBuild(arg);
+  else if (cmd === 'submit') await submit();
+  else if (cmd === 'get') console.log(JSON.stringify(await api(arg), null, 1));
+  else if (cmd === 'patch')
+    console.log(
+      JSON.stringify(
+        await api(arg, { method: 'PATCH', body: process.argv[4] }),
+        null,
+        1,
+      ).slice(0, 2000),
+    );
   else
     fail(
       'uso: asc.mjs status | ensure-bundle | profile <salida> | builds | screenshots | set-version <X.Y.Z> | listing [--dry]',
