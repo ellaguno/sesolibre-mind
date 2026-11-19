@@ -248,7 +248,7 @@ export default function FusionGame({
       rules={[t('fusion.rule1'), t('fusion.rule2'), t('fusion.rule3')]}
     >
       <div
-        className="relative h-full w-full touch-none select-none overflow-hidden rounded-2xl bg-slate-800/70"
+        className="relative h-full w-full touch-none select-none overflow-hidden rounded-2xl border-2 border-slate-400/60 bg-slate-700"
         style={{ containerType: 'inline-size' }}
         onPointerUp={onUp}
         onPointerCancel={() => (dragFrom.current = null)}
@@ -277,7 +277,6 @@ export default function FusionGame({
               className="absolute flex items-center justify-center"
               style={place(i)}
             >
-              <span className="absolute h-1.5 w-1.5 rounded-full bg-white/10" />
               {v > 0 && (
                 <span
                   key={fx?.to === i ? `pop${fx.id}` : 'still'}
@@ -330,7 +329,7 @@ export default function FusionGame({
                 state: v ? String(v) : t('cell.empty'),
               })}
               onPointerDown={() => onDown(i)}
-              className="relative flex items-center justify-center outline-none"
+              className="relative flex items-center justify-center border border-white/25 outline-none"
             >
               {v > 0 && (
                 <span
