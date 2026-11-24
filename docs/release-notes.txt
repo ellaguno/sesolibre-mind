@@ -1,2 +1,2 @@
-es: Nuevo puzzle Fusión: junta burbujas iguales hasta dejar una sola. Inicio renovado en cuadrícula con una sugerencia del día, animaciones de la mascota, récords en línea desde tu perfil y Choque de colores más legible.
-en: New Fusion puzzle: merge matching bubbles until only one is left. A refreshed home grid with a daily suggestion, mascot animations, online records from your profile and a clearer Color Clash.
+es: Fusión con operaciones: nuevos niveles para sumar, restar, multiplicar y dividir hasta llegar a la meta, y burbujas que se funden con más gracia. Recordatorio opcional por la mañana. En Laberinto de palabras el trazo a medias se queda dibujado.
+en: Fusion with operations: new levels to add, subtract, multiply and divide your way to the target, plus smoother bubble merges. Optional morning reminder. In Word Maze a half-drawn trail now stays on the board.
