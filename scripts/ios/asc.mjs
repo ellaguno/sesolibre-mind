@@ -13,7 +13,8 @@
  *   node scripts/ios/asc.mjs profile <salida>       descarga (o crea) el perfil App Store
  *   node scripts/ios/asc.mjs builds                 últimos builds subidos y su estado
  *   node scripts/ios/asc.mjs screenshots            capturas de la versión en edición, por idioma y tamaño
- *   node scripts/ios/asc.mjs set-version <X.Y.Z>    cambia el número de la versión en edición
+ *   node scripts/ios/asc.mjs set-version <X.Y.Z>    cambia el número de la versión en edición (o la crea)
+ *   node scripts/ios/asc.mjs whats-new              novedades de la versión, desde docs/release-notes.txt
  *   node scripts/ios/asc.mjs listing [--dry]        sube la ficha de docs/APP-STORE-LISTING.md
  *   node scripts/ios/asc.mjs set-build <número>     asigna ese build (ya procesado) a la versión editable
  *   node scripts/ios/asc.mjs get </ruta>            GET crudo de la API (diagnóstico)
@@ -252,7 +253,21 @@ async function setVersion(version) {
   if (!app) fail(`no hay app con ${BUNDLE_ID}`);
   const versions = await api(`/apps/${app.id}/appStoreVersions?limit=10`);
   const v = versions.data.find(editable);
-  if (!v) fail('no hay una versión editable (preparación o rechazada)');
+  if (!v) {
+    // La anterior ya se publicó: se crea la versión nueva.
+    await api('/appStoreVersions', {
+      method: 'POST',
+      body: JSON.stringify({
+        data: {
+          type: 'appStoreVersions',
+          attributes: { platform: 'IOS', versionString: version },
+          relationships: { app: { data: { type: 'apps', id: app.id } } },
+        },
+      }),
+    });
+    console.log(`✓ Versión ${version} creada`);
+    return;
+  }
   if (v.attributes.versionString === version) {
     console.log(`✓ La versión ya es ${version}`);
     return;
@@ -500,6 +515,42 @@ async function setBuild(number) {
   );
 }
 
+/** «Novedades» de la versión en edición, desde docs/release-notes.txt (es: / en:). */
+async function whatsNew() {
+  const text = readFileSync(
+    new URL('../../docs/release-notes.txt', import.meta.url),
+    'utf8',
+  );
+  const notes = Object.fromEntries(
+    [...text.matchAll(/^(es|en):\s*([\s\S]*?)(?=\n(?:es|en):|$)/gm)].map((m) => [
+      m[1],
+      m[2].trim(),
+    ]),
+  );
+  const apps = await api(`/apps?filter[bundleId]=${BUNDLE_ID}`);
+  const app = apps.data[0];
+  if (!app) fail(`no hay app con ${BUNDLE_ID}`);
+  const versions = await api(`/apps/${app.id}/appStoreVersions?limit=10`);
+  const v = versions.data.find(editable);
+  if (!v) fail('no hay una versión editable (preparación o rechazada)');
+  const locs = await api(`/appStoreVersions/${v.id}/appStoreVersionLocalizations`);
+  for (const loc of locs.data) {
+    const text = notes[loc.attributes.locale.slice(0, 2)];
+    if (!text) continue;
+    await api(`/appStoreVersionLocalizations/${loc.id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({
+        data: {
+          type: 'appStoreVersionLocalizations',
+          id: loc.id,
+          attributes: { whatsNew: text },
+        },
+      }),
+    });
+    console.log(`✓ ${loc.attributes.locale}: novedades`);
+  }
+}
+
 /** Envía la versión en edición a revisión (reviewSubmissions). */
 async function submit() {
   const apps = await api(`/apps?filter[bundleId]=${BUNDLE_ID}`);
@@ -590,6 +641,7 @@ try {
   else if (cmd === 'listing') await listing(arg === '--dry');
   else if (cmd === 'set-build') await setBuild(arg);
   else if (cmd === 'submit') await submit();
+  else if (cmd === 'whats-new') await whatsNew();
   else if (cmd === 'get') console.log(JSON.stringify(await api(arg), null, 1));
   else if (cmd === 'patch')
     console.log(
