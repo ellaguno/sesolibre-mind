@@ -11,6 +11,7 @@ import { useSettings } from '../core/settings';
 import { useT } from '../core/i18n';
 import { dailyPlan, isComplete, loadSession } from '../core/session';
 import StreakCalendar from './StreakCalendar';
+import ReminderInvite from './ReminderInvite';
 import StartChoiceDialog from './StartChoiceDialog';
 import { hasProgress } from '../core/progress';
 import { useActiveProfile, useProfiles } from '../core/profiles';
@@ -324,6 +325,8 @@ export default function HubScreen() {
           </Link>
         </div>
       </section>
+
+      <ReminderInvite show={streak > 0} />
 
       <StreakCalendar />
 

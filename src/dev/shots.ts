@@ -47,7 +47,8 @@ async function seed(lang: Lang) {
     colorblind: false,
     serene: false,
     reminder: false,
-    reminderTime: '19:00',
+    reminderTime: '08:00',
+    reminderAsked: true,
     compare: false,
     initials: '',
   });

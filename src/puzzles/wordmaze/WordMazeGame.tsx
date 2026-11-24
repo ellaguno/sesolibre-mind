@@ -101,9 +101,11 @@ export default function WordMazeGame({
   });
   const { cells: found, cellsRef, commit, solved } = session;
 
-  // Trazo en curso (aún no es una jugada: se confirma al soltar).
+  // Trazo en curso (aún no es una jugada). Al soltar sin formar palabra se
+  // queda dibujado: se sigue desde su punta o se recorta tocando una casilla suya.
   const [trace, setTrace] = useState<number[]>([]);
   const traceRef = useRef<number[]>([]);
+  const dragging = useRef(false);
   const setTraceBoth = (next: number[]) => {
     traceRef.current = next;
     setTrace(next);
@@ -155,25 +157,38 @@ export default function WordMazeGame({
     const i = cellAt(e.clientX, e.clientY);
     if (i === null || owner.has(i)) return;
     (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+    dragging.current = true;
     setNotice(null);
-    setTraceBoth([i]);
+    // Tocar el trazo dibujado lo recorta hasta ahí (y se sigue desde esa casilla).
+    const at = traceRef.current.indexOf(i);
+    setTraceBoth(at >= 0 ? traceRef.current.slice(0, at + 1) : [i]);
   };
 
   const onPointerMove = (e: React.PointerEvent) => {
-    if (!traceRef.current.length) return;
+    if (!dragging.current || !traceRef.current.length) return;
     const i = cellAt(e.clientX, e.clientY);
     if (i !== null) extendTo(i);
   };
 
   const onPointerUp = () => {
+    if (!dragging.current) return;
+    dragging.current = false;
     const tr = traceRef.current;
-    setTraceBoth([]);
     if (!generated || tr.length < 2) return;
     const r = checkTrace(generated, cellsRef.current, tr);
     if (r.kind === 'found') {
+      setTraceBoth([]);
       AudioService.play('word');
       commit(cellsRef.current, [...cellsRef.current, r.word]);
-    } else {
+      return;
+    }
+    // Sin palabra: el trazo se queda. Sólo se avisa si ya no puede crecer a una.
+    const longest = Math.max(
+      ...generated.puzzle.words
+        .filter((_, k) => !cellsRef.current.includes(k))
+        .map((w) => w.length),
+    );
+    if (r.kind === 'otherPath' || tr.length >= longest) {
       AudioService.play('wrong');
       setNotice(t(r.kind === 'otherPath' ? 'wordmaze.otherPath' : 'wordmaze.notWord'));
     }
@@ -181,6 +196,7 @@ export default function WordMazeGame({
 
   const applyHint = () => {
     if (!generated || solved) return;
+    setTraceBoth([]);
     const h = nextHint(generated, cellsRef.current, revealed);
     if (!h) return;
     session.countHint();
@@ -254,10 +270,14 @@ export default function WordMazeGame({
         reset();
       }}
       onExit={onExit}
-      onUndo={session.undo}
+      onUndo={() => {
+        setTraceBoth([]);
+        session.undo();
+      }}
       canUndo={session.canUndo}
       onClear={() => {
         setNotice(null);
+        setTraceBoth([]);
         commit(cellsRef.current, []);
       }}
       onHint={applyHint}

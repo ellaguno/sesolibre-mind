@@ -19,6 +19,8 @@ export interface Settings {
   /** Recordatorio diario (app nativa) y su hora HH:MM. */
   reminder: boolean;
   reminderTime: string;
+  /** Ya se ofreció el recordatorio de la mañana en el inicio (no volver a insistir). */
+  reminderAsked: boolean;
   /** Comparar resultados en línea (games.sesolibre.com/score), apagado por defecto. */
   compare: boolean;
   /** Iniciales (3 letras) con las que se publican los resultados. */
@@ -34,7 +36,9 @@ const DEFAULTS: Settings = {
   colorblind: false,
   serene: false,
   reminder: false,
-  reminderTime: '19:00',
+  // Por la mañana: el mejor momento para la sesión del día.
+  reminderTime: '08:00',
+  reminderAsked: false,
   compare: false,
   initials: '',
 };
@@ -50,6 +54,7 @@ interface SettingsState extends Settings {
   setColorblind: (on: boolean) => void;
   setSerene: (on: boolean) => void;
   setReminder: (on: boolean, time?: string) => void;
+  setReminderAsked: () => void;
   setCompare: (on: boolean) => void;
   setInitials: (initials: string) => void;
 }
@@ -122,6 +127,11 @@ export const useSettings = create<SettingsState>((set, get) => ({
     void persist(get);
   },
 
+  setReminderAsked: () => {
+    set({ reminderAsked: true });
+    void persist(get);
+  },
+
   setCompare: (compare) => {
     set({ compare });
     void persist(get);
@@ -154,6 +164,7 @@ async function persist(get: () => SettingsState) {
     serene,
     reminder,
     reminderTime,
+    reminderAsked,
     compare,
     initials,
   } = get();
@@ -166,6 +177,7 @@ async function persist(get: () => SettingsState) {
     serene,
     reminder,
     reminderTime,
+    reminderAsked,
     compare,
     initials,
   });

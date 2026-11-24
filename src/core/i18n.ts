@@ -387,6 +387,11 @@ const es: Dict = {
   'reminder.denied':
     'Sin permiso de notificaciones. Actívalo en los ajustes de Android para SesoLibre Mind.',
   'reminder.on': 'Listo: te avisaremos cada día a las {time}.',
+  'reminder.invite': '¿Te recuerdo cada mañana?',
+  'reminder.inviteHint':
+    'Un aviso en este teléfono para no olvidar tu sesión del día. Cambias la hora o lo apagas en Ajustes.',
+  'reminder.inviteYes': 'Sí, a las {time}',
+  'reminder.inviteNo': 'No, gracias',
   'reminder.title': 'SesoLibre Mind',
   'reminder.body1': '¿Hacemos la sesión de hoy? Son unos 5 minutos. 🧠',
   'reminder.body2': 'Tu puzzle del día te espera. 🧩',
@@ -524,7 +529,7 @@ const es: Dict = {
   'act.wordmaze.desc':
     'Encuentra las palabras del tema que serpentean por la cuadrícula.',
   'wordmaze.rule1':
-    'Arrastra el dedo por letras vecinas (sin diagonales) para formar una palabra del tema.',
+    'Arrastra el dedo por letras vecinas (sin diagonales) para formar una palabra del tema. Si sueltas a medias, el trazo se queda: sigue desde su punta.',
   'wordmaze.rule2': 'Las palabras doblan esquinas, pero no cruzan las paredes.',
   'wordmaze.rule3':
     'Entre todas usan cada letra una sola vez. La pista revela la siguiente letra.',
@@ -912,6 +917,11 @@ const en: Dict = {
   'reminder.denied':
     'Notifications are not allowed. Turn them on in Android settings for SesoLibre Mind.',
   'reminder.on': 'Done: we will remind you every day at {time}.',
+  'reminder.invite': 'Want a reminder each morning?',
+  'reminder.inviteHint':
+    'A notification on this phone so you do not miss your daily session. You can change the time or turn it off in Settings.',
+  'reminder.inviteYes': 'Yes, at {time}',
+  'reminder.inviteNo': 'No, thanks',
   'reminder.title': 'SesoLibre Mind',
   'reminder.body1': "Shall we do today's session? About 5 minutes. 🧠",
   'reminder.body2': 'Your puzzle of the day is waiting. 🧩',
@@ -1046,7 +1056,7 @@ const en: Dict = {
   'act.wordmaze.title': 'Word Maze',
   'act.wordmaze.desc': 'Find the theme words winding through the grid.',
   'wordmaze.rule1':
-    'Drag across neighbouring letters (no diagonals) to spell a theme word.',
+    'Drag across neighbouring letters (no diagonals) to spell a theme word. Let go halfway and the trail stays: carry on from its end.',
   'wordmaze.rule2': 'Words can turn corners, but they never cross walls.',
   'wordmaze.rule3':
     'Together they use every letter exactly once. A hint reveals the next letter.',
