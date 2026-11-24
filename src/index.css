@@ -342,39 +342,106 @@ body {
 .blob-idle {
   animation: blob-idle 2.4s ease-in-out infinite;
 }
-@keyframes blob-pop {
+/* La que recibe se estira hacia la que llega (--a apunta hacia ella). */
+@keyframes blob-reach {
   0% {
-    transform: scale(0.75);
+    transform: rotate(var(--a)) scale(1, 1) rotate(calc(-1 * var(--a)));
   }
-  45% {
-    transform: scale(1.22, 1.1);
+  100% {
+    transform: rotate(var(--a)) scale(1.18, 0.9) rotate(calc(-1 * var(--a)));
   }
-  70% {
-    transform: scale(0.94, 1.04);
+}
+.blob-reach {
+  animation: blob-reach 230ms ease-in forwards;
+}
+/* Rebote de gelatina al recibirla (y crecer al nuevo tamaño). */
+@keyframes blob-jelly {
+  0% {
+    transform: scale(0.8);
+  }
+  22% {
+    transform: scale(1.3, 0.78);
+  }
+  42% {
+    transform: scale(0.86, 1.16);
+  }
+  60% {
+    transform: scale(1.09, 0.93);
+  }
+  77% {
+    transform: scale(0.97, 1.04);
   }
   100% {
     transform: scale(1);
   }
 }
-.blob-pop {
-  animation: blob-pop 420ms cubic-bezier(0.3, 1.4, 0.5, 1) 120ms both;
+.blob-jelly {
+  animation: blob-jelly 650ms ease-out both;
 }
-@keyframes blob-ghost {
-  from {
-    transform: translate(0, 0) scale(1);
+/* La que viaja: se estira, avanza y se encoge al entrar (el contenedor ya gira). */
+@keyframes blob-merge {
+  0% {
+    transform: translateX(0) scale(1, 1);
   }
-  to {
-    transform: translate(var(--dx), var(--dy)) scale(0.8);
+  30% {
+    transform: translateX(10%) scale(1.3, 0.78);
+  }
+  75% {
+    transform: translateX(78%) scale(1.15, 0.72);
+  }
+  100% {
+    transform: translateX(100%) scale(0.45);
   }
 }
 .blob-ghost {
   position: absolute;
-  animation: blob-ghost 180ms ease-in forwards;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: blob-merge 230ms cubic-bezier(0.55, 0, 0.75, 0.2) forwards;
+}
+/* Gotitas de la salpicadura. */
+@keyframes blob-drop {
+  0% {
+    transform: rotate(var(--a)) translateX(0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: rotate(var(--a)) translateX(var(--r)) scale(0.15);
+    opacity: 0;
+  }
+}
+.blob-drop {
+  position: absolute;
+  border-radius: 9999px;
+  animation: blob-drop 520ms cubic-bezier(0.2, 0.8, 0.3, 1) forwards;
+}
+/* Etiqueta de la operación que sube y se desvanece. */
+@keyframes blob-float {
+  0% {
+    opacity: 0;
+    transform: translateY(20%) scale(0.6);
+  }
+  20% {
+    opacity: 1;
+    transform: translateY(-10%) scale(1.15);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-80%) scale(1);
+  }
+}
+.blob-float {
+  animation: blob-float 900ms ease-out forwards;
 }
 @media (prefers-reduced-motion: reduce) {
   .blob-idle,
-  .blob-pop,
-  .blob-ghost {
+  .blob-reach,
+  .blob-jelly,
+  .blob-ghost,
+  .blob-drop,
+  .blob-float {
     animation: none;
   }
 }

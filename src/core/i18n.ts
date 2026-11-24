@@ -489,6 +489,19 @@ const es: Dict = {
   'fusion.rule3':
     'Gana quien deja una sola burbuja: el orden importa, una burbuja sin pareja cerca ya no se puede juntar.',
   'fusion.stuck': 'Ya no quedan fusiones posibles: deshaz o pide una pista.',
+  'fusion.target': 'Meta',
+  'fusion.opsIntro':
+    'Nuevo: junta dos burbujas vecinas cualesquiera y elige + − × ÷ hasta dejar una que valga la meta.',
+  'fusion.missed': 'Te quedó {v} y la meta es {t}: deshaz o pide una pista.',
+  'fusion.stuckOps': 'Ya no hay burbujas vecinas que combinar: deshaz o pide una pista.',
+  'fusion.hintBusy': 'No encontré una pista a tiempo: prueba deshacer una jugada.',
+  'fusion.pick': 'Elige la operación',
+  'fusion.cancel': 'Cancelar',
+  'fusion.opsRule1':
+    'Arrastra una burbuja sobre cualquier vecina (o tócalas una tras otra) y elige + − × ÷.',
+  'fusion.opsRule2':
+    'La resta y la división van del mayor entre el menor, y la división tiene que ser exacta.',
+  'fusion.opsRule3': 'Gana dejando una sola burbuja que valga la meta 🎯.',
   'fusion.hintMove': 'Fusioné un par por ti.',
   'fusion.hintBack': 'Por ese camino ya no se gana: deshice la última fusión.',
   'tut.fusion.1.title': 'Iguales se juntan',
@@ -1019,6 +1032,19 @@ const en: Dict = {
   'fusion.rule3':
     'Leave a single bubble to win: order matters, and a bubble with no partner nearby is stuck for good.',
   'fusion.stuck': 'No merges left: undo or ask for a hint.',
+  'fusion.target': 'Target',
+  'fusion.opsIntro':
+    'New: join any two neighboring bubbles and pick + − × ÷ until one bubble is left with the target value.',
+  'fusion.missed': 'You ended with {v} and the target is {t}: undo or ask for a hint.',
+  'fusion.stuckOps': 'No neighboring bubbles left to combine: undo or ask for a hint.',
+  'fusion.hintBusy': "I couldn't find a hint in time: try undoing a move.",
+  'fusion.pick': 'Pick the operation',
+  'fusion.cancel': 'Cancel',
+  'fusion.opsRule1':
+    'Drag a bubble onto any neighbor (or tap one, then the other) and pick + − × ÷.',
+  'fusion.opsRule2':
+    'Subtraction and division always go larger by smaller, and division must come out even.',
+  'fusion.opsRule3': 'Leave a single bubble worth the target 🎯 to win.',
   'fusion.hintMove': 'I merged a pair for you.',
   'fusion.hintBack': "That path can't win, so I undid the last merge.",
   'tut.fusion.1.title': 'Matches merge',

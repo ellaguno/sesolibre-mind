@@ -267,7 +267,8 @@ export const activities: ActivityMeta[] = [
     higherIsBetter: false,
     available: true,
     accent: '#d946ef',
-    variants: ['3', '4', '5'],
+    // x4 / x5: con operaciones (+ − × ÷) y meta.
+    variants: ['3', '4', '5', 'x4', 'x5'],
     normal: '4',
     load: () => import('../puzzles/fusion/FusionGame'),
   },

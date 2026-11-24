@@ -1,10 +1,14 @@
 import { mulberry32, type Rng } from '../../core/rng';
 
 /**
- * Fusión: tablero N×N con burbujas numeradas (0 = casilla vacía). Una burbuja
- * se fusiona con una vecina ortogonal del mismo valor: la vecina pasa a valer
- * la suma (el doble) y la casilla de origen queda vacía. Se gana al dejar una
- * sola burbuja.
+ * Fusión: tablero N×N con burbujas numeradas (0 = casilla vacía).
+ *
+ * - Clásico (3, 4, 5): una burbuja se fusiona con una vecina ortogonal del
+ *   mismo valor; la vecina pasa a valer la suma y el origen queda vacío. Se
+ *   gana al dejar una sola burbuja.
+ * - Con operaciones (x4, x5): dos vecinas cualesquiera se combinan con + − × ÷
+ *   (la resta y la división, siempre del mayor entre el menor, y exactas). Se
+ *   gana dejando una sola burbuja que valga la meta.
  */
 export type Board = number[];
 
@@ -13,11 +17,46 @@ export interface Move {
   to: number;
 }
 
-export const VARIANTS = [
-  { id: '3', size: 3, blobs: 5, tries: 12 },
-  { id: '4', size: 4, blobs: 8, tries: 8 },
-  { id: '5', size: 5, blobs: 12, tries: 6 },
-] as const;
+export type Op = '+' | '-' | '×' | '÷';
+export const OPS: readonly Op[] = ['+', '-', '×', '÷'];
+
+export interface Variant {
+  id: string;
+  size: number;
+  blobs: number;
+  tries: number;
+  /** Con operaciones y meta (si no, sólo iguales que se suman). */
+  ops: boolean;
+}
+
+// Los nuevos van al final: el índice del nivel viaja en los códigos de reto.
+export const VARIANTS: readonly Variant[] = [
+  { id: '3', size: 3, blobs: 5, tries: 12, ops: false },
+  { id: '4', size: 4, blobs: 8, tries: 8, ops: false },
+  { id: '5', size: 5, blobs: 12, tries: 6, ops: false },
+  { id: 'x4', size: 4, blobs: 5, tries: 1, ops: true },
+  { id: 'x5', size: 5, blobs: 7, tries: 1, ops: true },
+];
+
+/** Valor máximo de una burbuja (que quepa en la burbuja y se calcule de cabeza). */
+export const MAX_VALUE = 999;
+
+/** Resultado de combinar a y b con op, o null si no se puede. */
+export function apply(a: number, b: number, op: Op): number | null {
+  const hi = Math.max(a, b);
+  const lo = Math.min(a, b);
+  const r =
+    op === '+'
+      ? a + b
+      : op === '-'
+        ? hi - lo
+        : op === '×'
+          ? a * b
+          : hi % lo
+            ? 0
+            : hi / lo;
+  return r > 0 && r <= MAX_VALUE ? r : null;
+}
 
 export function neighbors(i: number, n: number): number[] {
   const r = Math.floor(i / n);
@@ -135,12 +174,131 @@ function split(rng: Rng, n: number, blobs: number): Board | null {
 export interface Generated {
   board: Board;
   size: number;
+  /** Meta (sólo con operaciones). */
+  target?: number;
+}
+
+// ---------- Con operaciones ----------
+
+export interface OpMove extends Move {
+  op: Op;
+  value: number;
+}
+
+/** Combinaciones posibles: cada par de vecinas, en ambos sentidos, con cada operación. */
+export function opMoves(b: readonly number[], n: number): OpMove[] {
+  const out: OpMove[] = [];
+  b.forEach((a, from) => {
+    if (!a) return;
+    for (const to of neighbors(from, n)) {
+      if (!b[to]) continue;
+      for (const op of OPS) {
+        const value = apply(a, b[to], op);
+        if (value !== null) out.push({ from, to, op, value });
+      }
+    }
+  });
+  return out;
+}
+
+export function combine(b: readonly number[], m: OpMove): Board {
+  const next = [...b];
+  next[m.to] = m.value;
+  next[m.from] = 0;
+  return next;
+}
+
+export const reachedTarget = (b: readonly number[], target: number) =>
+  isSolved(b) && b.some((v) => v === target);
+
+/**
+ * Busca cómo llegar a la meta. undefined = se agotó la búsqueda sin saberlo
+ * (no es lo mismo que «no hay salida»).
+ */
+export function solveOps(
+  b: readonly number[],
+  n: number,
+  target: number,
+  limit = 150_000,
+): OpMove[] | null | undefined {
+  const dead = new Set<string>();
+  let budget = limit;
+  const go = (cur: readonly number[]): OpMove[] | null | undefined => {
+    if (reachedTarget(cur, target)) return [];
+    if (isSolved(cur)) return null;
+    const key = cur.join(',');
+    if (dead.has(key)) return null;
+    if (--budget < 0) return undefined;
+    let unknown = false;
+    for (const m of opMoves(cur, n)) {
+      const rest = go(combine(cur, m));
+      if (rest) return [m, ...rest];
+      if (rest === undefined) unknown = true;
+    }
+    if (unknown) return undefined;
+    dead.add(key);
+    return null;
+  };
+  return go(b);
+}
+
+/** Parte v en dos números que, combinados con alguna operación, dan v. */
+function splitValue(rng: Rng, v: number): [number, number] | null {
+  const options: [number, number][] = [];
+  // Suma y resta: números de una o dos cifras.
+  // Pocos «1»: con ×1 y ÷1 cualquier tablero se vuelve fácil.
+  if (v >= 4) {
+    const b = 2 + Math.floor(rng() * (v - 3));
+    options.push([v - b, b]);
+  }
+  const d = 2 + Math.floor(rng() * 8);
+  if (v + d <= 60) options.push([v + d, d]);
+  // Multiplicación y división: más interesantes, se ofrecen dos veces.
+  const divs: number[] = [];
+  for (let k = 2; k * k <= v; k++) if (v % k === 0) divs.push(k);
+  if (divs.length) {
+    const k = divs[Math.floor(rng() * divs.length)];
+    options.push([v / k, k], [v / k, k]);
+  }
+  const q = 2 + Math.floor(rng() * 3);
+  if (v * q <= 60) options.push([v * q, q], [v * q, q]);
+  return options.length ? options[Math.floor(rng() * options.length)] : null;
+}
+
+function splitOps(rng: Rng, n: number, blobs: number, target: number): Board | null {
+  const b: Board = new Array(n * n).fill(0);
+  b[Math.floor(rng() * n * n)] = target;
+  for (let guard = 0; blobCount(b) < blobs; guard++) {
+    if (guard > 200) return null;
+    const cells = b.map((_, i) => i).filter((i) => b[i] > 1);
+    if (!cells.length) return null;
+    const i = cells[Math.floor(rng() * cells.length)];
+    const free = neighbors(i, n).filter((j) => b[j] === 0);
+    if (!free.length) continue;
+    const pair = splitValue(rng, b[i]);
+    if (!pair) continue;
+    const j = free[Math.floor(rng() * free.length)];
+    const [x, y] = rng() < 0.5 ? pair : [pair[1], pair[0]];
+    b[i] = x;
+    b[j] = y;
+  }
+  return b;
+}
+
+function generateOps(rng: Rng, v: Variant): Generated {
+  for (;;) {
+    const target = 12 + Math.floor(rng() * (v.size === 4 ? 37 : 61));
+    const b = splitOps(rng, v.size, v.blobs, target);
+    // Que no empiece ya resuelto con una sola cuenta obvia de todo el tablero.
+    if (b && blobCount(b) === v.blobs) return { board: b, size: v.size, target };
+  }
 }
 
 /** Varios candidatos y se queda con el más tramposo. */
 export function generateFusion(seed: number, variantId: string): Generated {
   const v = VARIANTS.find((x) => x.id === variantId) ?? VARIANTS[1];
   const rng = mulberry32(seed);
+  if (v.ops) return generateOps(rng, v);
   let best: Board | null = null;
   let bestScore = -1;
   for (let t = 0; t < v.tries * 4 && (t < v.tries || !best); t++) {

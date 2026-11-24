@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import {
   VARIANTS,
+  apply,
+  combine,
+  reachedTarget,
+  solveOps,
   blobCount,
   canMerge,
   generateFusion,
@@ -19,7 +23,7 @@ describe('Fusión', () => {
   });
 
   it('genera tableros resolubles, deterministas y con las burbujas pedidas', () => {
-    for (const v of VARIANTS) {
+    for (const v of VARIANTS.filter((x) => !x.ops)) {
       for (const seed of [1, 2, 3]) {
         const g = generateFusion(seed, v.id);
         expect(g).toEqual(generateFusion(seed, v.id));
@@ -39,5 +43,33 @@ describe('Fusión', () => {
 
   it('detecta un tablero sin salida', () => {
     expect(solve([2, 4, 0, 0, 0, 0, 0, 0, 0], 3)).toBeNull();
+  });
+});
+
+describe('Fusión con operaciones', () => {
+  it('opera del mayor entre el menor y sólo divisiones exactas', () => {
+    expect(apply(3, 8, '-')).toBe(5);
+    expect(apply(12, 3, '÷')).toBe(4);
+    expect(apply(3, 12, '÷')).toBe(4);
+    expect(apply(7, 2, '÷')).toBeNull();
+    expect(apply(5, 5, '-')).toBeNull();
+    expect(apply(4, 6, '×')).toBe(24);
+  });
+
+  it('genera tableros que llegan a la meta', () => {
+    for (const id of ['x4', 'x5']) {
+      const v = VARIANTS.find((x) => x.id === id)!;
+      for (const seed of [1, 2, 3, 4]) {
+        const g = generateFusion(seed, id);
+        expect(g).toEqual(generateFusion(seed, id));
+        expect(blobCount(g.board)).toBe(v.blobs);
+        expect(g.target).toBeGreaterThan(0);
+        const path = solveOps(g.board, g.size, g.target!);
+        expect(path).toBeTruthy();
+        let b = g.board;
+        for (const m of path!) b = combine(b, m);
+        expect(reachedTarget(b, g.target!)).toBe(true);
+      }
+    }
   });
 });
